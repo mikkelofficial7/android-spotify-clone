@@ -3,6 +3,7 @@ package com.view.musicplayer.spotifyclone.ui.theme
 import androidx.compose.ui.graphics.Color
 
 val Transparent = Color(0x00000000)
+val Gray50 = Color(0xFF888888)
 val White80 = Color(0xCCFFFFFF)
 val Black80 = Color(0xCC000000)
 val Black60 = Color(0xFF1E1E1E)

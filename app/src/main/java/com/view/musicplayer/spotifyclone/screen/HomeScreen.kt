@@ -1,7 +1,6 @@
 package com.view.musicplayer.spotifyclone.screen
 
 import android.content.Context
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -32,7 +31,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import coil.compose.rememberAsyncImagePainter
 import coil.request.ImageRequest
 import com.view.musicplayer.spotifyclone.R
 import com.view.musicplayer.spotifyclone.ui.theme.Black60
@@ -101,35 +99,43 @@ fun MusicItemCard(id: String, title: String, description: String, imageUrl: Stri
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(8.dp)
         ) {
-            AsyncImage(
-                model = ImageRequest.Builder(LocalContext.current)
-                    .data(imageUrl)
-                    .crossfade(true)
-                    .build(),
-                contentScale = ContentScale.Crop,
-                contentDescription = title,
-                modifier = Modifier
-                    .size(64.dp)
-                    .padding(8.dp)
-                    .clip(RoundedCornerShape(8.dp)),
-                placeholder = painterResource(R.drawable.is_spotify_green),
-                error = painterResource(R.drawable.is_spotify_green)
-            )
-            Column(
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier.padding(start = 8.dp)
-            ) {
-                Text(
-                    text = title,
-                    color = White80,
-                    style = MaterialTheme.typography.bodySmall
-                )
-                Text(
-                    text = description,
-                    color = White80,
-                    style = MaterialTheme.typography.bodySmall
-                )
-            }
+            ImageLoader(imageUrl,
+                otherModifier = Modifier.size(64.dp).padding(8.dp).clip(RoundedCornerShape(8.dp)))
+            itemCardTitleDescription(title = title, description = description)
         }
+    }
+}
+
+@Composable
+fun ImageLoader(url: String, otherModifier: Modifier = Modifier) {
+    AsyncImage(
+        model = ImageRequest.Builder(LocalContext.current)
+            .data(url)
+            .crossfade(true)
+            .build(),
+        contentScale = ContentScale.Crop,
+        contentDescription = url,
+        modifier = Modifier.then(otherModifier),
+        placeholder = painterResource(R.drawable.is_spotify_green),
+        error = painterResource(R.drawable.is_spotify_green)
+    )
+}
+
+@Composable
+fun itemCardTitleDescription(title: String, description: String) {
+    Column(
+        verticalArrangement = Arrangement.Center,
+        modifier = Modifier.padding(start = 8.dp)
+    ) {
+        Text(
+            text = title,
+            color = White80,
+            style = MaterialTheme.typography.bodySmall
+        )
+        Text(
+            text = description,
+            color = White80,
+            style = MaterialTheme.typography.bodySmall
+        )
     }
 }
