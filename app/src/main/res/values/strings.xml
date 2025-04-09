@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">android-spotify-clone</string>
+    <string name="app_name">Android Spotify Clone</string>
+    <string name="your_favorit">Your Favorites</string>
 </resources>

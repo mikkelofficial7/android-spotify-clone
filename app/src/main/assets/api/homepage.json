@@ -1,0 +1,168 @@
+{
+  "code": 200,
+  "message": "Success",
+  "data": [
+    {
+      "title": "Top Picks",
+      "description": "Hand-picked just for your vibe",
+      "tracks": [
+        {
+          "id": "midnight_city",
+          "title": "Midnight City",
+          "artist": "M83",
+          "albumArt": "https://wallpapers.com/images/hd/synthetic-music-vinyl-disc-d9csh522u27ebd3r.jpg",
+          "duration": 210,
+          "isExplicit": false
+        },
+        {
+          "id": "blinding_lights",
+          "title": "Blinding Lights",
+          "artist": "The Weeknd",
+          "albumArt": "https://c4.wallpaperflare.com/wallpaper/520/229/100/disc-jockey-glasses-turntables-music-wallpaper-preview.jpg",
+          "duration": 200,
+          "isExplicit": false
+        },
+        {
+          "id": "daydream",
+          "title": "Daydream",
+          "artist": "Lily Moore",
+          "albumArt": "https://wallpapers.com/images/hd/synthetic-music-vinyl-disc-d9csh522u27ebd3r.jpg",
+          "duration": 198,
+          "isExplicit": false
+        },
+        {
+          "id": "ocean_eyes",
+          "title": "Ocean Eyes",
+          "artist": "Billie Eilish",
+          "albumArt": "https://c4.wallpaperflare.com/wallpaper/520/229/100/disc-jockey-glasses-turntables-music-wallpaper-preview.jpg",
+          "duration": 215,
+          "isExplicit": false
+        },
+        {
+          "id": "sunset_drive",
+          "title": "Sunset Drive",
+          "artist": "Tame Impala",
+          "albumArt": "https://wallpapers.com/images/hd/synthetic-music-vinyl-disc-d9csh522u27ebd3r.jpg",
+          "duration": 221,
+          "isExplicit": true
+        },
+        {
+          "id": "city_lights",
+          "title": "City Lights",
+          "artist": "The Midnight",
+          "albumArt": "https://c4.wallpaperflare.com/wallpaper/520/229/100/disc-jockey-glasses-turntables-music-wallpaper-preview.jpg",
+          "duration": 204,
+          "isExplicit": false
+        }
+      ]
+    },
+    {
+      "title": "Chill Vibes",
+      "description": "Lo-fi, chillhop and mellow beats",
+      "tracks": [
+        {
+          "id": "snowman",
+          "title": "Snowman",
+          "artist": "WYS",
+          "albumArt": "https://wallpapers.com/images/hd/synthetic-music-vinyl-disc-d9csh522u27ebd3r.jpg",
+          "duration": 189,
+          "isExplicit": false
+        },
+        {
+          "id": "coffee_break",
+          "title": "Coffee Break",
+          "artist": "Lofigirl",
+          "albumArt": "https://c4.wallpaperflare.com/wallpaper/520/229/100/disc-jockey-glasses-turntables-music-wallpaper-preview.jpg",
+          "duration": 172,
+          "isExplicit": false
+        },
+        {
+          "id": "midnight_lofi",
+          "title": "Midnight Lofi",
+          "artist": "Nujabes",
+          "albumArt": "https://wallpapers.com/images/hd/synthetic-music-vinyl-disc-d9csh522u27ebd3r.jpg",
+          "duration": 180,
+          "isExplicit": false
+        },
+        {
+          "id": "breeze",
+          "title": "Breeze",
+          "artist": "Jinsang",
+          "albumArt": "https://c4.wallpaperflare.com/wallpaper/520/229/100/disc-jockey-glasses-turntables-music-wallpaper-preview.jpg",
+          "duration": 177,
+          "isExplicit": false
+        },
+        {
+          "id": "rooftop_dreams",
+          "title": "Rooftop Dreams",
+          "artist": "Eevee",
+          "albumArt": "https://wallpapers.com/images/hd/synthetic-music-vinyl-disc-d9csh522u27ebd3r.jpg",
+          "duration": 191,
+          "isExplicit": false
+        },
+        {
+          "id": "quiet_sky",
+          "title": "Quiet Sky",
+          "artist": "Idealism",
+          "albumArt": "https://c4.wallpaperflare.com/wallpaper/520/229/100/disc-jockey-glasses-turntables-music-wallpaper-preview.jpg",
+          "duration": 174,
+          "isExplicit": false
+        }
+      ]
+    },
+    {
+      "title": "New Releases",
+      "description": "Fresh drops from your favorite artists",
+      "tracks": [
+        {
+          "id": "eternal_sunshine",
+          "title": "Eternal Sunshine",
+          "artist": "Ariana Grande",
+          "albumArt": "https://wallpapers.com/images/hd/synthetic-music-vinyl-disc-d9csh522u27ebd3r.jpg",
+          "duration": 213,
+          "isExplicit": true
+        },
+        {
+          "id": "paint_the_town_red",
+          "title": "Paint The Town Red",
+          "artist": "Doja Cat",
+          "albumArt": "https://c4.wallpaperflare.com/wallpaper/520/229/100/disc-jockey-glasses-turntables-music-wallpaper-preview.jpg",
+          "duration": 205,
+          "isExplicit": true
+        },
+        {
+          "id": "calm_down",
+          "title": "Calm Down",
+          "artist": "Rema & Selena Gomez",
+          "albumArt": "https://wallpapers.com/images/hd/synthetic-music-vinyl-disc-d9csh522u27ebd3r.jpg",
+          "duration": 215,
+          "isExplicit": false
+        },
+        {
+          "id": "dance_the_night",
+          "title": "Dance The Night",
+          "artist": "Dua Lipa",
+          "albumArt": "https://c4.wallpaperflare.com/wallpaper/520/229/100/disc-jockey-glasses-turntables-music-wallpaper-preview.jpg",
+          "duration": 198,
+          "isExplicit": false
+        },
+        {
+          "id": "greedy",
+          "title": "Greedy",
+          "artist": "Tate McRae",
+          "albumArt": "https://wallpapers.com/images/hd/synthetic-music-vinyl-disc-d9csh522u27ebd3r.jpg",
+          "duration": 203,
+          "isExplicit": false
+        },
+        {
+          "id": "honey",
+          "title": "Honey",
+          "artist": "Sam Smith",
+          "albumArt": "https://c4.wallpaperflare.com/wallpaper/520/229/100/disc-jockey-glasses-turntables-music-wallpaper-preview.jpg",
+          "duration": 200,
+          "isExplicit": true
+        }
+      ]
+    }
+  ]
+}
