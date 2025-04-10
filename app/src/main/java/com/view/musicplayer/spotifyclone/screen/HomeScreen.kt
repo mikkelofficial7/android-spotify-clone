@@ -33,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.view.musicplayer.spotifyclone.EmptyView
 import com.view.musicplayer.spotifyclone.R
 import com.view.musicplayer.spotifyclone.ext.roundedNumber
 import com.view.musicplayer.spotifyclone.ui.theme.Black60
@@ -80,7 +81,7 @@ fun HomeScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Black60)
-                    .padding(16.dp)
+                    .padding(bottom = 16.dp)
             ) {
                 items(firstListTopArtist.orEmpty()) {  artist ->
                     MusicItemCard(
@@ -89,6 +90,11 @@ fun HomeScreen(
                         description = context.getString(R.string.total_listener, artist.listeners.toInt().roundedNumber()),
                         imageUrl = artist.image.first().text
                     )
+                }
+                if (firstListTopArtist.isNullOrEmpty()) {
+                    item {
+                        EmptyView()
+                    }
                 }
             }
         }
@@ -106,7 +112,7 @@ fun HomeScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Black60)
-                    .padding(16.dp)
+                    .padding(bottom = 16.dp)
             ) {
                 items(secondListArtist.orEmpty()) {  artist ->
                     MusicItemCard(
@@ -115,6 +121,11 @@ fun HomeScreen(
                         description = context.getString(R.string.total_listener, artist.listeners.toInt().roundedNumber()),
                         imageUrl = artist.image.first().text
                     )
+                }
+                if (secondListArtist.isNullOrEmpty()) {
+                    item {
+                        EmptyView()
+                    }
                 }
             }
         }
@@ -132,7 +143,7 @@ fun HomeScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Black60)
-                    .padding(16.dp)
+                    .padding(bottom = 16.dp)
             ) {
                 items(firstListTopTrack.orEmpty()) { artist ->
                     MusicItemCard(
@@ -141,6 +152,11 @@ fun HomeScreen(
                         description = "by ${artist.artist.name} (${context.getString(R.string.total_listener, artist.listeners.toInt().roundedNumber())})",
                         imageUrl = artist.image.first().text
                     )
+                }
+                if (firstListTopTrack.isNullOrEmpty()) {
+                    item {
+                        EmptyView()
+                    }
                 }
             }
         }
@@ -158,7 +174,7 @@ fun HomeScreen(
                 modifier = Modifier
                     .fillMaxSize()
                     .background(Black60)
-                    .padding(16.dp)
+                    .padding(bottom = 16.dp)
             ) {
                 items(secondListTrack.orEmpty()) { artist ->
                     MusicItemCard(
@@ -167,6 +183,11 @@ fun HomeScreen(
                         description = "by ${artist.artist.name} (${context.getString(R.string.total_listener, artist.listeners.toInt().roundedNumber())})",
                         imageUrl = artist.image.first().text
                     )
+                }
+                if (secondListTrack.isNullOrEmpty()) {
+                    item {
+                        EmptyView()
+                    }
                 }
             }
         }
@@ -189,7 +210,10 @@ fun MusicItemCard(id: String, title: String, description: String, imageUrl: Stri
             modifier = Modifier.padding(8.dp)
         ) {
             ImageLoader(imageUrl,
-                otherModifier = Modifier.size(64.dp).padding(8.dp).clip(RoundedCornerShape(8.dp)))
+                otherModifier = Modifier
+                    .size(64.dp)
+                    .padding(8.dp)
+                    .clip(RoundedCornerShape(8.dp)))
             itemCardTitleDescription(title = title, description = description)
         }
     }

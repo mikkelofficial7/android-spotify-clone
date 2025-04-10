@@ -5,7 +5,10 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -19,9 +22,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
@@ -37,6 +42,7 @@ import com.view.musicplayer.spotifyclone.ui.theme.AndroidspotifycloneTheme
 import com.view.musicplayer.spotifyclone.ui.theme.Black80
 import com.view.musicplayer.spotifyclone.ui.theme.SpotifyAccent80
 import com.view.musicplayer.spotifyclone.ui.theme.Transparent
+import com.view.musicplayer.spotifyclone.ui.theme.White80
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -90,7 +96,9 @@ fun BottomNavBar(navController: NavController) {
     NavigationBar {
         items.forEach { screen ->
             NavigationBarItem(
-                icon = { Icon(loadIconToVector(screen.icon), contentDescription = screen.title, modifier = Modifier.width(30.dp).height(30.dp)) },
+                icon = { Icon(loadIconToVector(screen.icon), contentDescription = screen.title, modifier = Modifier
+                    .width(30.dp)
+                    .height(30.dp)) },
                 label = { Text(screen.title) },
                 selected = currentRoute == screen.route,
                 colors = NavigationBarItemDefaults.colors(
@@ -117,4 +125,18 @@ fun BottomNavBar(navController: NavController) {
 @Composable
 fun loadIconToVector(@DrawableRes icon: Int): ImageVector {
     return ImageVector.vectorResource(id = icon)
+}
+
+@Composable
+fun EmptyView(padding: Int = 5) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()) {
+        Text(
+            text = "~ No Data Available ~",
+            color = White80,
+            textAlign = TextAlign.Center,
+            modifier = Modifier.fillMaxWidth().padding(vertical = padding.dp)
+        )
+    }
 }

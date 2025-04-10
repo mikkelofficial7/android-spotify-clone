@@ -53,6 +53,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.view.musicplayer.spotifyclone.EmptyView
 import com.view.musicplayer.spotifyclone.R
 import com.view.musicplayer.spotifyclone.ext.roundedNumber
 import com.view.musicplayer.spotifyclone.loadIconToVector
@@ -292,6 +293,11 @@ fun showQuerySearchPage(viewModel: SearchViewModel, context: Context, query: Str
                 imageUrl = artist.image.first().text
             )
             if (i == (list?.size ?: 0) - 1) Spacer(modifier = Modifier.height(10.dp))
+        }
+        if (list.isNullOrEmpty()) {
+            item {
+                EmptyView(35)
+            }
         }
     }
 
