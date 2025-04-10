@@ -14,4 +14,7 @@ object Constants {
 
     const val METHOD_SEARCH_ARTIST = "artist.search"
     const val METHOD_SEARCH_ALBUM = "album.search"
+
+    // todo
+    // using this api: https://api.deezer.com/search?q=shape%20of%20you
 }

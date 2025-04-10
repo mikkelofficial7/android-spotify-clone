@@ -130,8 +130,7 @@ fun loadIconToVector(@DrawableRes icon: Int): ImageVector {
 @Composable
 fun EmptyView(padding: Int = 5) {
     Box(
-        modifier = Modifier
-            .fillMaxWidth()) {
+        modifier = Modifier.fillMaxWidth()) {
         Text(
             text = "~ No Data Available ~",
             color = White80,

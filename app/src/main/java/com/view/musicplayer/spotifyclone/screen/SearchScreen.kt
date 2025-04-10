@@ -1,6 +1,7 @@
 package com.view.musicplayer.spotifyclone.screen
 
 import android.content.Context
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.FocusInteraction
@@ -25,7 +26,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -111,7 +112,7 @@ fun SearchScreen(
         ) {
             if (isSearchActive) {
                 Icon(
-                    imageVector = Icons.Default.ArrowBack,
+                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
                     contentDescription = "",
                     tint = White80,
                     modifier = Modifier.clickable {
@@ -271,10 +272,16 @@ fun showQuerySearchPage(viewModel: SearchViewModel, context: Context, query: Str
     val listArtistSearch by viewModel.listSearchArtist.observeAsState()
 
     LaunchedEffect(query) {
-        if (query.isBlank()) return@LaunchedEffect
+        if (query.isBlank()) {
+            return@LaunchedEffect
+        }
 
         delay(2500) // delay 2.5 second after typing
         viewModel.searchArtist(context, query, currentPage)
+    }
+
+    if (query.isBlank()) {
+        listArtistSearch?.clear()
     }
 
     LazyColumn(
@@ -284,21 +291,19 @@ fun showQuerySearchPage(viewModel: SearchViewModel, context: Context, query: Str
             .background(Transparent)
             .padding(start = 8.dp, end = 8.dp, top = 8.dp)
     ) {
-        val list = listArtistSearch?.results?.artistmatches?.artist
-        itemsIndexed(list.orEmpty()) { i, artist ->
-            MusicItemCard(
-                id = artist.mbid,
-                title = artist.name,
-                description = "by ${artist.name} (${context.getString(R.string.total_listener, artist.listeners.toInt().roundedNumber())})",
-                imageUrl = artist.image.first().text
-            )
-            if (i == (list?.size ?: 0) - 1) Spacer(modifier = Modifier.height(10.dp))
-        }
-        if (list.isNullOrEmpty()) {
+        if (listArtistSearch.isNullOrEmpty()) {
             item {
                 EmptyView(35)
             }
+        } else {
+            itemsIndexed(listArtistSearch.orEmpty()) { i, artist ->
+                MusicItemCard(
+                    id = artist.mbid,
+                    title = artist.name,
+                    description = "by ${artist.name} (${context.getString(R.string.total_listener, artist.listeners.toInt().roundedNumber())})",
+                    imageUrl = artist.image.first().text
+                )
+            }
         }
     }
-
 }
