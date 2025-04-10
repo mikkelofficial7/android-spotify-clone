@@ -3,6 +3,7 @@ package com.view.musicplayer.spotifyclone.network
 import com.view.musicplayer.spotifyclone.constants.Constants
 import com.view.musicplayer.spotifyclone.network.response.AllGenre
 import com.view.musicplayer.spotifyclone.network.response.AllSongBasedGenre
+import com.view.musicplayer.spotifyclone.network.response.SearchArtist
 import com.view.musicplayer.spotifyclone.network.response.TopChartArtist
 import com.view.musicplayer.spotifyclone.network.response.TopChartTracks
 import com.view.musicplayer.spotifyclone.network.response.general.GeneralResponse
@@ -27,6 +28,16 @@ interface Api {
         @Query("limit") maxPage: Int,
         @Query("page") page: Int = 1,
     ): TopChartTracks
+
+    @GET("2.0")
+    suspend fun searchArtist(
+        @Query("method") method: String = Constants.METHOD_SEARCH_ARTIST,
+        @Query("api_key") apiKey: String,
+        @Query("format") format: String = Constants.DEFAULT_FORMAT,
+        @Query("artist") artist: String,
+        @Query("limit") maxPage: Int,
+        @Query("page") page: Int = 1,
+    ): SearchArtist
 
     @GET("2.0")
     suspend fun getTopChartTracksBasedGenre(

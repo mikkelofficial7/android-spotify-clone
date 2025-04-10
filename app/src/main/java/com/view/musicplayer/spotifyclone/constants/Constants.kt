@@ -11,4 +11,7 @@ object Constants {
     const val METHOD_GET_ALL_TOP_ARTIST = "chart.gettopartists"
     const val METHOD_GET_ALL_TOP_TRACK = "chart.gettoptracks"
     const val METHOD_GET_ALL_TOP_TRACK_BASED_GENRE = "tag.gettoptracks"
+
+    const val METHOD_SEARCH_ARTIST = "artist.search"
+    const val METHOD_SEARCH_ALBUM = "album.search"
 }

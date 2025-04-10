@@ -22,6 +22,7 @@ import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
@@ -53,6 +54,7 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.view.musicplayer.spotifyclone.R
+import com.view.musicplayer.spotifyclone.ext.roundedNumber
 import com.view.musicplayer.spotifyclone.loadIconToVector
 import com.view.musicplayer.spotifyclone.network.response.AllGenre
 import com.view.musicplayer.spotifyclone.network.response.TopChartTracks
@@ -63,6 +65,7 @@ import com.view.musicplayer.spotifyclone.ui.theme.SpotifyGreen40
 import com.view.musicplayer.spotifyclone.ui.theme.Transparent
 import com.view.musicplayer.spotifyclone.ui.theme.White80
 import com.view.musicplayer.spotifyclone.viewmodel.SearchViewModel
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 
@@ -79,7 +82,7 @@ fun SearchScreen(
 
     val focusManager = LocalFocusManager.current
     var isSearchActive by remember { mutableStateOf(false) }
-    var musicSearched by rememberSaveable { mutableStateOf("") }
+    var querySearch by rememberSaveable { mutableStateOf("") }
 
     // get search textview focus state
     LaunchedEffect(searchInteractSource) {
@@ -111,67 +114,22 @@ fun SearchScreen(
                     contentDescription = "",
                     tint = White80,
                     modifier = Modifier.clickable {
+                        querySearch = ""
                         focusManager.clearFocus(force = true)
                         isSearchActive = false
                     }
                 )
                 Spacer(modifier = Modifier.width(10.dp))
             }
-            SearchMusicBar(searchInteractSource, musicSearched) {
-                musicSearched = it
+            SearchMusicBar(searchInteractSource, querySearch) {
+                querySearch = it
             }
         }
         when (isSearchActive) {
-            true -> Text(text = "")
+            true -> showQuerySearchPage(viewModel, context, querySearch)
             false -> showDefaultSearchPage(recommendTopTrack, genreData)
         }
 
-    }
-}
-
-@Composable
-fun showDefaultSearchPage(recommendTopTrack: TopChartTracks?, genreData: AllGenre?) {
-    Spacer(modifier = Modifier.height(5.dp))
-    LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 5.dp, start = 5.dp, end = 5.dp, bottom = 5.dp),
-        verticalArrangement = Arrangement.spacedBy(16.dp)
-    )  {
-        item {
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Transparent)
-            ) {
-                items(recommendTopTrack?.tracks?.track.orEmpty()) { track ->
-                    MusicItemCard(
-                        id = track.mbid,
-                        title = track.name,
-                        description = "by ${track.artist.name}",
-                        imageUrl = track.image.first().text
-                    )
-                }
-            }
-        }
-        item {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                modifier = Modifier
-                    .fillMaxSize()
-                    .height(550.dp)
-                    .background(Transparent)
-                    .padding(top = 8.dp),
-                userScrollEnabled = false,
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                items(genreData?.genreSection.orEmpty()) { genre ->
-                    ItemCardGenre(genre.name, genre.imageUrl, genre.color)
-                }
-            }
-        }
     }
 }
 
@@ -258,4 +216,83 @@ fun SearchMusicBar(interactSource: MutableInteractionSource, musicSearched: Stri
             )
         }
     )
+}
+
+@Composable
+fun showDefaultSearchPage(recommendTopTrack: TopChartTracks?, genreData: AllGenre?) {
+    Spacer(modifier = Modifier.height(5.dp))
+    LazyColumn(
+        modifier = Modifier
+            .fillMaxSize()
+            .padding(top = 5.dp, start = 5.dp, end = 5.dp, bottom = 5.dp),
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    )  {
+        item {
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(Transparent)
+            ) {
+                items(recommendTopTrack?.tracks?.track.orEmpty()) { track ->
+                    MusicItemCard(
+                        id = track.mbid,
+                        title = track.name,
+                        description = "by ${track.artist.name}",
+                        imageUrl = track.image.first().text
+                    )
+                }
+            }
+        }
+        item {
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(2),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .height(550.dp)
+                    .background(Transparent)
+                    .padding(top = 8.dp),
+                userScrollEnabled = false,
+                verticalArrangement = Arrangement.spacedBy(12.dp),
+                horizontalArrangement = Arrangement.spacedBy(12.dp)
+            ) {
+                items(genreData?.genreSection.orEmpty()) { genre ->
+                    ItemCardGenre(genre.name, genre.imageUrl, genre.color)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun showQuerySearchPage(viewModel: SearchViewModel, context: Context, query: String) {
+    val currentPage by remember { mutableStateOf(1) }
+    val listArtistSearch by viewModel.listSearchArtist.observeAsState()
+
+    LaunchedEffect(query) {
+        if (query.isBlank()) return@LaunchedEffect
+
+        delay(2500) // delay 2.5 second after typing
+        viewModel.searchArtist(context, query, currentPage)
+    }
+
+    LazyColumn(
+        verticalArrangement = Arrangement.spacedBy(12.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .background(Transparent)
+            .padding(start = 8.dp, end = 8.dp, top = 8.dp)
+    ) {
+        val list = listArtistSearch?.results?.artistmatches?.artist
+        itemsIndexed(list.orEmpty()) { i, artist ->
+            MusicItemCard(
+                id = artist.mbid,
+                title = artist.name,
+                description = "by ${artist.name} (${context.getString(R.string.total_listener, artist.listeners.toInt().roundedNumber())})",
+                imageUrl = artist.image.first().text
+            )
+            if (i == (list?.size ?: 0) - 1) Spacer(modifier = Modifier.height(10.dp))
+        }
+    }
+
 }
