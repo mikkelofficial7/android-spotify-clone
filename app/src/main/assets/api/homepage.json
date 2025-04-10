@@ -163,6 +163,60 @@
           "isExplicit": true
         }
       ]
+    },
+    {
+      "title": "Recommended for You",
+      "description": "Inspired by your recent listens",
+      "tracks": [
+        {
+          "id": "yes_and",
+          "title": "yes, and?",
+          "artist": "Ariana Grande",
+          "albumArt": "https://images.unsplash.com/photo-1534670007418-fbb7f6cf32c3",
+          "duration": 212,
+          "isExplicit": true
+        },
+        {
+          "id": "vegas",
+          "title": "Vegas",
+          "artist": "Doja Cat",
+          "albumArt": "https://images.unsplash.com/photo-1511376777868-611b54f68947",
+          "duration": 186,
+          "isExplicit": true
+        },
+        {
+          "id": "feather",
+          "title": "feather",
+          "artist": "Sabrina Carpenter",
+          "albumArt": "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f",
+          "duration": 190,
+          "isExplicit": false
+        },
+        {
+          "id": "baby_dont_hurt_me",
+          "title": "Baby Don’t Hurt Me",
+          "artist": "David Guetta, Anne-Marie & Coi Leray",
+          "albumArt": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4",
+          "duration": 181,
+          "isExplicit": false
+        },
+        {
+          "id": "desire",
+          "title": "Desire",
+          "artist": "Calvin Harris & Sam Smith",
+          "albumArt": "https://images.unsplash.com/photo-1487215078519-e21cc028cb29",
+          "duration": 199,
+          "isExplicit": false
+        },
+        {
+          "id": "one_of_the_girls",
+          "title": "One of the Girls",
+          "artist": "The Weeknd, JENNIE, Lily-Rose Depp",
+          "albumArt": "https://images.unsplash.com/photo-1618005198919-d3d4b5a92ccb",
+          "duration": 231,
+          "isExplicit": true
+        }
+      ]
     }
   ]
 }

@@ -1,5 +1,6 @@
 package com.view.musicplayer.spotifyclone.di
 
+import com.view.musicplayer.spotifyclone.constants.Constants
 import com.view.musicplayer.spotifyclone.network.Api
 import com.view.musicplayer.spotifyclone.network.RetrofitBuilder
 import okhttp3.OkHttpClient
@@ -12,7 +13,7 @@ class ApiModule {
         }
 
         private fun provideUserApi(okHttpClient: OkHttpClient): Api {
-            return RetrofitBuilder.initRetrofit("https://www.google.xyz/", okHttpClient).create(Api::class.java)
+            return RetrofitBuilder.initRetrofit(Constants.BASE_URL, okHttpClient).create(Api::class.java)
         }
     }
 }

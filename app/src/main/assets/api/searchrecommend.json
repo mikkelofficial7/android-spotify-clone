@@ -98,7 +98,135 @@
             { "title": "The Four Seasons", "artist": "Vivaldi", "albumArt": "https://link-to-classical4.jpg" },
             { "title": "Canon in D", "artist": "Pachelbel", "albumArt": "https://link-to-classical5.jpg" }
           ]
-        }
+        },
+      {
+        "name": "Indie Rock",
+        "imageUrl": "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4",
+        "color": "#F4A261",
+        "songs": [
+          {
+            "title": "Electric Feel",
+            "artist": "MGMT",
+            "albumArt": "https://images.unsplash.com/photo-1487215078519-e21cc028cb29"
+          },
+          {
+            "title": "Dog Days Are Over",
+            "artist": "Florence + The Machine",
+            "albumArt": "https://images.unsplash.com/photo-1518972559570-9b1b0b1c5c57"
+          },
+          {
+            "title": "Reptilia",
+            "artist": "The Strokes",
+            "albumArt": "https://images.unsplash.com/photo-1509205477838-a534e43a8490"
+          },
+          {
+            "title": "Sweet Disposition",
+            "artist": "The Temper Trap",
+            "albumArt": "https://images.unsplash.com/photo-1511376777868-611b54f68947"
+          },
+          {
+            "title": "Take Me Out",
+            "artist": "Franz Ferdinand",
+            "albumArt": "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f"
+          }
+        ]
+      },
+      {
+        "name": "Reggaeton",
+        "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQ8256hCmD8cO6y4pLxFQp_bEMH9qoDlr0SkQ&s",
+        "color": "#FF6B6B",
+        "songs": [
+          {
+            "title": "Tití Me Preguntó",
+            "artist": "Bad Bunny",
+            "albumArt": "https://images.unsplash.com/photo-1530373239216-42518e6b4061"
+          },
+          {
+            "title": "Felices los 4",
+            "artist": "Maluma",
+            "albumArt": "https://images.unsplash.com/photo-1543574894-21f35097c5a4"
+          },
+          {
+            "title": "Bichota",
+            "artist": "Karol G",
+            "albumArt": "https://images.unsplash.com/photo-1549924231-f129b911e442"
+          },
+          {
+            "title": "Dákiti",
+            "artist": "Bad Bunny & Jhay Cortez",
+            "albumArt": "https://images.unsplash.com/photo-1599940824399-b87987ceb72a"
+          },
+          {
+            "title": "Ay Vamos",
+            "artist": "J Balvin",
+            "albumArt": "https://images.unsplash.com/photo-1573164713988-8665fc963095"
+          }
+        ]
+      },
+      {
+        "name": "K-Pop",
+        "imageUrl": "https://c4.wallpaperflare.com/wallpaper/912/105/80/k-pop-itzy-girl-band-asian-korean-hd-wallpaper-preview.jpg",
+        "color": "#FFB5E8",
+        "songs": [
+          {
+            "title": "Butter",
+            "artist": "BTS",
+            "albumArt": "https://images.unsplash.com/photo-1518976024611-488187ad0aab"
+          },
+          {
+            "title": "Pink Venom",
+            "artist": "BLACKPINK",
+            "albumArt": "https://images.unsplash.com/photo-1599940824263-b0c9ecbf23c9"
+          },
+          {
+            "title": "Love Dive",
+            "artist": "IVE",
+            "albumArt": "https://images.unsplash.com/photo-1592194996308-7b43878e84a6"
+          },
+          {
+            "title": "Antifragile",
+            "artist": "LE SSERAFIM",
+            "albumArt": "https://images.unsplash.com/photo-1579208575657-c595a05383a1"
+          },
+          {
+            "title": "OMG",
+            "artist": "NewJeans",
+            "albumArt": "https://images.unsplash.com/photo-1549388604-817d15aa0110"
+          }
+        ]
+      },
+      {
+        "name": "EDM",
+        "imageUrl": "https://images.unsplash.com/photo-1504384308090-c894fdcc538d",
+        "color": "#7EF9F9",
+        "songs": [
+          {
+            "title": "Staying Alive",
+            "artist": "David Guetta & Bebe Rexha",
+            "albumArt": "https://images.unsplash.com/photo-1525186402429-1a6d1e70d9c7"
+          },
+          {
+            "title": "Don't You Worry",
+            "artist": "Black Eyed Peas, Shakira, David Guetta",
+            "albumArt": "https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f"
+          },
+          {
+            "title": "Head & Heart",
+            "artist": "Joel Corry & MNEK",
+            "albumArt": "https://images.unsplash.com/photo-1549221986-5fd4e3e9f876"
+          },
+          {
+            "title": "The Business",
+            "artist": "Tiësto",
+            "albumArt": "https://images.unsplash.com/photo-1483412033650-1015ddeb83d1"
+          },
+          {
+            "title": "Lean On",
+            "artist": "Major Lazer & DJ Snake",
+            "albumArt": "https://images.unsplash.com/photo-1492684223066-81342ee5ff30"
+          }
+        ]
+      }
     ],
     "songSection": [
       {

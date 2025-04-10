@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Android Spotify Clone</string>
-    <string name="your_favorit">Your Favorites</string>
+    <string name="search_song">Search your music vibe..</string>
+    <string name="total_listener">%1$s Listeners</string>
+    <string name="top_artist_chart_1">Top 5 Artist Chart</string>
+    <string name="top_artist_chart_2">Top Artist On Your Vibe</string>
+    <string name="top_track_chart_1">Top 5 Track Chart</string>
+    <string name="top_track_chart_2">Top Track Chart On Your Vibe </string>
 </resources>

@@ -30,9 +30,11 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.view.musicplayer.spotifyclone.R
+import com.view.musicplayer.spotifyclone.ext.roundedNumber
 import com.view.musicplayer.spotifyclone.ui.theme.Black60
 import com.view.musicplayer.spotifyclone.ui.theme.Black80
 import com.view.musicplayer.spotifyclone.ui.theme.White80
@@ -44,10 +46,12 @@ fun HomeScreen(
     viewModel: HomepageViewModel = koinViewModel()
 ) {
     val context: Context = LocalContext.current
-    val homepageData by viewModel.homepageData.observeAsState()
+    val topArtist by viewModel.topChart.observeAsState()
+    val topTrack by viewModel.topTrack.observeAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.getHomePageData(context)
+        viewModel.getTopChartArtist(context)
+        viewModel.getTopChartTrack(context)
     }
 
     LazyColumn(
@@ -57,13 +61,20 @@ fun HomeScreen(
             .background(Black60)
             .padding(16.dp)
     ) {
-        items(homepageData.orEmpty()) { item ->
+        val firstListTopArtist = topArtist?.artists?.artist?.take(5)
+        val secondListArtist = topArtist?.artists?.artist?.slice(5..9)
+
+        val firstListTopTrack = topTrack?.tracks?.track?.take(5)
+        val secondListTrack = topTrack?.tracks?.track?.slice(5..9)
+
+        item {
             Text(
-                text = item.title,
-                style = MaterialTheme.typography.bodyMedium.copy(color = White80),
+                text = context.getString(R.string.top_artist_chart_1),
+                style = MaterialTheme.typography.bodyLarge.copy(color = White80),
                 modifier = Modifier.padding(bottom = 16.dp)
             )
-
+        }
+        item {
             LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(12.dp),
                 modifier = Modifier
@@ -71,12 +82,90 @@ fun HomeScreen(
                     .background(Black60)
                     .padding(16.dp)
             ) {
-                items(item.tracks.orEmpty()) { track ->
+                items(firstListTopArtist.orEmpty()) {  artist ->
                     MusicItemCard(
-                        id = track.id,
-                        title = track.title,
-                        description = "by ${track.artist}",
-                        imageUrl = track.albumArt
+                        id = artist.mbid,
+                        title = artist.name,
+                        description = context.getString(R.string.total_listener, artist.listeners.toInt().roundedNumber()),
+                        imageUrl = artist.image.first().text
+                    )
+                }
+            }
+        }
+
+        item {
+            Text(
+                text = context.getString(R.string.top_artist_chart_2),
+                style = MaterialTheme.typography.bodyLarge.copy(color = White80),
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+        }
+        item {
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Black60)
+                    .padding(16.dp)
+            ) {
+                items(secondListArtist.orEmpty()) {  artist ->
+                    MusicItemCard(
+                        id = artist.mbid,
+                        title = artist.name,
+                        description = context.getString(R.string.total_listener, artist.listeners.toInt().roundedNumber()),
+                        imageUrl = artist.image.first().text
+                    )
+                }
+            }
+        }
+
+        item {
+            Text(
+                text = context.getString(R.string.top_track_chart_1),
+                style = MaterialTheme.typography.bodyLarge.copy(color = White80),
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+        }
+        item {
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Black60)
+                    .padding(16.dp)
+            ) {
+                items(firstListTopTrack.orEmpty()) { artist ->
+                    MusicItemCard(
+                        id = artist.mbid,
+                        title = artist.name,
+                        description = "by ${artist.artist.name} (${context.getString(R.string.total_listener, artist.listeners.toInt().roundedNumber())})",
+                        imageUrl = artist.image.first().text
+                    )
+                }
+            }
+        }
+
+        item {
+            Text(
+                text = context.getString(R.string.top_track_chart_2),
+                style = MaterialTheme.typography.bodyLarge.copy(color = White80),
+                modifier = Modifier.padding(bottom = 16.dp)
+            )
+        }
+        item {
+            LazyRow(
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .background(Black60)
+                    .padding(16.dp)
+            ) {
+                items(secondListTrack.orEmpty()) { artist ->
+                    MusicItemCard(
+                        id = artist.mbid,
+                        title = artist.name,
+                        description = "by ${artist.artist.name} (${context.getString(R.string.total_listener, artist.listeners.toInt().roundedNumber())})",
+                        imageUrl = artist.image.first().text
                     )
                 }
             }
@@ -111,6 +200,7 @@ fun ImageLoader(url: String, otherModifier: Modifier = Modifier) {
     AsyncImage(
         model = ImageRequest.Builder(LocalContext.current)
             .data(url)
+            .size(200, 200)
             .crossfade(true)
             .build(),
         contentScale = ContentScale.Crop,
@@ -130,12 +220,14 @@ fun itemCardTitleDescription(title: String, description: String) {
         Text(
             text = title,
             color = White80,
-            style = MaterialTheme.typography.bodySmall
+            style = MaterialTheme.typography.bodySmall,
+            fontSize = 14.sp
         )
         Text(
             text = description,
             color = White80,
-            style = MaterialTheme.typography.bodySmall
+            style = MaterialTheme.typography.bodySmall,
+            fontSize = 12.sp
         )
     }
 }

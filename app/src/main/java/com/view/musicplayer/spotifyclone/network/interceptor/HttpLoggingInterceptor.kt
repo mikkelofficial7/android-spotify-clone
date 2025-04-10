@@ -6,7 +6,7 @@ import okhttp3.logging.HttpLoggingInterceptor
 object HttpLoggingInterceptor {
     fun get(): List<Interceptor> {
         val debugInterceptor = HttpLoggingInterceptor().apply {
-            level = HttpLoggingInterceptor.Level.NONE
+            level = HttpLoggingInterceptor.Level.BODY
         }
         return listOf(debugInterceptor)
     }
