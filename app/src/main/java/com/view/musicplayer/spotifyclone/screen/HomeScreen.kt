@@ -33,18 +33,24 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.view.musicplayer.spotifyclone.EmptyView
 import com.view.musicplayer.spotifyclone.R
 import com.view.musicplayer.spotifyclone.ext.roundedNumber
+import com.view.musicplayer.spotifyclone.network.response.Track
+import com.view.musicplayer.spotifyclone.screen.shared.EmptyView
+import com.view.musicplayer.spotifyclone.screen.shared.ImageLoader
+import com.view.musicplayer.spotifyclone.screen.shared.PlayerButton
 import com.view.musicplayer.spotifyclone.ui.theme.Black60
 import com.view.musicplayer.spotifyclone.ui.theme.Black80
+import com.view.musicplayer.spotifyclone.ui.theme.Transparent
 import com.view.musicplayer.spotifyclone.ui.theme.White80
 import com.view.musicplayer.spotifyclone.viewmodel.HomepageViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun HomeScreen(
-    viewModel: HomepageViewModel = koinViewModel()
+    viewModel: HomepageViewModel = koinViewModel(),
+    isShowPlayerButton: Boolean,
+    onClickMusic: (Track) -> Unit
 ) {
     val context: Context = LocalContext.current
     val recommendChart by viewModel.recommendationChart.observeAsState()
@@ -53,152 +59,164 @@ fun HomeScreen(
         viewModel.getRecommendation(context)
     }
 
-    LazyColumn(
-        verticalArrangement = Arrangement.spacedBy(12.dp),
-        modifier = Modifier
-            .fillMaxSize()
-            .background(Black60)
-            .padding(16.dp)
-    ) {
-        val firstListTopArtist = recommendChart?.get(0)?.tracks
-        val secondListArtist = recommendChart?.get(1)?.tracks
+    Column {
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .background(Black60)
+        ) {
+            val firstListTopArtist = recommendChart?.get(0)?.tracks
+            val secondListArtist = recommendChart?.get(1)?.tracks
 
-        val firstListTopTrack = recommendChart?.get(2)?.tracks
-        val secondListTrack = recommendChart?.get(3)?.tracks
+            val firstListTopTrack = recommendChart?.get(2)?.tracks
+            val secondListTrack = recommendChart?.get(3)?.tracks
 
-        item {
-            Text(
-                text = context.getString(R.string.top_artist_chart_1),
-                style = MaterialTheme.typography.bodyLarge.copy(color = White80),
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-        }
-        item {
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Black60)
-                    .padding(bottom = 16.dp)
-            ) {
-                items(firstListTopArtist.orEmpty()) {  artist ->
-                    MusicItemCard(
-                        id = artist.id,
-                        title = artist.title,
-                        description = context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber()),
-                        imageUrl = artist.imageUrl
-                    )
+            item {
+                Text(
+                    text = context.getString(R.string.top_artist_chart_1),
+                    style = MaterialTheme.typography.bodyLarge.copy(color = White80),
+                    modifier = Modifier.padding(16.dp)
+                )
+            }
+            item {
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
+                ) {
+                    items(firstListTopArtist.orEmpty()) {  artist ->
+                        MusicItemCard(
+                            id = artist.id,
+                            title = artist.title,
+                            description = context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber()),
+                            imageUrl = artist.imageUrl
+                        ) {
+                            onClickMusic(artist)
+                        }
+                    }
+                    if (firstListTopArtist.isNullOrEmpty()) {
+                        item {
+                            EmptyView()
+                        }
+                    }
                 }
-                if (firstListTopArtist.isNullOrEmpty()) {
-                    item {
-                        EmptyView()
+            }
+
+            item {
+                Text(
+                    text = context.getString(R.string.top_artist_chart_2),
+                    style = MaterialTheme.typography.bodyLarge.copy(color = White80),
+                    modifier = Modifier.padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
+                )
+            }
+            item {
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
+                ) {
+                    items(secondListArtist.orEmpty()) {  artist ->
+                        MusicItemCard(
+                            id = artist.id,
+                            title = artist.title,
+                            description = context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber()),
+                            imageUrl = artist.imageUrl
+                        ) {
+                            onClickMusic(artist)
+                        }
+                    }
+                    if (secondListArtist.isNullOrEmpty()) {
+                        item {
+                            EmptyView()
+                        }
+                    }
+                }
+            }
+
+            item {
+                Text(
+                    text = context.getString(R.string.top_track_chart_1),
+                    style = MaterialTheme.typography.bodyLarge.copy(color = White80),
+                    modifier = Modifier.padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
+                )
+            }
+            item {
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Transparent)
+                        .padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
+                ) {
+                    items(firstListTopTrack.orEmpty()) { artist ->
+                        MusicItemCard(
+                            id = artist.id,
+                            title = artist.title,
+                            description = context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber()),
+                            imageUrl = artist.imageUrl
+                        ) {
+                            onClickMusic(artist)
+                        }
+                    }
+                    if (firstListTopTrack.isNullOrEmpty()) {
+                        item {
+                            EmptyView()
+                        }
+                    }
+                }
+            }
+
+            item {
+                Text(
+                    text = context.getString(R.string.top_track_chart_2),
+                    style = MaterialTheme.typography.bodyLarge.copy(color = White80),
+                    modifier = Modifier.padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
+                )
+            }
+            item {
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Transparent)
+                        .padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
+                ) {
+                    items(secondListTrack.orEmpty()) { artist ->
+                        MusicItemCard(
+                            id = artist.id,
+                            title = artist.title,
+                            description = context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber()),
+                            imageUrl = artist.imageUrl
+                        ) {
+                            onClickMusic(artist)
+                        }
+                    }
+                    if (secondListTrack.isNullOrEmpty()) {
+                        item {
+                            EmptyView()
+                        }
                     }
                 }
             }
         }
 
-        item {
-            Text(
-                text = context.getString(R.string.top_artist_chart_2),
-                style = MaterialTheme.typography.bodyLarge.copy(color = White80),
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-        }
-        item {
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Black60)
-                    .padding(bottom = 16.dp)
-            ) {
-                items(secondListArtist.orEmpty()) {  artist ->
-                    MusicItemCard(
-                        id = artist.id,
-                        title = artist.title,
-                        description = context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber()),
-                        imageUrl = artist.imageUrl
-                    )
-                }
-                if (secondListArtist.isNullOrEmpty()) {
-                    item {
-                        EmptyView()
-                    }
-                }
-            }
-        }
-
-        item {
-            Text(
-                text = context.getString(R.string.top_track_chart_1),
-                style = MaterialTheme.typography.bodyLarge.copy(color = White80),
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-        }
-        item {
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Black60)
-                    .padding(bottom = 16.dp)
-            ) {
-                items(firstListTopTrack.orEmpty()) { artist ->
-                    MusicItemCard(
-                        id = artist.id,
-                        title = artist.title,
-                        description = context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber()),
-                        imageUrl = artist.imageUrl
-                    )
-                }
-                if (firstListTopTrack.isNullOrEmpty()) {
-                    item {
-                        EmptyView()
-                    }
-                }
-            }
-        }
-
-        item {
-            Text(
-                text = context.getString(R.string.top_track_chart_2),
-                style = MaterialTheme.typography.bodyLarge.copy(color = White80),
-                modifier = Modifier.padding(bottom = 16.dp)
-            )
-        }
-        item {
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Black60)
-                    .padding(bottom = 16.dp)
-            ) {
-                items(secondListTrack.orEmpty()) { artist ->
-                    MusicItemCard(
-                        id = artist.id,
-                        title = artist.title,
-                        description = context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber()),
-                        imageUrl = artist.imageUrl
-                    )
-                }
-                if (secondListTrack.isNullOrEmpty()) {
-                    item {
-                        EmptyView()
-                    }
-                }
-            }
+        if (isShowPlayerButton) {
+            PlayerButton()
         }
     }
 }
 
 @Composable
-fun MusicItemCard(id: String, title: String, description: String, imageUrl: String, onClick: (String) -> Unit = {}) {
+fun MusicItemCard(id: String, title: String, description: String, imageUrl: String, onClick: () -> Unit = {}) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .height(80.dp)
-            .clickable { onClick(id) },
+            .clickable { onClick() },
         colors = CardDefaults.cardColors(containerColor = Black80),
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
@@ -215,22 +233,6 @@ fun MusicItemCard(id: String, title: String, description: String, imageUrl: Stri
             itemCardTitleDescription(title = title, description = description)
         }
     }
-}
-
-@Composable
-fun ImageLoader(url: String, otherModifier: Modifier = Modifier) {
-    AsyncImage(
-        model = ImageRequest.Builder(LocalContext.current)
-            .data(url)
-            .size(200, 200)
-            .crossfade(true)
-            .build(),
-        contentScale = ContentScale.Crop,
-        contentDescription = url,
-        modifier = Modifier.then(otherModifier),
-        placeholder = painterResource(R.drawable.is_spotify_green),
-        error = painterResource(R.drawable.is_spotify_green)
-    )
 }
 
 @Composable

@@ -8,7 +8,6 @@ import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -51,15 +50,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.view.musicplayer.spotifyclone.EmptyView
 import com.view.musicplayer.spotifyclone.R
 import com.view.musicplayer.spotifyclone.ext.roundedNumber
-import com.view.musicplayer.spotifyclone.loadIconToVector
 import com.view.musicplayer.spotifyclone.network.response.Genre
 import com.view.musicplayer.spotifyclone.network.response.SongRecommendation
-import com.view.musicplayer.spotifyclone.showLoading
+import com.view.musicplayer.spotifyclone.network.response.Track
+import com.view.musicplayer.spotifyclone.screen.shared.EmptyView
+import com.view.musicplayer.spotifyclone.screen.shared.ImageLoader
+import com.view.musicplayer.spotifyclone.screen.shared.PlayerButton
+import com.view.musicplayer.spotifyclone.screen.shared.loadIconToVector
+import com.view.musicplayer.spotifyclone.screen.shared.showLoading
 import com.view.musicplayer.spotifyclone.ui.theme.Black80
 import com.view.musicplayer.spotifyclone.ui.theme.Gray50
 import com.view.musicplayer.spotifyclone.ui.theme.SpotifyAccent40
@@ -71,12 +74,14 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
 import org.koin.androidx.compose.koinViewModel
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SearchScreen(
-    viewModel: SearchViewModel = koinViewModel()
+    viewModel: SearchViewModel = koinViewModel(),
+    isShowPlayerButton: Boolean,
+    onClickMusic: (Track) -> Unit
 ) {
     val context: Context = LocalContext.current
+    val keyboardController = LocalSoftwareKeyboardController.current
 
     val searchInteractSource = remember { MutableInteractionSource() }
     val genreData by viewModel.allGenre.observeAsState()
@@ -103,35 +108,56 @@ fun SearchScreen(
 
     Column(
         modifier = Modifier
-            .fillMaxSize()
+            .fillMaxWidth()
             .background(Black80)
-            .padding(16.dp)
     ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f)
+                .background(Transparent)
+                .padding(16.dp)
         ) {
-            if (isSearchActive) {
-                Icon(
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "",
-                    tint = White80,
-                    modifier = Modifier.clickable {
-                        querySearch = ""
-                        focusManager.clearFocus(force = true)
-                        isSearchActive = false
-                    }
-                )
-                Spacer(modifier = Modifier.width(10.dp))
+            Row(
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                if (isSearchActive) {
+                    Icon(
+                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = "",
+                        tint = White80,
+                        modifier = Modifier.clickable {
+                            querySearch = ""
+                            focusManager.clearFocus(force = true)
+                            isSearchActive = false
+                        }
+                    )
+                    Spacer(modifier = Modifier.width(10.dp))
+                }
+                SearchMusicBar(searchInteractSource, querySearch) {
+                    querySearch = it
+                }
             }
-            SearchMusicBar(searchInteractSource, querySearch) {
-                querySearch = it
+            when (isSearchActive) {
+                true -> showQuerySearchPage(viewModel, context, querySearch,
+                    onClick = {
+                        keyboardController?.hide()
+                        onClickMusic(it)
+                    })
+                false -> showDefaultSearchPage(recommendTopTrack, genreData ?: listOf(),
+                    onClickMusic = {
+                        keyboardController?.hide()
+                        onClickMusic(it)
+                    },
+                    onClickGenre = {
+                        keyboardController?.hide()
+                    })
             }
-        }
-        when (isSearchActive) {
-            true -> showQuerySearchPage(viewModel, context, querySearch)
-            false -> showDefaultSearchPage(recommendTopTrack, genreData ?: listOf())
         }
 
+        if (isShowPlayerButton) {
+            PlayerButton()
+        }
     }
 }
 
@@ -141,12 +167,12 @@ fun readHexColor(color: String): Color {
 }
 
 @Composable
-fun ItemCardGenre(name: String, imageUrl: String, color: String) {
+fun ItemCardGenre(name: String, imageUrl: String, color: String, onClick: () -> Unit) {
     Card(
         modifier = Modifier
-            .fillMaxWidth()
-            .height(80.dp),
-        shape = RoundedCornerShape(16.dp),
+            .height(80.dp)
+            .clickable { onClick() },
+        shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(4.dp)
     ) {
         Box(
@@ -221,45 +247,50 @@ fun SearchMusicBar(interactSource: MutableInteractionSource, musicSearched: Stri
 }
 
 @Composable
-fun showDefaultSearchPage(recommendTopTrack: SongRecommendation?, genreData: List<Genre>) {
-    Spacer(modifier = Modifier.height(5.dp))
-    LazyColumn(
+fun showDefaultSearchPage(recommendTopTrack: SongRecommendation?, genreData: List<Genre>, onClickMusic: (Track) -> Unit = {}, onClickGenre: (Genre) -> Unit = {}) {
+    Column(
         modifier = Modifier
-            .fillMaxSize()
-            .padding(top = 5.dp, start = 5.dp, end = 5.dp, bottom = 5.dp),
+            .fillMaxWidth()
+            .padding(5.dp),
         verticalArrangement = Arrangement.spacedBy(16.dp)
     )  {
-        item {
-            LazyRow(
-                horizontalArrangement = Arrangement.spacedBy(12.dp),
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .background(Transparent)
-            ) {
-                items(recommendTopTrack?.tracks.orEmpty()) { track ->
-                    MusicItemCard(
-                        id = track.id,
-                        title = track.title,
-                        description = "by ${track.artist}",
-                        imageUrl = track.imageUrl
-                    )
+        LazyRow(
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(Transparent)
+                .padding(top = 5.dp)
+        ) {
+            items(recommendTopTrack?.tracks.orEmpty()) { track ->
+                MusicItemCard(
+                    id = track.id,
+                    title = track.title,
+                    description = "by ${track.artist}",
+                    imageUrl = track.imageUrl
+                ) {
+                    onClickMusic(track)
                 }
             }
         }
-        item {
-            LazyVerticalGrid(
-                columns = GridCells.Fixed(2),
-                modifier = Modifier
-                    .fillMaxSize()
-                    .height(550.dp)
-                    .background(Transparent)
-                    .padding(top = 8.dp),
-                userScrollEnabled = false,
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                items(genreData) { genre ->
-                    ItemCardGenre(genre.name, genre.imageUrl, genre.color)
+        LazyVerticalGrid(
+            columns = GridCells.Fixed(2),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(Transparent)
+                .padding(5.dp),
+            verticalArrangement = Arrangement.spacedBy(12.dp),
+            horizontalArrangement = Arrangement.spacedBy(12.dp),
+            userScrollEnabled = true // Set to false if nested inside another scrollable
+        ) {
+            items(genreData) { item ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 10.dp)
+                ) {
+                    ItemCardGenre(item.name, item.imageUrl, item.color) {
+                        onClickGenre(item)
+                    }
                 }
             }
         }
@@ -267,7 +298,7 @@ fun showDefaultSearchPage(recommendTopTrack: SongRecommendation?, genreData: Lis
 }
 
 @Composable
-fun showQuerySearchPage(viewModel: SearchViewModel, context: Context, query: String) {
+fun showQuerySearchPage(viewModel: SearchViewModel, context: Context, query: String, onClick: (Track) -> Unit = {}) {
     val listArtistSearch by viewModel.listSearchArtist.observeAsState()
     val isLoading by viewModel.isLoadingEvent.observeAsState()
 
@@ -306,7 +337,8 @@ fun showQuerySearchPage(viewModel: SearchViewModel, context: Context, query: Str
                         id = artist.id,
                         title = artist.title,
                         description = "by ${artist.artist} (${context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber())})",
-                        imageUrl = artist.imageUrl
+                        imageUrl = artist.imageUrl,
+                        onClick = { onClick(artist) }
                     )
                 }
             }
