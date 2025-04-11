@@ -17,4 +17,22 @@ data class Track (
     val streamedUrl: String,
     val duration: Long,
     val genre: String
-)
+) {
+    companion object {
+        val empty: Track
+            get() {
+                return Track(
+                    "",
+                    "",
+                    "",
+                    "",
+                    -1,
+                    "",
+                    "",
+                    "",
+                    -1,
+                    ""
+                )
+            }
+    }
+}

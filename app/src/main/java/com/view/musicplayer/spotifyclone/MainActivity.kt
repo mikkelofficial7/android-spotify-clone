@@ -31,6 +31,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.view.musicplayer.spotifyclone.navigation.ScreenRoute
+import com.view.musicplayer.spotifyclone.network.response.Track
 import com.view.musicplayer.spotifyclone.screen.HomeScreen
 import com.view.musicplayer.spotifyclone.screen.ProfileScreen
 import com.view.musicplayer.spotifyclone.screen.SearchScreen
@@ -68,6 +69,7 @@ fun GreetingPreview() {
 fun MainPage() {
     val navController = rememberNavController()
     var isShowPlayerButton by rememberSaveable { mutableStateOf(false) }
+    var currentPlaying by remember { mutableStateOf(Track.empty) }
 
     Scaffold(
         bottomBar = { BottomNavBar(navController) }
@@ -79,12 +81,24 @@ fun MainPage() {
         ) {
             composable(ScreenRoute.Home.route) {
                 HomeScreen(isShowPlayerButton = isShowPlayerButton) {
-                    isShowPlayerButton = !isShowPlayerButton
+                   if (currentPlaying.id == it.id) {
+                       currentPlaying = Track.empty
+                       isShowPlayerButton = !isShowPlayerButton
+                   } else {
+                       currentPlaying = it
+                       isShowPlayerButton = true
+                   }
                 }
             }
             composable(ScreenRoute.Search.route) {
                 SearchScreen(isShowPlayerButton = isShowPlayerButton) {
-                    isShowPlayerButton = !isShowPlayerButton
+                    if (currentPlaying.id == it.id) {
+                        currentPlaying = Track.empty
+                        isShowPlayerButton = !isShowPlayerButton
+                    } else {
+                        currentPlaying = it
+                        isShowPlayerButton = true
+                    }
                 }
             }
             composable(ScreenRoute.Profile.route) { ProfileScreen() }
