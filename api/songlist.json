@@ -9,7 +9,7 @@
       "releaseDate": "April 25, 2005",
       "totalListener": 2000000,
       "description": "Mockingbird is a song by Eminem, released in 2005 as a single from his album Encore (2004). It’s one of his most personal and emotional tracks.",
-      "imageUrl": "",
+      "imageUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_cover/Eminem%20-%20Mockingbird.png",
       "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Eminem%20-%20Mockingbird.mp3",
       "duration": 364,
       "genre": "Hip Hop"
@@ -21,7 +21,7 @@
       "releaseDate": "October 14, 2013",
       "totalListener": 2500000,
       "description": "Rap God showcases Eminem’s lyrical speed and versatility, with over 1,500 words in just over 6 minutes.",
-      "imageUrl": "",
+      "imageUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_cover/Eminem%20-%20Rap%20God.png",
       "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Eminem%20-%20Rap%20God.mp3",
       "duration": 364,
       "genre": "Hip Hop"
@@ -33,7 +33,7 @@
       "releaseDate": "April 29, 2010",
       "totalListener": 1800000,
       "description": "Not Afraid is a motivational anthem by Eminem, expressing his commitment to change and recovery.",
-      "imageUrl": "",
+      "imageUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_cover/Eminem%20-%20Not%20Afraid.png",
       "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Eminem%20-%20Not%20Afraid.mp3",
       "duration": 258,
       "genre": "Hip Hop"
@@ -45,7 +45,7 @@
       "releaseDate": "March 30, 2016",
       "totalListener": 1900000,
       "description": "Needed Me is a moody, trap-infused song about independence and empowerment, from Rihanna’s album Anti.",
-      "imageUrl": "",
+      "imageUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_cover/Rihanna%20-%20Needed%20Me.png",
       "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Rihanna%20-%20Needed%20Me.mp3",
       "duration": 212,
       "genre": "R&B"
@@ -57,7 +57,7 @@
       "releaseDate": "September 22, 2011",
       "totalListener": 3000000,
       "description": "A chart-topping dance-pop hit featuring Calvin Harris, known for its infectious energy and emotional lyrics.",
-      "imageUrl": "",
+      "imageUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_cover/Rihanna%20-%20We%20Found%20Love%20ft.%20Calvin%20Harris.png",
       "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Rihanna%20-%20We%20Found%20Love%20ft.%20Calvin%20Harris.mp3",
       "duration": 219,
       "genre": "Dance Pop"
@@ -69,7 +69,7 @@
       "releaseDate": "September 26, 2012",
       "totalListener": 2700000,
       "description": "Diamonds is a slow-tempo pop ballad celebrating love and inner strength.",
-      "imageUrl": "",
+      "imageUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_cover/Rihanna%20-%20Diamonds.png",
       "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Rihanna%20-%20Diamonds.mp3",
       "duration": 235,
       "genre": "Pop"
@@ -81,7 +81,7 @@
       "releaseDate": "August 24, 2017",
       "totalListener": 3200000,
       "description": "A bold comeback single by Taylor Swift, addressing her public feuds and media image.",
-      "imageUrl": "",
+      "imageUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_cover/Taylor%20Swift%20-%20Look%20What%20You%20Made%20Me%20Do.png",
       "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Taylor%20Swift%20-%20Look%20What%20You%20Made%20Me%20Do.mp3",
       "duration": 211,
       "genre": "Electropop"
@@ -93,7 +93,7 @@
       "releaseDate": "August 18, 2014",
       "totalListener": 3500000,
       "description": "A fun and upbeat anthem about shaking off negativity and embracing self-confidence.",
-      "imageUrl": "",
+      "imageUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_cover/Taylor%20Swift%20-%20Shake%20It%20Off.png",
       "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Taylor%20Swift%20-%20Shake%20It%20Off.mp3",
       "duration": 219,
       "genre": "Pop"
@@ -105,7 +105,7 @@
       "releaseDate": "November 10, 2014",
       "totalListener": 3400000,
       "description": "A satirical take on media portrayal of Taylor Swift's love life, with dark pop vibes.",
-      "imageUrl": "",
+      "imageUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_cover/Taylor%20Swift%20-%20Blank%20Space.png",
       "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Taylor%20Swift%20-%20Blank%20Space.mp3",
       "duration": 231,
       "genre": "Synth-pop"
