@@ -1,0 +1,36 @@
+{
+  "code": 200,
+  "message": "Success",
+  "data": [
+    {
+      "name": "Hip Hop",
+      "imageUrl": "https://m.media-amazon.com/images/I/81kMR4xq-OL._AC_SX679_.jpg",
+      "color": "#F67280"
+    },
+    {
+      "name": "R&B",
+      "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQlq5qithhZb061shh2nQjBccnG1M-VgtuytA&s",
+      "color": "#6C5B7B"
+    },
+    {
+      "name": "Dance Pop",
+      "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyv7ztzHckRxvrqPJwkqrizB5trXlPOXwK8g&s",
+      "color": "#355C7D"
+    },
+    {
+      "name": "Pop",
+      "imageUrl": "https://i.pinimg.com/236x/f4/89/4c/f4894c7a185679b526b69faefd31013a.jpg",
+      "color": "#FFB400"
+    },
+    {
+      "name": "Electropop",
+      "imageUrl": "https://wallpapers.com/images/hd/electronic-dance-music-1238-x-782-wallpaper-52fig7g5kcxame6x.jpg",
+      "color": "#00B8A9"
+    },
+    {
+      "name": "Synth-pop",
+      "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS65I_LmwJVHBToHF76X6uEbVMMCzVqox1jfg&s",
+      "color": "#C06C84"
+    }
+  ]
+}

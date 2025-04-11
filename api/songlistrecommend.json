@@ -1,0 +1,270 @@
+{
+  "code": 200,
+  "message": "Success",
+  "data": [
+    {
+      "id": "late-night-vibes",
+      "title": "Late Night Vibes",
+      "tracks": [
+        {
+          "id": "eminem-mockingbird",
+          "title": "Mocking Bird",
+          "artist": "Eminem",
+          "releaseDate": "April 25, 2005",
+          "totalListener": 2000000,
+          "description": "Mockingbird is a song by Eminem, released in 2005 as a single from his album Encore (2004). It’s one of his most personal and emotional tracks.",
+          "imageUrl": "",
+          "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Eminem%20-%20Mockingbird.mp3",
+          "duration": 364,
+          "genre": "Hip Hop"
+        },
+        {
+          "id": "rihanna-diamonds",
+          "title": "Diamonds",
+          "artist": "Rihanna",
+          "releaseDate": "September 26, 2012",
+          "totalListener": 2700000,
+          "description": "Diamonds is a slow-tempo pop ballad celebrating love and inner strength.",
+          "imageUrl": "",
+          "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Rihanna%20-%20Diamonds.mp3",
+          "duration": 235,
+          "genre": "Pop"
+        },
+        {
+          "id": "taylorswift-shakeitoff",
+          "title": "Shake It Off",
+          "artist": "Taylor Swift",
+          "releaseDate": "August 18, 2014",
+          "totalListener": 3500000,
+          "description": "A fun and upbeat anthem about shaking off negativity and embracing self-confidence.",
+          "imageUrl": "",
+          "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Taylor%20Swift%20-%20Shake%20It%20Off.mp3",
+          "duration": 219,
+          "genre": "Pop"
+        },
+        {
+          "id": "eminem-rapgod",
+          "title": "Rap God",
+          "artist": "Eminem",
+          "releaseDate": "October 14, 2013",
+          "totalListener": 2500000,
+          "description": "Rap God showcases Eminem’s lyrical speed and versatility, with over 1,500 words in just over 6 minutes.",
+          "imageUrl": "",
+          "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Eminem%20-%20Rap%20God.mp3",
+          "duration": 364,
+          "genre": "Hip Hop"
+        },
+        {
+          "id": "taylorswift-blankspace",
+          "title": "Blank Space",
+          "artist": "Taylor Swift",
+          "releaseDate": "November 10, 2014",
+          "totalListener": 3400000,
+          "description": "A satirical take on media portrayal of Taylor Swift's love life, with dark pop vibes.",
+          "imageUrl": "",
+          "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Taylor%20Swift%20-%20Blank%20Space.mp3",
+          "duration": 231,
+          "genre": "Synth-pop"
+        }
+      ]
+    },
+    {
+      "id": "feel-good-beats",
+      "title": "Feel Good Beats",
+      "tracks": [
+        {
+          "id": "rihanna-wefoundlove",
+          "title": "We Found Love ft. Calvin Harris",
+          "artist": "Rihanna",
+          "releaseDate": "September 22, 2011",
+          "totalListener": 3000000,
+          "description": "A chart-topping dance-pop hit featuring Calvin Harris, known for its infectious energy and emotional lyrics.",
+          "imageUrl": "",
+          "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Rihanna%20-%20We%20Found%20Love%20ft.%20Calvin%20Harris.mp3",
+          "duration": 219,
+          "genre": "Dance Pop"
+        },
+        {
+          "id": "taylorswift-lookwhatyoumademedo",
+          "title": "Look What You Made Me Do",
+          "artist": "Taylor Swift",
+          "releaseDate": "August 24, 2017",
+          "totalListener": 3200000,
+          "description": "A bold comeback single by Taylor Swift, addressing her public feuds and media image.",
+          "imageUrl": "",
+          "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Taylor%20Swift%20-%20Look%20What%20You%20Made%20Me%20Do.mp3",
+          "duration": 211,
+          "genre": "Electropop"
+        },
+        {
+          "id": "eminem-notafraid",
+          "title": "Not Afraid",
+          "artist": "Eminem",
+          "releaseDate": "April 29, 2010",
+          "totalListener": 1800000,
+          "description": "Not Afraid is a motivational anthem by Eminem, expressing his commitment to change and recovery.",
+          "imageUrl": "",
+          "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Eminem%20-%20Not%20Afraid.mp3",
+          "duration": 258,
+          "genre": "Hip Hop"
+        },
+        {
+          "id": "rihanna-neededme",
+          "title": "Needed Me",
+          "artist": "Rihanna",
+          "releaseDate": "March 30, 2016",
+          "totalListener": 1900000,
+          "description": "Needed Me is a moody, trap-infused song about independence and empowerment, from Rihanna’s album Anti.",
+          "imageUrl": "",
+          "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Rihanna%20-%20Needed%20Me.mp3",
+          "duration": 212,
+          "genre": "R&B"
+        },
+        {
+          "id": "taylorswift-shakeitoff",
+          "title": "Shake It Off",
+          "artist": "Taylor Swift",
+          "releaseDate": "August 18, 2014",
+          "totalListener": 3500000,
+          "description": "A fun and upbeat anthem about shaking off negativity and embracing self-confidence.",
+          "imageUrl": "",
+          "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Taylor%20Swift%20-%20Shake%20It%20Off.mp3",
+          "duration": 219,
+          "genre": "Pop"
+        }
+      ]
+    },
+    {
+      "id": "power-anthems",
+      "title": "Power Anthems",
+      "tracks": [
+        {
+          "id": "taylorswift-blankspace",
+          "title": "Blank Space",
+          "artist": "Taylor Swift",
+          "releaseDate": "November 10, 2014",
+          "totalListener": 3400000,
+          "description": "A satirical take on media portrayal of Taylor Swift's love life, with dark pop vibes.",
+          "imageUrl": "",
+          "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Taylor%20Swift%20-%20Blank%20Space.mp3",
+          "duration": 231,
+          "genre": "Synth-pop"
+        },
+        {
+          "id": "eminem-rapgod",
+          "title": "Rap God",
+          "artist": "Eminem",
+          "releaseDate": "October 14, 2013",
+          "totalListener": 2500000,
+          "description": "Rap God showcases Eminem’s lyrical speed and versatility, with over 1,500 words in just over 6 minutes.",
+          "imageUrl": "",
+          "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Eminem%20-%20Rap%20God.mp3",
+          "duration": 364,
+          "genre": "Hip Hop"
+        },
+        {
+          "id": "eminem-notafraid",
+          "title": "Not Afraid",
+          "artist": "Eminem",
+          "releaseDate": "April 29, 2010",
+          "totalListener": 1800000,
+          "description": "Not Afraid is a motivational anthem by Eminem, expressing his commitment to change and recovery.",
+          "imageUrl": "",
+          "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Eminem%20-%20Not%20Afraid.mp3",
+          "duration": 258,
+          "genre": "Hip Hop"
+        },
+        {
+          "id": "rihanna-neededme",
+          "title": "Needed Me",
+          "artist": "Rihanna",
+          "releaseDate": "March 30, 2016",
+          "totalListener": 1900000,
+          "description": "Needed Me is a moody, trap-infused song about independence and empowerment, from Rihanna’s album Anti.",
+          "imageUrl": "",
+          "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Rihanna%20-%20Needed%20Me.mp3",
+          "duration": 212,
+          "genre": "R&B"
+        },
+        {
+          "id": "taylorswift-lookwhatyoumademedo",
+          "title": "Look What You Made Me Do",
+          "artist": "Taylor Swift",
+          "releaseDate": "August 24, 2017",
+          "totalListener": 3200000,
+          "description": "A bold comeback single by Taylor Swift, addressing her public feuds and media image.",
+          "imageUrl": "",
+          "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Taylor%20Swift%20-%20Look%20What%20You%20Made%20Me%20Do.mp3",
+          "duration": 211,
+          "genre": "Electropop"
+        }
+      ]
+    },
+    {
+      "id": "golden-hits",
+      "title": "Golden Hits",
+      "tracks": [
+        {
+          "id": "eminem-mockingbird",
+          "title": "Mocking Bird",
+          "artist": "Eminem",
+          "releaseDate": "April 25, 2005",
+          "totalListener": 2000000,
+          "description": "Mockingbird is a song by Eminem, released in 2005 as a single from his album Encore (2004). It’s one of his most personal and emotional tracks.",
+          "imageUrl": "",
+          "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Eminem%20-%20Mockingbird.mp3",
+          "duration": 364,
+          "genre": "Hip Hop"
+        },
+        {
+          "id": "rihanna-wefoundlove",
+          "title": "We Found Love ft. Calvin Harris",
+          "artist": "Rihanna",
+          "releaseDate": "September 22, 2011",
+          "totalListener": 3000000,
+          "description": "A chart-topping dance-pop hit featuring Calvin Harris, known for its infectious energy and emotional lyrics.",
+          "imageUrl": "",
+          "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Rihanna%20-%20We%20Found%20Love%20ft.%20Calvin%20Harris.mp3",
+          "duration": 219,
+          "genre": "Dance Pop"
+        },
+        {
+          "id": "rihanna-diamonds",
+          "title": "Diamonds",
+          "artist": "Rihanna",
+          "releaseDate": "September 26, 2012",
+          "totalListener": 2700000,
+          "description": "Diamonds is a slow-tempo pop ballad celebrating love and inner strength.",
+          "imageUrl": "",
+          "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Rihanna%20-%20Diamonds.mp3",
+          "duration": 235,
+          "genre": "Pop"
+        },
+        {
+          "id": "taylorswift-shakeitoff",
+          "title": "Shake It Off",
+          "artist": "Taylor Swift",
+          "releaseDate": "August 18, 2014",
+          "totalListener": 3500000,
+          "description": "A fun and upbeat anthem about shaking off negativity and embracing self-confidence.",
+          "imageUrl": "",
+          "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Taylor%20Swift%20-%20Shake%20It%20Off.mp3",
+          "duration": 219,
+          "genre": "Pop"
+        },
+        {
+          "id": "taylorswift-blankspace",
+          "title": "Blank Space",
+          "artist": "Taylor Swift",
+          "releaseDate": "November 10, 2014",
+          "totalListener": 3400000,
+          "description": "A satirical take on media portrayal of Taylor Swift's love life, with dark pop vibes.",
+          "imageUrl": "",
+          "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Taylor%20Swift%20-%20Blank%20Space.mp3",
+          "duration": 231,
+          "genre": "Synth-pop"
+        }
+      ]
+    }
+  ]
+}
