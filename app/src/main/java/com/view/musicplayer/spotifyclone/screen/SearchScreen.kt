@@ -59,6 +59,7 @@ import com.view.musicplayer.spotifyclone.ext.roundedNumber
 import com.view.musicplayer.spotifyclone.loadIconToVector
 import com.view.musicplayer.spotifyclone.network.response.Genre
 import com.view.musicplayer.spotifyclone.network.response.SongRecommendation
+import com.view.musicplayer.spotifyclone.showLoading
 import com.view.musicplayer.spotifyclone.ui.theme.Black80
 import com.view.musicplayer.spotifyclone.ui.theme.Gray50
 import com.view.musicplayer.spotifyclone.ui.theme.SpotifyAccent40
@@ -268,6 +269,7 @@ fun showDefaultSearchPage(recommendTopTrack: SongRecommendation?, genreData: Lis
 @Composable
 fun showQuerySearchPage(viewModel: SearchViewModel, context: Context, query: String) {
     val listArtistSearch by viewModel.listSearchArtist.observeAsState()
+    val isLoading by viewModel.isLoadingEvent.observeAsState()
 
     LaunchedEffect(query) {
         if (query.isBlank()) {
@@ -289,18 +291,24 @@ fun showQuerySearchPage(viewModel: SearchViewModel, context: Context, query: Str
             .background(Transparent)
             .padding(start = 8.dp, end = 8.dp, top = 8.dp)
     ) {
-        if (listArtistSearch.isNullOrEmpty()) {
+        if (isLoading == true) {
             item {
-                EmptyView(35)
+                showLoading(35)
             }
         } else {
-            itemsIndexed(listArtistSearch.orEmpty()) { i, artist ->
-                MusicItemCard(
-                    id = artist.id,
-                    title = artist.title,
-                    description = "by ${artist.artist} (${context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber())})",
-                    imageUrl = artist.imageUrl
-                )
+            if (listArtistSearch.isNullOrEmpty()) {
+                item {
+                    EmptyView(35)
+                }
+            } else {
+                itemsIndexed(listArtistSearch.orEmpty()) { i, artist ->
+                    MusicItemCard(
+                        id = artist.id,
+                        title = artist.title,
+                        description = "by ${artist.artist} (${context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber())})",
+                        imageUrl = artist.imageUrl
+                    )
+                }
             }
         }
     }

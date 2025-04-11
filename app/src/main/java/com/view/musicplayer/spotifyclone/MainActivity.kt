@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -137,5 +138,15 @@ fun EmptyView(padding: Int = 5) {
             textAlign = TextAlign.Center,
             modifier = Modifier.fillMaxWidth().padding(vertical = padding.dp)
         )
+    }
+}
+
+@Composable
+fun showLoading(padding: Int = 5) {
+    Box(
+        modifier = Modifier.fillMaxSize().padding(top = padding.dp, bottom = padding.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator(color = SpotifyAccent80)
     }
 }
