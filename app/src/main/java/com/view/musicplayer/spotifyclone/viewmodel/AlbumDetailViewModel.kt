@@ -9,7 +9,7 @@ import com.view.musicplayer.spotifyclone.viewmodel.base.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class HomepageViewModel(private val api: Api): BaseViewModel<Any?>() {
+class AlbumDetailViewModel(private val api: Api): BaseViewModel<Any?>() {
     val recommendationChart = SingleLiveEvent<List<SongRecommendation>>()
 
     internal fun getRecommendation(context: Context) {

@@ -53,8 +53,10 @@ import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavController
 import com.view.musicplayer.spotifyclone.R
 import com.view.musicplayer.spotifyclone.ext.roundedNumber
+import com.view.musicplayer.spotifyclone.navigation.ScreenRoute
 import com.view.musicplayer.spotifyclone.network.response.Genre
 import com.view.musicplayer.spotifyclone.network.response.SongRecommendation
 import com.view.musicplayer.spotifyclone.network.response.Track
@@ -78,6 +80,7 @@ import org.koin.androidx.compose.koinViewModel
 fun SearchScreen(
     viewModel: SearchViewModel = koinViewModel(),
     isShowPlayerButton: Boolean,
+    navController: NavController,
     onClickMusic: (Track) -> Unit
 ) {
     val context: Context = LocalContext.current
@@ -151,6 +154,11 @@ fun SearchScreen(
                     },
                     onClickGenre = {
                         keyboardController?.hide()
+                        navController.navigate(ScreenRoute.AlbumDetail.route) {
+                            popUpTo(navController.graph.startDestinationId) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = true
+                        }
                     })
             }
         }

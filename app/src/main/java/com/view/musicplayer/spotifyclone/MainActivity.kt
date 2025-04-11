@@ -32,6 +32,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.view.musicplayer.spotifyclone.navigation.ScreenRoute
 import com.view.musicplayer.spotifyclone.network.response.Track
+import com.view.musicplayer.spotifyclone.screen.AlbumDetailScreen
 import com.view.musicplayer.spotifyclone.screen.HomeScreen
 import com.view.musicplayer.spotifyclone.screen.ProfileScreen
 import com.view.musicplayer.spotifyclone.screen.SearchScreen
@@ -91,7 +92,7 @@ fun MainPage() {
                 }
             }
             composable(ScreenRoute.Search.route) {
-                SearchScreen(isShowPlayerButton = isShowPlayerButton) {
+                SearchScreen(isShowPlayerButton = isShowPlayerButton, navController = navController) {
                     if (currentPlaying.id == it.id) {
                         currentPlaying = Track.empty
                         isShowPlayerButton = !isShowPlayerButton
@@ -101,19 +102,32 @@ fun MainPage() {
                     }
                 }
             }
-            composable(ScreenRoute.Profile.route) { ProfileScreen() }
+            composable(ScreenRoute.Profile.route) {
+                ProfileScreen()
+            }
+            composable(ScreenRoute.AlbumDetail.route) {
+                AlbumDetailScreen(isShowPlayerButton = isShowPlayerButton) {
+                    if (currentPlaying.id == it.id) {
+                        currentPlaying = Track.empty
+                        isShowPlayerButton = !isShowPlayerButton
+                    } else {
+                        currentPlaying = it
+                        isShowPlayerButton = true
+                    }
+                }
+            }
         }
     }
 }
 
 @Composable
 fun BottomNavBar(navController: NavController) {
-    val items = listOf(ScreenRoute.Home, ScreenRoute.Search, ScreenRoute.Profile)
+    val itemsInNav = listOf(ScreenRoute.Home, ScreenRoute.Search, ScreenRoute.Profile)
     val currentBackStackEntry = navController.currentBackStackEntryAsState()
     val currentRoute = currentBackStackEntry.value?.destination?.route
 
     NavigationBar {
-        items.forEach { screen ->
+        itemsInNav.forEach { screen ->
             NavigationBarItem(
                 icon = { Icon(loadIconToVector(screen.icon), contentDescription = screen.title, modifier = Modifier
                     .width(30.dp)

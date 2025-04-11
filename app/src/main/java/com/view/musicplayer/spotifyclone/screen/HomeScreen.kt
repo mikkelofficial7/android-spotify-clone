@@ -26,13 +26,9 @@ import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
 import com.view.musicplayer.spotifyclone.R
 import com.view.musicplayer.spotifyclone.ext.roundedNumber
 import com.view.musicplayer.spotifyclone.network.response.Track
@@ -43,12 +39,12 @@ import com.view.musicplayer.spotifyclone.ui.theme.Black60
 import com.view.musicplayer.spotifyclone.ui.theme.Black80
 import com.view.musicplayer.spotifyclone.ui.theme.Transparent
 import com.view.musicplayer.spotifyclone.ui.theme.White80
-import com.view.musicplayer.spotifyclone.viewmodel.HomepageViewModel
+import com.view.musicplayer.spotifyclone.viewmodel.HomePageViewModel
 import org.koin.androidx.compose.koinViewModel
 
 @Composable
 fun HomeScreen(
-    viewModel: HomepageViewModel = koinViewModel(),
+    viewModel: HomePageViewModel = koinViewModel(),
     isShowPlayerButton: Boolean,
     onClickMusic: (Track) -> Unit
 ) {
