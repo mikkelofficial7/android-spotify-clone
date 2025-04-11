@@ -47,12 +47,10 @@ fun HomeScreen(
     viewModel: HomepageViewModel = koinViewModel()
 ) {
     val context: Context = LocalContext.current
-    val topArtist by viewModel.topChart.observeAsState()
-    val topTrack by viewModel.topTrack.observeAsState()
+    val recommendChart by viewModel.recommendationChart.observeAsState()
 
     LaunchedEffect(Unit) {
-        viewModel.getTopChartArtist(context)
-        viewModel.getTopChartTrack(context)
+        viewModel.getRecommendation(context)
     }
 
     LazyColumn(
@@ -62,11 +60,11 @@ fun HomeScreen(
             .background(Black60)
             .padding(16.dp)
     ) {
-        val firstListTopArtist = topArtist?.artists?.artist?.take(5)
-        val secondListArtist = topArtist?.artists?.artist?.slice(5..9)
+        val firstListTopArtist = recommendChart?.get(0)?.tracks
+        val secondListArtist = recommendChart?.get(1)?.tracks
 
-        val firstListTopTrack = topTrack?.tracks?.track?.take(5)
-        val secondListTrack = topTrack?.tracks?.track?.slice(5..9)
+        val firstListTopTrack = recommendChart?.get(2)?.tracks
+        val secondListTrack = recommendChart?.get(3)?.tracks
 
         item {
             Text(
@@ -85,10 +83,10 @@ fun HomeScreen(
             ) {
                 items(firstListTopArtist.orEmpty()) {  artist ->
                     MusicItemCard(
-                        id = artist.mbid,
-                        title = artist.name,
-                        description = context.getString(R.string.total_listener, artist.listeners.toInt().roundedNumber()),
-                        imageUrl = artist.image.first().text
+                        id = artist.id,
+                        title = artist.title,
+                        description = context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber()),
+                        imageUrl = artist.imageUrl
                     )
                 }
                 if (firstListTopArtist.isNullOrEmpty()) {
@@ -116,10 +114,10 @@ fun HomeScreen(
             ) {
                 items(secondListArtist.orEmpty()) {  artist ->
                     MusicItemCard(
-                        id = artist.mbid,
-                        title = artist.name,
-                        description = context.getString(R.string.total_listener, artist.listeners.toInt().roundedNumber()),
-                        imageUrl = artist.image.first().text
+                        id = artist.id,
+                        title = artist.title,
+                        description = context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber()),
+                        imageUrl = artist.imageUrl
                     )
                 }
                 if (secondListArtist.isNullOrEmpty()) {
@@ -147,10 +145,10 @@ fun HomeScreen(
             ) {
                 items(firstListTopTrack.orEmpty()) { artist ->
                     MusicItemCard(
-                        id = artist.mbid,
-                        title = artist.name,
-                        description = "by ${artist.artist.name} (${context.getString(R.string.total_listener, artist.listeners.toInt().roundedNumber())})",
-                        imageUrl = artist.image.first().text
+                        id = artist.id,
+                        title = artist.title,
+                        description = context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber()),
+                        imageUrl = artist.imageUrl
                     )
                 }
                 if (firstListTopTrack.isNullOrEmpty()) {
@@ -178,10 +176,10 @@ fun HomeScreen(
             ) {
                 items(secondListTrack.orEmpty()) { artist ->
                     MusicItemCard(
-                        id = artist.mbid,
-                        title = artist.name,
-                        description = "by ${artist.artist.name} (${context.getString(R.string.total_listener, artist.listeners.toInt().roundedNumber())})",
-                        imageUrl = artist.image.first().text
+                        id = artist.id,
+                        title = artist.title,
+                        description = context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber()),
+                        imageUrl = artist.imageUrl
                     )
                 }
                 if (secondListTrack.isNullOrEmpty()) {

@@ -1,7 +1,6 @@
 package com.view.musicplayer.spotifyclone.screen
 
 import android.content.Context
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.FocusInteraction
@@ -58,8 +57,8 @@ import com.view.musicplayer.spotifyclone.EmptyView
 import com.view.musicplayer.spotifyclone.R
 import com.view.musicplayer.spotifyclone.ext.roundedNumber
 import com.view.musicplayer.spotifyclone.loadIconToVector
-import com.view.musicplayer.spotifyclone.network.response.AllGenre
-import com.view.musicplayer.spotifyclone.network.response.TopChartTracks
+import com.view.musicplayer.spotifyclone.network.response.Genre
+import com.view.musicplayer.spotifyclone.network.response.SongRecommendation
 import com.view.musicplayer.spotifyclone.ui.theme.Black80
 import com.view.musicplayer.spotifyclone.ui.theme.Gray50
 import com.view.musicplayer.spotifyclone.ui.theme.SpotifyAccent40
@@ -98,7 +97,7 @@ fun SearchScreen(
 
     LaunchedEffect(Unit) {
         viewModel.getAllGenre(context)
-        viewModel.getTopChartTrack(context)
+        viewModel.getSongRecommendation(context)
     }
 
     Column(
@@ -129,7 +128,7 @@ fun SearchScreen(
         }
         when (isSearchActive) {
             true -> showQuerySearchPage(viewModel, context, querySearch)
-            false -> showDefaultSearchPage(recommendTopTrack, genreData)
+            false -> showDefaultSearchPage(recommendTopTrack, genreData ?: listOf())
         }
 
     }
@@ -221,7 +220,7 @@ fun SearchMusicBar(interactSource: MutableInteractionSource, musicSearched: Stri
 }
 
 @Composable
-fun showDefaultSearchPage(recommendTopTrack: TopChartTracks?, genreData: AllGenre?) {
+fun showDefaultSearchPage(recommendTopTrack: SongRecommendation?, genreData: List<Genre>) {
     Spacer(modifier = Modifier.height(5.dp))
     LazyColumn(
         modifier = Modifier
@@ -236,12 +235,12 @@ fun showDefaultSearchPage(recommendTopTrack: TopChartTracks?, genreData: AllGenr
                     .fillMaxWidth()
                     .background(Transparent)
             ) {
-                items(recommendTopTrack?.tracks?.track.orEmpty()) { track ->
+                items(recommendTopTrack?.tracks.orEmpty()) { track ->
                     MusicItemCard(
-                        id = track.mbid,
-                        title = track.name,
-                        description = "by ${track.artist.name}",
-                        imageUrl = track.image.first().text
+                        id = track.id,
+                        title = track.title,
+                        description = "by ${track.artist}",
+                        imageUrl = track.imageUrl
                     )
                 }
             }
@@ -258,7 +257,7 @@ fun showDefaultSearchPage(recommendTopTrack: TopChartTracks?, genreData: AllGenr
                 verticalArrangement = Arrangement.spacedBy(12.dp),
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                items(genreData?.genreSection.orEmpty()) { genre ->
+                items(genreData) { genre ->
                     ItemCardGenre(genre.name, genre.imageUrl, genre.color)
                 }
             }
@@ -268,7 +267,6 @@ fun showDefaultSearchPage(recommendTopTrack: TopChartTracks?, genreData: AllGenr
 
 @Composable
 fun showQuerySearchPage(viewModel: SearchViewModel, context: Context, query: String) {
-    val currentPage by remember { mutableStateOf(1) }
     val listArtistSearch by viewModel.listSearchArtist.observeAsState()
 
     LaunchedEffect(query) {
@@ -277,7 +275,7 @@ fun showQuerySearchPage(viewModel: SearchViewModel, context: Context, query: Str
         }
 
         delay(2500) // delay 2.5 second after typing
-        viewModel.searchArtist(context, query, currentPage)
+        viewModel.searchArtistOrSong(context, query)
     }
 
     if (query.isBlank()) {
@@ -298,10 +296,10 @@ fun showQuerySearchPage(viewModel: SearchViewModel, context: Context, query: Str
         } else {
             itemsIndexed(listArtistSearch.orEmpty()) { i, artist ->
                 MusicItemCard(
-                    id = artist.mbid,
-                    title = artist.name,
-                    description = "by ${artist.name} (${context.getString(R.string.total_listener, artist.listeners.toInt().roundedNumber())})",
-                    imageUrl = artist.image.first().text
+                    id = artist.id,
+                    title = artist.title,
+                    description = "by ${artist.artist} (${context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber())})",
+                    imageUrl = artist.imageUrl
                 )
             }
         }
