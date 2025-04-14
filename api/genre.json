@@ -5,32 +5,38 @@
     {
       "name": "Hip Hop",
       "imageUrl": "https://m.media-amazon.com/images/I/81kMR4xq-OL._AC_SX679_.jpg",
-      "color": "#F67280"
+      "color": "#F67280",
+      "description": "Beats that hit hard, bars that tell stories — Hip Hop’s the real talk soundtrack for when you're feeling bold."
     },
     {
       "name": "R&B",
       "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQlq5qithhZb061shh2nQjBccnG1M-VgtuytA&s",
-      "color": "#6C5B7B"
+      "color": "#6C5B7B",
+      "description": "Smooth vibes, soulful vocals, and late-night feels. R&B is your go-to for slow grooves and deep emotion."
     },
     {
       "name": "Dance Pop",
       "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSyv7ztzHckRxvrqPJwkqrizB5trXlPOXwK8g&s",
-      "color": "#355C7D"
+      "color": "#355C7D",
+      "description": "Catchy hooks, feel-good beats — Dance Pop is all about moving your body and letting the good vibes flow."
     },
     {
       "name": "Pop",
       "imageUrl": "https://i.pinimg.com/236x/f4/89/4c/f4894c7a185679b526b69faefd31013a.jpg",
-      "color": "#FFB400"
+      "color": "#FFB400",
+      "description": "Bright, upbeat, and totally addictive — Pop is that friend who always knows how to lift the mood."
     },
     {
       "name": "Electropop",
       "imageUrl": "https://wallpapers.com/images/hd/electronic-dance-music-1238-x-782-wallpaper-52fig7g5kcxame6x.jpg",
-      "color": "#00B8A9"
+      "color": "#00B8A9",
+      "description": "Retro-futuristic feels with a digital twist. Electropop brings synths, sparkle, and high-energy bliss."
     },
     {
       "name": "Synth-pop",
       "imageUrl": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS65I_LmwJVHBToHF76X6uEbVMMCzVqox1jfg&s",
-      "color": "#C06C84"
+      "color": "#C06C84",
+      "description": "Vintage vibes, dreamy textures — Synth-pop sounds like neon lights and nostalgic nights."
     }
   ]
 }
