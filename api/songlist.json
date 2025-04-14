@@ -397,6 +397,54 @@
       "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Kesha%20-%20TiK%20ToK.mp3",
       "duration": 200,
       "genre": "Electropop"
+    },
+    {
+      "id": "chvrches-the-mother-we-share",
+      "title": "The Mother We Share",
+      "artist": "CHVRCHES",
+      "releaseDate": "September 5, 2012",
+      "totalListener": 3200000,
+      "description": "A defining synth-pop track of the early 2010s with ethereal vocals and a memorable synth melody that brought CHVRCHES international recognition.",
+      "imageUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_cover/CHVRCHES%20-%20The%20Mother%20We%20Share.png",
+      "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/CHVRCHES%20-%20The%20Mother%20We%20Share.mp3",
+      "duration": 211,
+      "genre": "Synth-pop"
+    },
+    {
+      "id": "tame-impala-the-less-i-know-the-better",
+      "title": "The Less I Know The Better",
+      "artist": "Tame Impala",
+      "releaseDate": "November 28, 2015",
+      "totalListener": 5900000,
+      "description": "A psychedelic synth-pop track with a groovy bassline and introspective lyrics that became one of Tame Impala's most popular songs.",
+      "imageUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_cover/Tame%20Impala%20-%20The%20Less%20I%20Know%20The%20Better.png",
+      "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Tame%20Impala%20-%20The%20Less%20I%20Know%20The%20Better.mp3",
+      "duration": 216,
+      "genre": "Synth-pop"
+    },
+    {
+      "id": "empire-of-the-sun-walking-on-a-dream",
+      "title": "Walking on a Dream",
+      "artist": "Empire of the Sun",
+      "releaseDate": "August 30, 2008",
+      "totalListener": 4500000,
+      "description": "An ethereal and dreamy synth-pop track with a distinctive sound that gained significant popularity worldwide.",
+      "imageUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_cover/Empire%20of%20the%20Sun%20-%20Walking%20on%20a%20Dream.png",
+      "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Empire%20of%20the%20Sun%20-%20Walking%20on%20a%20Dream.mp3",
+      "duration": 236,
+      "genre": "Synth-pop"
+    },
+    {
+      "id": "mgmt-electric-feel",
+      "title": "Electric Feel",
+      "artist": "MGMT",
+      "releaseDate": "June 8, 2007",
+      "totalListener": 5100000,
+      "description": "A psychedelic-infused synth-pop track with a distinctive groove and catchy synth lines that became one of MGMT's signature songs.",
+      "imageUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_cover/MGMT%20-%20Electric%20Feel.png",
+      "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/MGMT%20-%20Electric%20Feel.mp3",
+      "duration": 228,
+      "genre": "Synth-pop"
     }        
   ]
 }
