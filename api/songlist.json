@@ -169,6 +169,66 @@
       "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/J%20Cole%20-%20No%20Role%20Modelz.mp3",
       "duration": 299,
       "genre": "Hip Hop"
-    } 
+    },
+    {
+      "id": "beyonce-halo",
+      "title": "Halo",
+      "artist": "Beyoncé",
+      "releaseDate": "January 20, 2009",
+      "totalListener": 3500000,
+      "description": "Halo is a powerful love ballad that showcases Beyoncé’s vocal range and emotional depth, becoming one of her most iconic R&B hits.",
+      "imageUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_cover/Beyonce%20-%20Halo.png",
+      "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Beyonce%20-%20Halo.mp3",
+      "duration": 261,
+      "genre": "R&B"
+    },
+    {
+      "id": "usher-u-got-it-bad",
+      "title": "U Got It Bad",
+      "artist": "Usher",
+      "releaseDate": "November 27, 2001",
+      "totalListener": 3100000,
+      "description": "U Got It Bad is a smooth and emotional R&B ballad from Usher that became a chart-topping hit in the early 2000s.",
+      "imageUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_cover/Usher%20-%20U%20Got%20It%20Bad.png",
+      "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Usher%20-%20U%20Got%20It%20Bad.mp3",
+      "duration": 266,
+      "genre": "R&B"
+    },
+    {
+      "id": "aliciakeys-ifiaintgotyou",
+      "title": "If I Ain’t Got You",
+      "artist": "Alicia Keys",
+      "releaseDate": "February 17, 2004",
+      "totalListener": 2900000,
+      "description": "This heartfelt piano-driven ballad became one of Alicia Keys’ signature songs, highlighting themes of love over materialism.",
+      "imageUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_cover/Alicia%20Keys%20-%20If%20I%20Ain't%20Got%20You.png",
+      "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Alicia%20Keys%20-%20If%20I%20Ain't%20Got%20You.mp3",
+      "duration": 242,
+      "genre": "R&B"
+    },
+    {
+      "id": "theweeknd-blindinglights",
+      "title": "Blinding Lights",
+      "artist": "The Weeknd",
+      "releaseDate": "November 29, 2019",
+      "totalListener": 5000000,
+      "description": "Blinding Lights blends retro synth vibes with modern R&B and pop elements, becoming one of the most streamed songs of all time.",
+      "imageUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_cover/The%20Weeknd%20-%20Blinding%20Lights.png",
+      "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/The%20Weeknd%20-%20Blinding%20Lights.mp3",
+      "duration": 200,
+      "genre": "R&B"
+    },
+    {
+      "id": "frank-ocean-thinkinboutyou",
+      "title": "Thinkin Bout You",
+      "artist": "Frank Ocean",
+      "releaseDate": "April 17, 2012",
+      "totalListener": 2700000,
+      "description": "Frank Ocean's 'Thinkin Bout You' is a tender, introspective track that explores longing and emotional vulnerability with ethereal production.",
+      "imageUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_cover/Frank%20Ocean%20-%20Thinkin%20Bout%20You.png",
+      "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Frank%20Ocean%20-%20Thinkin%20Bout%20You.mp3",
+      "duration": 208,
+      "genre": "R&B"
+    }     
   ]
 }
