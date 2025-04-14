@@ -16,13 +16,13 @@ import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
 
 private val DarkColorScheme = darkColorScheme(
-    primary = SpotifyGreen80,
+    primary = Black80,
     secondary = SpotifyGreenGrey80,
     tertiary = SpotifyAccent80
 )
 
 private val LightColorScheme = lightColorScheme(
-    primary = SpotifyGreen40,
+    primary = Black80,
     secondary = SpotifyGreenGrey40,
     tertiary = SpotifyAccent40
 

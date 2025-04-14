@@ -69,7 +69,7 @@ fun HomeScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
-                .background(Black60)
+                .background(Black80)
         ) {
             item {
                 Text(

@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
@@ -43,14 +44,17 @@ fun SongDetailScreen(
            verticalAlignment = Alignment.CenterVertically
        ) {
            BackButton {
-            navController.popBackStack()
+             navController.popBackStack()
            }
            Spacer(modifier = Modifier.width(10.dp))
            Text(
                text = "aaaa",
                color = White80,
-               fontSize = 16.sp
+               fontSize = 16.sp,
+               textAlign = TextAlign.Center,
+               modifier = Modifier.fillMaxWidth().weight(1f)
            )
+           Spacer(modifier = Modifier.width(40.dp))
        }
    }
 }
