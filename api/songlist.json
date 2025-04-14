@@ -229,6 +229,126 @@
       "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Frank%20Ocean%20-%20Thinkin%20Bout%20You.mp3",
       "duration": 208,
       "genre": "R&B"
-    }     
+    },
+    {
+      "id": "dua-lipa-dont-start-now",
+      "title": "Don't Start Now",
+      "artist": "Dua Lipa",
+      "releaseDate": "October 31, 2019",
+      "totalListener": 4800000,
+      "description": "Dua Lipa's 'Don't Start Now' is a disco-inspired dance pop anthem full of confidence and groove.",
+      "imageUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_cover/Dua%20Lipa%20-%20Don't%20Start%20Now.png",
+      "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Dua%20Lipa%20-%20Don't%20Start%20Now.mp3",
+      "duration": 183,
+      "genre": "Dance Pop"
+    },
+    {
+      "id": "lady-gaga-stupid-love",
+      "title": "Stupid Love",
+      "artist": "Lady Gaga",
+      "releaseDate": "February 28, 2020",
+      "totalListener": 3900000,
+      "description": "A high-energy pop song with synth-heavy production, 'Stupid Love' channels Lady Gaga's signature dance-pop sound.",
+      "imageUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_cover/Lady%20Gaga%20-%20Stupid%20Love.png",
+      "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Lady%20Gaga%20-%20Stupid%20Love.mp3",
+      "duration": 194,
+      "genre": "Dance Pop"
+    },
+    {
+      "id": "calvin-harris-rihanna-this-is-what-you-came-for",
+      "title": "This Is What You Came For",
+      "artist": "Calvin Harris ft. Rihanna",
+      "releaseDate": "April 29, 2016",
+      "totalListener": 5200000,
+      "description": "A club-ready collaboration blending Calvin Harris's EDM flair and Rihanna’s smooth vocals.",
+      "imageUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_cover/Calvin%20Harris%20-%20This%20Is%20What%20You%20Came%20For.png",
+      "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Calvin%20Harris%20-%20This%20Is%20What%20You%20Came%20For.mp3",
+      "duration": 223,
+      "genre": "Dance Pop"
+    },
+    {
+      "id": "justin-timberlake-cant-stop-the-feeling",
+      "title": "Can't Stop The Feeling!",
+      "artist": "Justin Timberlake",
+      "releaseDate": "May 6, 2016",
+      "totalListener": 6100000,
+      "description": "A feel-good anthem with funky dance vibes and irresistibly catchy hooks.",
+      "imageUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_cover/Justin%20Timberlake%20-%20Can't%20Stop%20The%20Feeling.png",
+      "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Justin%20Timberlake%20-%20Can't%20Stop%20The%20Feeling.mp3",
+      "duration": 236,
+      "genre": "Dance Pop"
+    },
+    {
+      "id": "avicii-wake-me-up",
+      "title": "Wake Me Up",
+      "artist": "Avicii",
+      "releaseDate": "June 17, 2013",
+      "totalListener": 7000000,
+      "description": "Fusing dance music with folk vocals, 'Wake Me Up' became a global summer hit.",
+      "imageUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_cover/Avicii%20-%20Wake%20Me%20Up.png",
+      "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Avicii%20-%20Wake%20Me%20Up.mp3",
+      "duration": 247,
+      "genre": "Dance Pop"
+    },
+    {
+      "id": "ed-sheeran-shape-of-you",
+      "title": "Shape of You",
+      "artist": "Ed Sheeran",
+      "releaseDate": "January 6, 2017",
+      "totalListener": 9500000,
+      "description": "A tropical pop track that became one of the most streamed songs ever with its catchy rhythm.",
+      "imageUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_cover/Ed%20Sheeran%20-%20Shape%20Of%20You.png",
+      "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Ed%20Sheeran%20-%20Shape%20Of%20You.mp3",
+      "duration": 233,
+      "genre": "Pop"
+    },
+    {
+      "id": "shawn-mendes-treat-you-better",
+      "title": "Treat You Better",
+      "artist": "Shawn Mendes",
+      "releaseDate": "June 3, 2016",
+      "totalListener": 4300000,
+      "description": "A heartfelt pop song exploring emotional struggles in a one-sided relationship.",
+      "imageUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_cover/Shawn%20Mendes%20-%20Treat%20You%20Better.png",
+      "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Shawn%20Mendes%20-%20Treat%20You%20Better.mp3",
+      "duration": 207,
+      "genre": "Pop"
+    },
+    {
+      "id": "olivia-rodrigo-drivers-license",
+      "title": "drivers license",
+      "artist": "Olivia Rodrigo",
+      "releaseDate": "January 8, 2021",
+      "totalListener": 7200000,
+      "description": "Olivia Rodrigo’s emotional debut single that captivated listeners with its vulnerability and narrative.",
+      "imageUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_cover/Olivia%20Rodrigo%20-%20Drivers%20License.png",
+      "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Olivia%20Rodrigo%20-%20Drivers%20License.mp3",
+      "duration": 242,
+      "genre": "Pop"
+    },
+    {
+      "id": "harry-styles-watermelon-sugar",
+      "title": "Watermelon Sugar",
+      "artist": "Harry Styles",
+      "releaseDate": "May 15, 2020",
+      "totalListener": 5500000,
+      "description": "An upbeat, summer-infused track filled with nostalgic pop energy and vibrant visuals.",
+      "imageUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_cover/Harry%20Styles%20-%20Watermelon%20Sugar.png",
+      "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Harry%20Styles%20-%20Watermelon%20Sugar.mp3",
+      "duration": 174,
+      "genre": "Pop"
+    },
+    {
+      "id": "taylor-swift-love-story",
+      "title": "Love Story",
+      "artist": "Taylor Swift",
+      "releaseDate": "September 15, 2008",
+      "totalListener": 6000000,
+      "description": "A modern pop retelling of Romeo & Juliet with a country-pop crossover twist.",
+      "imageUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_cover/Taylor%20Swift%20-%20Love%20Story.png",
+      "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Taylor%20Swift%20-%20Love%20Story.mp3",
+      "duration": 235,
+      "genre": "Pop"
+    }        
   ]
 }
