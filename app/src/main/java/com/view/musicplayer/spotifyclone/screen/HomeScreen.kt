@@ -7,11 +7,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
@@ -38,7 +40,6 @@ import com.view.musicplayer.spotifyclone.screen.shared.EmptyView
 import com.view.musicplayer.spotifyclone.screen.shared.ImageLoader
 import com.view.musicplayer.spotifyclone.screen.shared.PlayerButton
 import com.view.musicplayer.spotifyclone.screen.shared.loadIconToVector
-import com.view.musicplayer.spotifyclone.ui.theme.Black60
 import com.view.musicplayer.spotifyclone.ui.theme.Black80
 import com.view.musicplayer.spotifyclone.ui.theme.Transparent
 import com.view.musicplayer.spotifyclone.ui.theme.White80
@@ -92,6 +93,7 @@ fun HomeScreen(
                             title = artist.title,
                             description = context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber()),
                             imageUrl = artist.imageUrl,
+                            isShowThreeDot = currentPlaying.id == artist.id,
                             onClick = {
                                 onClickMusic(artist)
                             }
@@ -125,6 +127,7 @@ fun HomeScreen(
                             title = artist.title,
                             description = context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber()),
                             imageUrl = artist.imageUrl,
+                            isShowThreeDot = currentPlaying.id == artist.id,
                             onClick = {
                                 onClickMusic(artist)
                             }
@@ -159,6 +162,7 @@ fun HomeScreen(
                             title = artist.title,
                             description = context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber()),
                             imageUrl = artist.imageUrl,
+                            isShowThreeDot = currentPlaying.id == artist.id,
                             onClick = {
                                 onClickMusic(artist)
                             }
@@ -193,6 +197,7 @@ fun HomeScreen(
                             title = artist.title,
                             description = context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber()),
                             imageUrl = artist.imageUrl,
+                            isShowThreeDot = currentPlaying.id == artist.id,
                             onClick = {
                                 onClickMusic(artist)
                             }
@@ -218,7 +223,6 @@ fun MusicItemCard(id: String,
                   title: String,
                   description: String,
                   imageUrl: String,
-                  otherModifier: Modifier = Modifier,
                   isShowThreeDot: Boolean = false,
                   onClick: () -> Unit = {},
                   onThreeDotClick: () -> Unit = {}) {
@@ -226,15 +230,16 @@ fun MusicItemCard(id: String,
         modifier = Modifier
             .fillMaxWidth()
             .height(80.dp)
-            .clickable { onClick() }
-            .then(otherModifier),
+            .clickable { onClick() },
         colors = CardDefaults.cardColors(containerColor = Black80),
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(8.dp).fillMaxWidth()
+            modifier = Modifier
+                .padding(8.dp)
+                .fillMaxWidth()
         ) {
             ImageLoader(imageUrl,
                 otherModifier = Modifier
@@ -244,14 +249,6 @@ fun MusicItemCard(id: String,
             Column(
                 modifier = Modifier
                     .padding(start = 8.dp)
-                    .fillMaxWidth()
-                    .then(
-                        if (isShowThreeDot) {
-                            Modifier.weight(1f)
-                        } else {
-                            Modifier
-                        }
-                    )
             ) {
                 Text(
                     text = title,
@@ -266,6 +263,7 @@ fun MusicItemCard(id: String,
                     fontSize = 12.sp
                 )
             }
+            Spacer(modifier = Modifier.fillMaxWidth().weight(1f))
             if (isShowThreeDot) {
                 Image(
                     imageVector = loadIconToVector(icon = R.drawable.ic_three_dots),
@@ -276,6 +274,8 @@ fun MusicItemCard(id: String,
                         .wrapContentWidth()
                         .clickable { onThreeDotClick() }
                 )
+            } else {
+                Spacer(modifier = Modifier.width(30.dp))
             }
         }
     }

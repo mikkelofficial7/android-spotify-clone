@@ -140,7 +140,7 @@ fun SearchScreen(
                         keyboardController?.hide()
                         onClickMusic(it)
                     })
-                false -> showDefaultSearchPage(recommendTopTrack, genreData ?: listOf(),
+                false -> showDefaultSearchPage(currentPlaying, recommendTopTrack, genreData ?: listOf(),
                     onClickMusic = {
                         keyboardController?.hide()
                         onClickMusic(it)
@@ -248,7 +248,7 @@ fun SearchMusicBar(interactSource: MutableInteractionSource, musicSearched: Stri
 }
 
 @Composable
-fun showDefaultSearchPage(recommendTopTrack: List<Track>?, genreData: List<Genre>, onClickMusic: (Track) -> Unit = {}, onClickGenre: (Genre) -> Unit = {}) {
+fun showDefaultSearchPage(currentPlaying: Track, recommendTopTrack: List<Track>?, genreData: List<Genre>, onClickMusic: (Track) -> Unit = {}, onClickGenre: (Genre) -> Unit = {}) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -268,6 +268,7 @@ fun showDefaultSearchPage(recommendTopTrack: List<Track>?, genreData: List<Genre
                     title = track.title,
                     description = "by ${track.artist}",
                     imageUrl = track.imageUrl,
+                    isShowThreeDot = currentPlaying.id == track.id,
                     onClick = { onClickMusic(track) }
                 )
             }
