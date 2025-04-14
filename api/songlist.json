@@ -109,6 +109,66 @@
       "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Taylor%20Swift%20-%20Blank%20Space.mp3",
       "duration": 231,
       "genre": "Synth-pop"
-    }
+    },
+    {
+      "id": "kendrick-lamar-humble",
+      "title": "Humble",
+      "artist": "Kendrick Lamar",
+      "releaseDate": "March 30, 2017",
+      "totalListener": 1500000,
+      "description": "HUMBLE. delivers Kendrick Lamar’s sharp critique of the hip-hop industry, with a powerful beat and a memorable hook.",
+      "imageUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_cover/Kendrick%20Lamar%20-%20Humble.png",
+      "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Kendrick%20Lamar%20-%20Humble.mp3",
+      "duration": 177,
+      "genre": "Hip Hop"
+    },
+    {
+      "id": "drake-godplan",
+      "title": "God's Plan",
+      "artist": "Drake",
+      "releaseDate": "January 19, 2018",
+      "totalListener": 1800000,
+      "description": "God's Plan combines introspective lyrics with a catchy, celebratory beat, touching on themes of success and helping others.",
+      "imageUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_cover/Drake%20-%20God%27s%20Plan.png",
+      "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Drake%20-%20God%27s%20Plan.mp3",
+      "duration": 198,
+      "genre": "Hip Hop"
+    },
+    {
+      "id": "jayz-niggasinparis",
+      "title": "Niggas in Paris",
+      "artist": "Jay-Z & Kanye West",
+      "releaseDate": "August 8, 2011",
+      "totalListener": 2100000,
+      "description": "A high-energy anthem from Jay-Z and Kanye West’s collaborative album, this track is known for its luxury-fueled lyrics and iconic beats.",
+      "imageUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_cover/Jay%20Z%20-%20Niggas%20In%20Paris.png",
+      "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Jay%20Z%20-%20Niggas%20In%20Paris.mp3",
+      "duration": 250,
+      "genre": "Hip Hop"
+    },
+    {
+      "id": "travis-scott-sicko-mode",
+      "title": "SICKO MODE",
+      "artist": "Travis Scott",
+      "releaseDate": "August 3, 2018",
+      "totalListener": 2200000,
+      "description": "SICKO MODE is a multi-phase, genre-defying hit, blending hypnotic beats with Travis Scott’s dynamic performance.",
+      "imageUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_cover/Travis%20Scott%20-%20SICKO%20MODE.png",
+      "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Travis%20Scott%20-%20SICKO%20MODE.mp3",
+      "duration": 312,
+      "genre": "Hip Hop"
+    },
+    {
+      "id": "jcole-norolemodelz",
+      "title": "No Role Modelz",
+      "artist": "J. Cole",
+      "releaseDate": "September 9, 2014",
+      "totalListener": 1300000,
+      "description": "No Role Modelz sees J. Cole reflect on relationships, success, and the pursuit of happiness over a smooth, melodic beat.",
+      "imageUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_cover/J%20Cole%20-%20No%20Role%20Modelz.png",
+      "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/J%20Cole%20-%20No%20Role%20Modelz.mp3",
+      "duration": 299,
+      "genre": "Hip Hop"
+    } 
   ]
 }
