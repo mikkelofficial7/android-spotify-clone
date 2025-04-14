@@ -215,7 +215,8 @@ fun MusicItemCard(id: String,
                   imageUrl: String,
                   otherModifier: Modifier = Modifier,
                   isShowThreeDot: Boolean = false,
-                  onClick: () -> Unit = {}) {
+                  onClick: () -> Unit = {},
+                  onThreeDotClick: () -> Unit = {}) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -268,6 +269,7 @@ fun MusicItemCard(id: String,
                     modifier = Modifier
                         .height(30.dp)
                         .wrapContentWidth()
+                        .clickable { onThreeDotClick() }
                 )
             }
         }

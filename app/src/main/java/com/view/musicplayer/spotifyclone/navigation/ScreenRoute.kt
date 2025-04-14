@@ -10,4 +10,7 @@ sealed class ScreenRoute(val route: String, val title: String, @DrawableRes val 
     object AlbumDetail : ScreenRoute("album_detail/{albumGenre}", "Album Detail", 0) {
         fun route(albumGenre: String): String = "album_detail/$albumGenre"
     }
+    object MusicDetail : ScreenRoute("music_detail/{musicTitle}", "Song Detail", 0) {
+        fun route(musicTitle: String): String = "music_detail/$musicTitle"
+    }
 }

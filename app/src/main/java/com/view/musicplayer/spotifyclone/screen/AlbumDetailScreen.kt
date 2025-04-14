@@ -42,6 +42,7 @@ import com.view.musicplayer.spotifyclone.R
 import com.view.musicplayer.spotifyclone.ext.convertMillisToTime
 import com.view.musicplayer.spotifyclone.ext.roundedNumber
 import com.view.musicplayer.spotifyclone.ext.toSecond
+import com.view.musicplayer.spotifyclone.navigation.ScreenRoute
 import com.view.musicplayer.spotifyclone.network.response.Track
 import com.view.musicplayer.spotifyclone.screen.shared.BackButton
 import com.view.musicplayer.spotifyclone.screen.shared.EmptyView
@@ -309,7 +310,13 @@ fun AlbumDetailScreen(
                             title = artist.title,
                             description = "by ${artist.artist} (${context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber())})",
                             imageUrl = artist.imageUrl,
-                            isShowThreeDot = true
+                            isShowThreeDot = true,
+                            onClick = {
+                                onClickMusic(artist)
+                            },
+                            onThreeDotClick = {
+                                navController.navigate(ScreenRoute.MusicDetail.route(artist.id))
+                            }
                         )
                     }
                 }

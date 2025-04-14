@@ -23,8 +23,6 @@ import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Icon
@@ -58,7 +56,6 @@ import com.view.musicplayer.spotifyclone.R
 import com.view.musicplayer.spotifyclone.ext.roundedNumber
 import com.view.musicplayer.spotifyclone.navigation.ScreenRoute
 import com.view.musicplayer.spotifyclone.network.response.Genre
-import com.view.musicplayer.spotifyclone.network.response.SongRecommendation
 import com.view.musicplayer.spotifyclone.network.response.Track
 import com.view.musicplayer.spotifyclone.screen.shared.BackButton
 import com.view.musicplayer.spotifyclone.screen.shared.EmptyView
@@ -71,7 +68,6 @@ import com.view.musicplayer.spotifyclone.ui.theme.Gray50
 import com.view.musicplayer.spotifyclone.ui.theme.SpotifyAccent40
 import com.view.musicplayer.spotifyclone.ui.theme.SpotifyGreen40
 import com.view.musicplayer.spotifyclone.ui.theme.Transparent
-import com.view.musicplayer.spotifyclone.ui.theme.White80
 import com.view.musicplayer.spotifyclone.viewmodel.SearchViewModel
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.collectLatest
@@ -138,7 +134,7 @@ fun SearchScreen(
                 }
             }
             when (isSearchActive) {
-                true -> showQuerySearchPage(viewModel, context, querySearch,
+                true -> showQuerySearchPage(navController, viewModel, context, querySearch,
                     onClick = {
                         keyboardController?.hide()
                         onClickMusic(it)
@@ -150,11 +146,7 @@ fun SearchScreen(
                     },
                     onClickGenre = {
                         keyboardController?.hide()
-                        navController.navigate(ScreenRoute.AlbumDetail.route(it.name)) {
-                            popUpTo(navController.graph.startDestinationId) { saveState = true }
-                            launchSingleTop = true
-                            restoreState = false
-                        }
+                        navController.navigate(ScreenRoute.AlbumDetail.route(it.name))
                     })
             }
         }
@@ -302,7 +294,7 @@ fun showDefaultSearchPage(recommendTopTrack: List<Track>?, genreData: List<Genre
 }
 
 @Composable
-fun showQuerySearchPage(viewModel: SearchViewModel, context: Context, query: String, onClick: (Track) -> Unit = {}) {
+fun showQuerySearchPage(navController: NavController, viewModel: SearchViewModel, context: Context, query: String, onClick: (Track) -> Unit = {}) {
     val listArtistSearch by viewModel.listSearchArtist.observeAsState()
     val isLoading by viewModel.isLoadingEvent.observeAsState()
 
@@ -343,7 +335,10 @@ fun showQuerySearchPage(viewModel: SearchViewModel, context: Context, query: Str
                         description = "by ${artist.artist} (${context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber())})",
                         imageUrl = artist.imageUrl,
                         isShowThreeDot = true,
-                        onClick = { onClick(artist) }
+                        onClick = { onClick(artist) },
+                        onThreeDotClick = {
+                            navController.navigate(ScreenRoute.MusicDetail.route(artist.id))
+                        }
                     )
                 }
             }

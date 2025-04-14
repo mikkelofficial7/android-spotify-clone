@@ -38,6 +38,7 @@ import com.view.musicplayer.spotifyclone.screen.AlbumDetailScreen
 import com.view.musicplayer.spotifyclone.screen.HomeScreen
 import com.view.musicplayer.spotifyclone.screen.ProfileScreen
 import com.view.musicplayer.spotifyclone.screen.SearchScreen
+import com.view.musicplayer.spotifyclone.screen.SongDetailScreen
 import com.view.musicplayer.spotifyclone.screen.shared.loadIconToVector
 import com.view.musicplayer.spotifyclone.ui.theme.AndroidspotifycloneTheme
 import com.view.musicplayer.spotifyclone.ui.theme.Black80
@@ -113,6 +114,21 @@ fun MainPage() {
             ) { backStackEntry ->
                 val albumGenre = backStackEntry.arguments?.getString("albumGenre").orEmpty()
                 AlbumDetailScreen(navController = navController, isShowPlayerButton = isShowPlayerButton, albumGenre = albumGenre) {
+                    if (currentPlaying.id == it.id) {
+                        currentPlaying = Track.empty
+                        isShowPlayerButton = !isShowPlayerButton
+                    } else {
+                        currentPlaying = it
+                        isShowPlayerButton = true
+                    }
+                }
+            }
+            composable(
+                route = ScreenRoute.MusicDetail.route,
+                arguments = listOf(navArgument("musicTitle") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val musicTitle = backStackEntry.arguments?.getString("musicTitle").orEmpty()
+                SongDetailScreen(navController = navController, isShowPlayerButton = isShowPlayerButton, musicTitle = musicTitle) {
                     if (currentPlaying.id == it.id) {
                         currentPlaying = Track.empty
                         isShowPlayerButton = !isShowPlayerButton
