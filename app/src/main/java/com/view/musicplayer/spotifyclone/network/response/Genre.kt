@@ -4,4 +4,5 @@ data class Genre(
     val name: String,
     val imageUrl: String,
     val color: String,
+    val description: String,
 )

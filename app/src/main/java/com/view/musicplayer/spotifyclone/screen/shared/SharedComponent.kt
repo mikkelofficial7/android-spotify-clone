@@ -1,7 +1,10 @@
 package com.view.musicplayer.spotifyclone.screen.shared
 
+import android.content.res.Configuration
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -11,8 +14,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.FilledIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -20,8 +23,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
@@ -31,12 +36,19 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.view.musicplayer.spotifyclone.R
 import com.view.musicplayer.spotifyclone.ui.theme.Black100
+import com.view.musicplayer.spotifyclone.ui.theme.Black80
 import com.view.musicplayer.spotifyclone.ui.theme.SpotifyAccent80
+import com.view.musicplayer.spotifyclone.ui.theme.SpotifyGreenGrey80
 import com.view.musicplayer.spotifyclone.ui.theme.White80
 
 @Composable
 fun loadIconToVector(@DrawableRes icon: Int): ImageVector {
     return ImageVector.vectorResource(id = icon)
+}
+
+@Composable
+fun getDeviceScreenRatio(): Configuration {
+    return LocalConfiguration.current
 }
 
 @Composable
@@ -93,6 +105,7 @@ fun PlayerButton(
     onRefreshClick: () -> Unit = {}
 ) {
     val iconSize = 30
+    val middleIconSize = 50
 
     Box(modifier = Modifier
         .fillMaxWidth()
@@ -110,7 +123,9 @@ fun PlayerButton(
                 Icon(
                     imageVector = if (isShuffle) loadIconToVector(icon = R.drawable.ic_shuffle_on) else loadIconToVector(icon = R.drawable.ic_shuffle),
                     contentDescription = "Shuffle",
-                    modifier = Modifier.height(iconSize.dp).width(iconSize.dp)
+                    modifier = Modifier
+                        .height(iconSize.dp)
+                        .width(iconSize.dp)
                 )
             }
             IconButton(onClick = onPreviousClick, colors = IconButtonDefaults.iconButtonColors(
@@ -119,7 +134,9 @@ fun PlayerButton(
                 Icon(
                     imageVector = loadIconToVector(icon = R.drawable.ic_previous),
                     contentDescription = "Previous",
-                    modifier = Modifier.height(iconSize.dp).width(iconSize.dp)
+                    modifier = Modifier
+                        .height(iconSize.dp)
+                        .width(iconSize.dp)
                 )
             }
             IconButton(onClick = onPlayPauseClick, colors = IconButtonDefaults.iconButtonColors(
@@ -128,7 +145,9 @@ fun PlayerButton(
                 Icon(
                     imageVector = if (isPlaying) loadIconToVector(icon = R.drawable.ic_pause) else loadIconToVector(icon = R.drawable.ic_play),
                     contentDescription = if (isPlaying) "Pause" else "Play",
-                    modifier = Modifier.height(iconSize.dp).width(iconSize.dp)
+                    modifier = Modifier
+                        .height(middleIconSize.dp)
+                        .width(middleIconSize.dp)
                 )
             }
             IconButton(onClick = onNextClick, colors = IconButtonDefaults.iconButtonColors(
@@ -137,7 +156,9 @@ fun PlayerButton(
                 Icon(
                     imageVector = loadIconToVector(icon = R.drawable.ic_next),
                     contentDescription = "Next",
-                    modifier = Modifier.height(iconSize.dp).width(iconSize.dp)
+                    modifier = Modifier
+                        .height(iconSize.dp)
+                        .width(iconSize.dp)
                 )
             }
             IconButton(onClick = onRefreshClick, colors = IconButtonDefaults.iconButtonColors(
@@ -146,9 +167,38 @@ fun PlayerButton(
                 Icon(
                     imageVector = loadIconToVector(icon = R.drawable.ic_repeat),
                     contentDescription = "Refresh",
-                    modifier = Modifier.height(iconSize.dp).width(iconSize.dp)
+                    modifier = Modifier
+                        .height(iconSize.dp)
+                        .width(iconSize.dp)
                 )
             }
         }
     }
+}
+
+@Composable
+fun GreenPlayButton(padding: Int = 0, onClick: () -> Unit) {
+    Image(
+        imageVector = loadIconToVector(icon = R.drawable.ic_play),
+        contentDescription = "Icon play",
+        alignment = Alignment.CenterEnd,
+        colorFilter = ColorFilter.tint(SpotifyGreenGrey80),
+        modifier = Modifier
+            .padding(padding.dp)
+            .height(70.dp)
+            .width(70.dp)
+            .clickable {
+                onClick()
+            }
+    )
+}
+
+@Composable
+fun BackButton(onBack: () -> Unit) {
+    Icon(
+        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+        contentDescription = "",
+        tint = White80,
+        modifier = Modifier.clickable { onBack() }
+    )
 }

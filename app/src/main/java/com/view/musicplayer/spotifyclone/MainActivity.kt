@@ -26,10 +26,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.view.musicplayer.spotifyclone.navigation.ScreenRoute
 import com.view.musicplayer.spotifyclone.network.response.Track
 import com.view.musicplayer.spotifyclone.screen.AlbumDetailScreen
@@ -105,8 +107,12 @@ fun MainPage() {
             composable(ScreenRoute.Profile.route) {
                 ProfileScreen()
             }
-            composable(ScreenRoute.AlbumDetail.route) {
-                AlbumDetailScreen(isShowPlayerButton = isShowPlayerButton) {
+            composable(
+                route = ScreenRoute.AlbumDetail.route,
+                arguments = listOf(navArgument("albumGenre") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val albumGenre = backStackEntry.arguments?.getString("albumGenre").orEmpty()
+                AlbumDetailScreen(navController = navController, isShowPlayerButton = isShowPlayerButton, albumGenre = albumGenre) {
                     if (currentPlaying.id == it.id) {
                         currentPlaying = Track.empty
                         isShowPlayerButton = !isShowPlayerButton

@@ -207,12 +207,18 @@ fun HomeScreen(
 }
 
 @Composable
-fun MusicItemCard(id: String, title: String, description: String, imageUrl: String, onClick: () -> Unit = {}) {
+fun MusicItemCard(id: String,
+                  title: String,
+                  description: String,
+                  imageUrl: String,
+                  otherModifier: Modifier = Modifier,
+                  onClick: () -> Unit = {}) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
             .height(80.dp)
-            .clickable { onClick() },
+            .clickable { onClick() }
+            .then(otherModifier),
         colors = CardDefaults.cardColors(containerColor = Black80),
         shape = RoundedCornerShape(12.dp),
         elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)

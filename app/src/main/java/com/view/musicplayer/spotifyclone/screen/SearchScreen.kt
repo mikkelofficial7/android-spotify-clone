@@ -60,6 +60,7 @@ import com.view.musicplayer.spotifyclone.navigation.ScreenRoute
 import com.view.musicplayer.spotifyclone.network.response.Genre
 import com.view.musicplayer.spotifyclone.network.response.SongRecommendation
 import com.view.musicplayer.spotifyclone.network.response.Track
+import com.view.musicplayer.spotifyclone.screen.shared.BackButton
 import com.view.musicplayer.spotifyclone.screen.shared.EmptyView
 import com.view.musicplayer.spotifyclone.screen.shared.ImageLoader
 import com.view.musicplayer.spotifyclone.screen.shared.PlayerButton
@@ -125,16 +126,11 @@ fun SearchScreen(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 if (isSearchActive) {
-                    Icon(
-                        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                        contentDescription = "",
-                        tint = White80,
-                        modifier = Modifier.clickable {
-                            querySearch = ""
-                            focusManager.clearFocus(force = true)
-                            isSearchActive = false
-                        }
-                    )
+                    BackButton {
+                        querySearch = ""
+                        focusManager.clearFocus(force = true)
+                        isSearchActive = false
+                    }
                     Spacer(modifier = Modifier.width(10.dp))
                 }
                 SearchMusicBar(searchInteractSource, querySearch) {
@@ -154,10 +150,10 @@ fun SearchScreen(
                     },
                     onClickGenre = {
                         keyboardController?.hide()
-                        navController.navigate(ScreenRoute.AlbumDetail.route) {
+                        navController.navigate(ScreenRoute.AlbumDetail.route(it.name)) {
                             popUpTo(navController.graph.startDestinationId) { saveState = true }
                             launchSingleTop = true
-                            restoreState = true
+                            restoreState = false
                         }
                     })
             }
