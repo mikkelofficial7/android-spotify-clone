@@ -349,6 +349,54 @@
       "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Taylor%20Swift%20-%20Love%20Story.mp3",
       "duration": 235,
       "genre": "Pop"
+    },
+    {
+      "id": "lady-gaga-poker-face",
+      "title": "Poker Face",
+      "artist": "Lady Gaga",
+      "releaseDate": "September 26, 2008",
+      "totalListener": 7300000,
+      "description": "An infectious and iconic electropop anthem with a catchy chorus and Gaga's theatrical flair.",
+      "imageUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_cover/Lady%20Gaga%20-%20Poker%20Face.png",
+      "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Lady%20Gaga%20-%20Poker%20Face.mp3",
+      "duration": 237,
+      "genre": "Electropop"
+    },
+    {
+      "id": "britney-spears-toxic",
+      "title": "Toxic",
+      "artist": "Britney Spears",
+      "releaseDate": "January 12, 2004",
+      "totalListener": 6800000,
+      "description": "A high-energy electropop track with a memorable string sample and Britney's signature breathy vocals.",
+      "imageUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_cover/Britney%20Spears%20-%20Toxic.png",
+      "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Britney%20Spears%20-%20Toxic.mp3",
+      "duration": 198,
+      "genre": "Electropop"
+    },
+    {
+      "id": "justin-timberlake-cry-me-a-river",
+      "title": "Cry Me a River",
+      "artist": "Justin Timberlake",
+      "releaseDate": "November 25, 2002",
+      "totalListener": 5900000,
+      "description": "A sleek and emotional electropop ballad with a distinctive beat and Timberlake's heartfelt vocals.",
+      "imageUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_cover/Justin%20Timberlake%20-%20Cry%20Me%20a%20River.png",
+      "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Justin%20Timberlake%20-%20Cry%20Me%20a%20River.mp3",
+      "duration": 348,
+      "genre": "Electropop"
+    },
+    {
+      "id": "kesha-tik-tok",
+      "title": "TiK ToK",
+      "artist": "Kesha",
+      "releaseDate": "August 3, 2009",
+      "totalListener": 6700000,
+      "description": "A catchy and energetic electropop track that became a defining party anthem of the late 2000s.",
+      "imageUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_cover/Kesha%20-%20TiK%20ToK.png",
+      "streamedUrl": "https://raw.githubusercontent.com/mikkelofficial7/android-spotify-clone/main/music_db/Kesha%20-%20TiK%20ToK.mp3",
+      "duration": 200,
+      "genre": "Electropop"
     }        
   ]
 }
