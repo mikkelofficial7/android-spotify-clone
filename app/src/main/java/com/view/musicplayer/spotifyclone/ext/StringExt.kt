@@ -22,3 +22,10 @@ fun Long.convertMillisToTime(): String {
 
     return "${days}d ${remainingHours}h ${remainingMinutes}m ${remainingSeconds}s"
 }
+
+fun Float.formatTimeTrackRunning(): String {
+    val totalSeconds = this.toLong() / 1000
+    val minutes = totalSeconds / 60
+    val seconds = totalSeconds % 60
+    return String.format("%02d:%02d", minutes, seconds)
+}
