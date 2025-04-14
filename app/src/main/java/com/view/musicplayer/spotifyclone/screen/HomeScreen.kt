@@ -1,6 +1,7 @@
 package com.view.musicplayer.spotifyclone.screen
 
 import android.content.Context
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -35,6 +37,7 @@ import com.view.musicplayer.spotifyclone.network.response.Track
 import com.view.musicplayer.spotifyclone.screen.shared.EmptyView
 import com.view.musicplayer.spotifyclone.screen.shared.ImageLoader
 import com.view.musicplayer.spotifyclone.screen.shared.PlayerButton
+import com.view.musicplayer.spotifyclone.screen.shared.loadIconToVector
 import com.view.musicplayer.spotifyclone.ui.theme.Black60
 import com.view.musicplayer.spotifyclone.ui.theme.Black80
 import com.view.musicplayer.spotifyclone.ui.theme.Transparent
@@ -211,6 +214,7 @@ fun MusicItemCard(id: String,
                   description: String,
                   imageUrl: String,
                   otherModifier: Modifier = Modifier,
+                  isShowThreeDot: Boolean = false,
                   onClick: () -> Unit = {}) {
     Card(
         modifier = Modifier
@@ -224,35 +228,48 @@ fun MusicItemCard(id: String,
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(8.dp)
+            modifier = Modifier.padding(8.dp).fillMaxWidth()
         ) {
             ImageLoader(imageUrl,
                 otherModifier = Modifier
                     .size(64.dp)
                     .padding(8.dp)
                     .clip(RoundedCornerShape(8.dp)))
-            itemCardTitleDescription(title = title, description = description)
+            Column(
+                modifier = Modifier
+                    .padding(start = 8.dp)
+                    .fillMaxWidth()
+                    .then(
+                        if (isShowThreeDot) {
+                            Modifier.weight(1f)
+                        } else {
+                            Modifier
+                        }
+                    )
+            ) {
+                Text(
+                    text = title,
+                    color = White80,
+                    style = MaterialTheme.typography.bodySmall,
+                    fontSize = 14.sp
+                )
+                Text(
+                    text = description,
+                    color = White80,
+                    style = MaterialTheme.typography.bodySmall,
+                    fontSize = 12.sp
+                )
+            }
+            if (isShowThreeDot) {
+                Image(
+                    imageVector = loadIconToVector(icon = R.drawable.ic_three_dots),
+                    contentDescription = "Three dots",
+                    alignment = Alignment.CenterEnd,
+                    modifier = Modifier
+                        .height(30.dp)
+                        .wrapContentWidth()
+                )
+            }
         }
-    }
-}
-
-@Composable
-fun itemCardTitleDescription(title: String, description: String) {
-    Column(
-        verticalArrangement = Arrangement.Center,
-        modifier = Modifier.padding(start = 8.dp)
-    ) {
-        Text(
-            text = title,
-            color = White80,
-            style = MaterialTheme.typography.bodySmall,
-            fontSize = 14.sp
-        )
-        Text(
-            text = description,
-            color = White80,
-            style = MaterialTheme.typography.bodySmall,
-            fontSize = 12.sp
-        )
     }
 }

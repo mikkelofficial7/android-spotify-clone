@@ -342,6 +342,7 @@ fun showQuerySearchPage(viewModel: SearchViewModel, context: Context, query: Str
                         title = artist.title,
                         description = "by ${artist.artist} (${context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber())})",
                         imageUrl = artist.imageUrl,
+                        isShowThreeDot = true,
                         onClick = { onClick(artist) }
                     )
                 }

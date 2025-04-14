@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -97,7 +98,7 @@ fun AlbumDetailScreen(
         }
         .distinctUntilChanged()
         .collectLatest { scrollY ->
-            isShowToolbar = scrollY >= targetedPx
+            isShowToolbar = scrollY >= (targetedPx - 190)
         }
     }
 
@@ -137,9 +138,15 @@ fun AlbumDetailScreen(
                                 fontWeight = FontWeight.Bold
                             )
                         }
-                        GreenPlayButton(padding = 20) {
-                            val firstTrack = listMusicByGenre?.firstOrNull()
-                            firstTrack?.let { onClickMusic(it) }
+                        Box(
+                            modifier = Modifier
+                                .padding(20.dp)
+                                .background(Black100, shape = RoundedCornerShape(100.dp))
+                        ) {
+                            GreenPlayButton {
+                                val firstTrack = listMusicByGenre?.firstOrNull()
+                                firstTrack?.let { onClickMusic(it) }
+                            }
                         }
                     }
                 }
@@ -301,7 +308,8 @@ fun AlbumDetailScreen(
                             id = artist.id,
                             title = artist.title,
                             description = "by ${artist.artist} (${context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber())})",
-                            imageUrl = artist.imageUrl
+                            imageUrl = artist.imageUrl,
+                            isShowThreeDot = true
                         )
                     }
                 }
