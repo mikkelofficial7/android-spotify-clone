@@ -166,9 +166,8 @@ fun BottomNavBar(navController: NavController) {
                 onClick = {
                     if (currentRoute == screen.route) return@NavigationBarItem
                     navController.navigate(screen.route) {
-                        popUpTo(navController.graph.startDestinationId) { saveState = true }
                         launchSingleTop = true
-                        restoreState = true
+                        restoreState = false
                     }
                 },
                 interactionSource = remember { MutableInteractionSource() },

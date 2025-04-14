@@ -2,6 +2,7 @@ package com.view.musicplayer.spotifyclone.screen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -20,6 +21,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.view.musicplayer.spotifyclone.network.response.Track
 import com.view.musicplayer.spotifyclone.screen.shared.BackButton
+import com.view.musicplayer.spotifyclone.screen.shared.PlayerButton
 import com.view.musicplayer.spotifyclone.ui.theme.Black80
 import com.view.musicplayer.spotifyclone.ui.theme.White80
 
@@ -41,7 +43,7 @@ fun SongDetailScreen(
                .fillMaxWidth()
                .height(60.dp)
                .padding(horizontal = 10.dp),
-           verticalAlignment = Alignment.CenterVertically
+           verticalAlignment = Alignment.Top
        ) {
            BackButton {
              navController.popBackStack()
@@ -52,9 +54,12 @@ fun SongDetailScreen(
                color = White80,
                fontSize = 16.sp,
                textAlign = TextAlign.Center,
-               modifier = Modifier.fillMaxWidth().weight(1f)
+               modifier = Modifier
+                   .fillMaxWidth()
+                   .weight(1f)
            )
            Spacer(modifier = Modifier.width(40.dp))
        }
+       PlayerButton()
    }
 }

@@ -315,7 +315,11 @@ fun AlbumDetailScreen(
                                 onClickMusic(artist)
                             },
                             onThreeDotClick = {
-                                navController.navigate(ScreenRoute.MusicDetail.route(artist.id))
+                                navController.navigate(ScreenRoute.MusicDetail.route(artist.id)) {
+                                    popUpTo(ScreenRoute.AlbumDetail.route) { saveState = true }
+                                    launchSingleTop = true
+                                    restoreState = false
+                                }
                             }
                         )
                     }

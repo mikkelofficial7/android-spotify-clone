@@ -146,7 +146,11 @@ fun SearchScreen(
                     },
                     onClickGenre = {
                         keyboardController?.hide()
-                        navController.navigate(ScreenRoute.AlbumDetail.route(it.name))
+                        navController.navigate(ScreenRoute.AlbumDetail.route(it.name)) {
+                            popUpTo(ScreenRoute.Search.route) { saveState = true }
+                            launchSingleTop = true
+                            restoreState = false
+                        }
                     })
             }
         }
@@ -262,10 +266,9 @@ fun showDefaultSearchPage(recommendTopTrack: List<Track>?, genreData: List<Genre
                     id = track.id,
                     title = track.title,
                     description = "by ${track.artist}",
-                    imageUrl = track.imageUrl
-                ) {
-                    onClickMusic(track)
-                }
+                    imageUrl = track.imageUrl,
+                    onClick = { onClickMusic(track) }
+                )
             }
         }
         LazyVerticalGrid(
@@ -337,7 +340,11 @@ fun showQuerySearchPage(navController: NavController, viewModel: SearchViewModel
                         isShowThreeDot = true,
                         onClick = { onClick(artist) },
                         onThreeDotClick = {
-                            navController.navigate(ScreenRoute.MusicDetail.route(artist.id))
+                            navController.navigate(ScreenRoute.MusicDetail.route(artist.id)) {
+                                popUpTo(ScreenRoute.Search.route) { saveState = true }
+                                launchSingleTop = true
+                                restoreState = false
+                            }
                         }
                     )
                 }

@@ -90,10 +90,11 @@ fun HomeScreen(
                             id = artist.id,
                             title = artist.title,
                             description = context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber()),
-                            imageUrl = artist.imageUrl
-                        ) {
-                            onClickMusic(artist)
-                        }
+                            imageUrl = artist.imageUrl,
+                            onClick = {
+                                onClickMusic(artist)
+                            }
+                        )
                     }
                     if (firstTrack.isNullOrEmpty()) {
                         item {
@@ -122,10 +123,11 @@ fun HomeScreen(
                             id = artist.id,
                             title = artist.title,
                             description = context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber()),
-                            imageUrl = artist.imageUrl
-                        ) {
-                            onClickMusic(artist)
-                        }
+                            imageUrl = artist.imageUrl,
+                            onClick = {
+                                onClickMusic(artist)
+                            }
+                        )
                     }
                     if (secondTrack.isNullOrEmpty()) {
                         item {
@@ -155,10 +157,11 @@ fun HomeScreen(
                             id = artist.id,
                             title = artist.title,
                             description = context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber()),
-                            imageUrl = artist.imageUrl
-                        ) {
-                            onClickMusic(artist)
-                        }
+                            imageUrl = artist.imageUrl,
+                            onClick = {
+                                onClickMusic(artist)
+                            }
+                        )
                     }
                     if (thirdTrack.isNullOrEmpty()) {
                         item {
@@ -188,10 +191,11 @@ fun HomeScreen(
                             id = artist.id,
                             title = artist.title,
                             description = context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber()),
-                            imageUrl = artist.imageUrl
-                        ) {
-                            onClickMusic(artist)
-                        }
+                            imageUrl = artist.imageUrl,
+                            onClick = {
+                                onClickMusic(artist)
+                            }
+                        )
                     }
                     if (fourthTrack.isNullOrEmpty()) {
                         item {
