@@ -40,7 +40,6 @@ import coil.request.ImageRequest
 import com.view.musicplayer.spotifyclone.R
 import com.view.musicplayer.spotifyclone.ext.formatTimeTrackRunning
 import com.view.musicplayer.spotifyclone.ui.theme.Black100
-import com.view.musicplayer.spotifyclone.ui.theme.Black60
 import com.view.musicplayer.spotifyclone.ui.theme.SpotifyAccent80
 import com.view.musicplayer.spotifyclone.ui.theme.SpotifyGreen80
 import com.view.musicplayer.spotifyclone.ui.theme.SpotifyGreenGrey80
@@ -101,8 +100,8 @@ fun ImageLoader(url: String, otherModifier: Modifier = Modifier) {
 
 @Composable
 fun PlayerButton(
-    currentPosition: Float = 50f,
-    totalDuration: Float = 50f,
+    currentPosition: Float = 00f,
+    totalDuration: Float = 0f,
     isPlaying: Boolean = false,
     isShuffle: Boolean = false,
     isShowTimeTrack: Boolean = false,
@@ -119,7 +118,7 @@ fun PlayerButton(
     Column {
         if (isShowTimeTrack) {
             Text(
-                text = "${currentPosition.formatTimeTrackRunning()}/${totalDuration.formatTimeTrackRunning()}",
+                text = "${currentPosition.formatTimeTrackRunning()} / ${totalDuration.formatTimeTrackRunning()}",
                 color = White80,
                 modifier = Modifier
                     .padding(horizontal = 20.dp, vertical = 10.dp)
@@ -211,7 +210,7 @@ fun CustomSeekBar(
     layoutHeight: Int = 14,
     seekbarHeight: Int = 5,
     seekBarActiveColor: Color = SpotifyGreen80,
-    seekBarBackgroundColor: Color = Black60,
+    seekBarBackgroundColor: Color = White80,
     onSeekBarChange: (Float) -> Unit = {}
 ) {
     onSeekBarChange(currentPosition)
