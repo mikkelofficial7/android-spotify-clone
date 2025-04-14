@@ -2,8 +2,7 @@ package com.view.musicplayer.spotifyclone.network.response
 
 data class SongRecommendation(
     val id: String,
-    val title: String,
-    val tracks: List<Track>
+    val title: String
 )
 
 data class Track (

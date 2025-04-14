@@ -251,7 +251,7 @@ fun SearchMusicBar(interactSource: MutableInteractionSource, musicSearched: Stri
 }
 
 @Composable
-fun showDefaultSearchPage(recommendTopTrack: SongRecommendation?, genreData: List<Genre>, onClickMusic: (Track) -> Unit = {}, onClickGenre: (Genre) -> Unit = {}) {
+fun showDefaultSearchPage(recommendTopTrack: List<Track>?, genreData: List<Genre>, onClickMusic: (Track) -> Unit = {}, onClickGenre: (Genre) -> Unit = {}) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -265,7 +265,7 @@ fun showDefaultSearchPage(recommendTopTrack: SongRecommendation?, genreData: Lis
                 .background(Transparent)
                 .padding(top = 5.dp)
         ) {
-            items(recommendTopTrack?.tracks.orEmpty()) { track ->
+            items(recommendTopTrack.orEmpty()) { track ->
                 MusicItemCard(
                     id = track.id,
                     title = track.title,

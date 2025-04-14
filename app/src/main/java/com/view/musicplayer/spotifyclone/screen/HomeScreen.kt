@@ -50,9 +50,14 @@ fun HomeScreen(
 ) {
     val context: Context = LocalContext.current
     val recommendChart by viewModel.recommendationChart.observeAsState()
+    val firstTrack by viewModel.firstTrack.observeAsState()
+    val secondTrack by viewModel.secondTrack.observeAsState()
+    val thirdTrack by viewModel.thirdTrack.observeAsState()
+    val fourthTrack by viewModel.fourthTrack.observeAsState()
 
     LaunchedEffect(Unit) {
         viewModel.getRecommendation(context)
+        viewModel.getSongRecommendation(context)
     }
 
     Column {
@@ -63,15 +68,9 @@ fun HomeScreen(
                 .weight(1f)
                 .background(Black60)
         ) {
-            val firstListTopArtist = recommendChart?.get(0)?.tracks
-            val secondListArtist = recommendChart?.get(1)?.tracks
-
-            val firstListTopTrack = recommendChart?.get(2)?.tracks
-            val secondListTrack = recommendChart?.get(3)?.tracks
-
             item {
                 Text(
-                    text = context.getString(R.string.top_artist_chart_1),
+                    text = recommendChart?.get(0)?.title.orEmpty(),
                     style = MaterialTheme.typography.bodyLarge.copy(color = White80),
                     modifier = Modifier.padding(16.dp)
                 )
@@ -83,7 +82,7 @@ fun HomeScreen(
                         .fillMaxSize()
                         .padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
                 ) {
-                    items(firstListTopArtist.orEmpty()) {  artist ->
+                    items(firstTrack.orEmpty()) {  artist ->
                         MusicItemCard(
                             id = artist.id,
                             title = artist.title,
@@ -93,7 +92,7 @@ fun HomeScreen(
                             onClickMusic(artist)
                         }
                     }
-                    if (firstListTopArtist.isNullOrEmpty()) {
+                    if (firstTrack.isNullOrEmpty()) {
                         item {
                             EmptyView()
                         }
@@ -103,7 +102,7 @@ fun HomeScreen(
 
             item {
                 Text(
-                    text = context.getString(R.string.top_artist_chart_2),
+                    text = recommendChart?.get(1)?.title.orEmpty(),
                     style = MaterialTheme.typography.bodyLarge.copy(color = White80),
                     modifier = Modifier.padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
                 )
@@ -115,7 +114,7 @@ fun HomeScreen(
                         .fillMaxSize()
                         .padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
                 ) {
-                    items(secondListArtist.orEmpty()) {  artist ->
+                    items(secondTrack.orEmpty()) {  artist ->
                         MusicItemCard(
                             id = artist.id,
                             title = artist.title,
@@ -125,7 +124,7 @@ fun HomeScreen(
                             onClickMusic(artist)
                         }
                     }
-                    if (secondListArtist.isNullOrEmpty()) {
+                    if (secondTrack.isNullOrEmpty()) {
                         item {
                             EmptyView()
                         }
@@ -135,40 +134,7 @@ fun HomeScreen(
 
             item {
                 Text(
-                    text = context.getString(R.string.top_track_chart_1),
-                    style = MaterialTheme.typography.bodyLarge.copy(color = White80),
-                    modifier = Modifier.padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
-                )
-            }
-            item {
-                LazyRow(
-                    horizontalArrangement = Arrangement.spacedBy(12.dp),
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .background(Transparent)
-                        .padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
-                ) {
-                    items(firstListTopTrack.orEmpty()) { artist ->
-                        MusicItemCard(
-                            id = artist.id,
-                            title = artist.title,
-                            description = context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber()),
-                            imageUrl = artist.imageUrl
-                        ) {
-                            onClickMusic(artist)
-                        }
-                    }
-                    if (firstListTopTrack.isNullOrEmpty()) {
-                        item {
-                            EmptyView()
-                        }
-                    }
-                }
-            }
-
-            item {
-                Text(
-                    text = context.getString(R.string.top_track_chart_2),
+                    text = recommendChart?.get(2)?.title.orEmpty(),
                     style = MaterialTheme.typography.bodyLarge.copy(color = White80),
                     modifier = Modifier.padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
                 )
@@ -181,7 +147,7 @@ fun HomeScreen(
                         .background(Transparent)
                         .padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
                 ) {
-                    items(secondListTrack.orEmpty()) { artist ->
+                    items(thirdTrack.orEmpty()) { artist ->
                         MusicItemCard(
                             id = artist.id,
                             title = artist.title,
@@ -191,7 +157,40 @@ fun HomeScreen(
                             onClickMusic(artist)
                         }
                     }
-                    if (secondListTrack.isNullOrEmpty()) {
+                    if (thirdTrack.isNullOrEmpty()) {
+                        item {
+                            EmptyView()
+                        }
+                    }
+                }
+            }
+
+            item {
+                Text(
+                    text = recommendChart?.get(3)?.title.orEmpty(),
+                    style = MaterialTheme.typography.bodyLarge.copy(color = White80),
+                    modifier = Modifier.padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
+                )
+            }
+            item {
+                LazyRow(
+                    horizontalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Transparent)
+                        .padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
+                ) {
+                    items(fourthTrack.orEmpty()) { artist ->
+                        MusicItemCard(
+                            id = artist.id,
+                            title = artist.title,
+                            description = context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber()),
+                            imageUrl = artist.imageUrl
+                        ) {
+                            onClickMusic(artist)
+                        }
+                    }
+                    if (fourthTrack.isNullOrEmpty()) {
                         item {
                             EmptyView()
                         }

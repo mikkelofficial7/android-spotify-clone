@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 
 class SearchViewModel(private val api: Api): BaseViewModel<Any?>() {
     val allGenre = SingleLiveEvent<List<Genre>>()
-    val topTrack = SingleLiveEvent<SongRecommendation>()
+    val topTrack = SingleLiveEvent<List<Track>>()
     val listSearchArtist = SingleLiveEvent<ArrayList<Track>>()
 
     internal fun getAllGenre(context: Context) {
@@ -31,9 +31,9 @@ class SearchViewModel(private val api: Api): BaseViewModel<Any?>() {
     internal fun getSongRecommendation(context: Context) {
         executeJob(context) {
             safeScopeFun(context).launch(Dispatchers.IO) {
-                flowOnValue(api.getRecommendation()).collectLatest { response ->
+                flowOnValue(api.searchArtist()).collectLatest { response ->
                     isLoadingEvent.postValue(false)
-                    topTrack.postValue(response.data?.lastOrNull())
+                    topTrack.postValue(response.data?.shuffled()?.take(5))
                 }
             }
         }
