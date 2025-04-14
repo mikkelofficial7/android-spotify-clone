@@ -77,6 +77,7 @@ import org.koin.androidx.compose.koinViewModel
 fun SearchScreen(
     viewModel: SearchViewModel = koinViewModel(),
     isShowPlayerButton: Boolean,
+    currentPlaying: Track,
     navController: NavController,
     onClickMusic: (Track) -> Unit
 ) {
@@ -134,7 +135,7 @@ fun SearchScreen(
                 }
             }
             when (isSearchActive) {
-                true -> showQuerySearchPage(navController, viewModel, context, querySearch,
+                true -> showQuerySearchPage(currentPlaying, navController, viewModel, context, querySearch,
                     onClick = {
                         keyboardController?.hide()
                         onClickMusic(it)
@@ -297,7 +298,7 @@ fun showDefaultSearchPage(recommendTopTrack: List<Track>?, genreData: List<Genre
 }
 
 @Composable
-fun showQuerySearchPage(navController: NavController, viewModel: SearchViewModel, context: Context, query: String, onClick: (Track) -> Unit = {}) {
+fun showQuerySearchPage(currentPlaying: Track, navController: NavController, viewModel: SearchViewModel, context: Context, query: String, onClick: (Track) -> Unit = {}) {
     val listArtistSearch by viewModel.listSearchArtist.observeAsState()
     val isLoading by viewModel.isLoadingEvent.observeAsState()
 
@@ -337,7 +338,7 @@ fun showQuerySearchPage(navController: NavController, viewModel: SearchViewModel
                         title = artist.title,
                         description = "by ${artist.artist} (${context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber())})",
                         imageUrl = artist.imageUrl,
-                        isShowThreeDot = true,
+                        isShowThreeDot = currentPlaying.id == artist.id,
                         onClick = { onClick(artist) },
                         onThreeDotClick = {
                             navController.navigate(ScreenRoute.MusicDetail.route(artist.id)) {

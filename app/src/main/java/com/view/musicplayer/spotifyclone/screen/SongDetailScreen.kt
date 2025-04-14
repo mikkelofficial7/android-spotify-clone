@@ -1,6 +1,5 @@
 package com.view.musicplayer.spotifyclone.screen
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,12 +26,10 @@ import com.view.musicplayer.spotifyclone.screen.shared.PlayerButton
 import com.view.musicplayer.spotifyclone.ui.theme.Black80
 import com.view.musicplayer.spotifyclone.ui.theme.White80
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun SongDetailScreen(
     navController: NavController,
-    isShowPlayerButton: Boolean,
-    musicTitle: String,
+    currentPlaying: Track,
     onClickMusic: (Track) -> Unit
 ) {
    Column(
@@ -43,7 +40,7 @@ fun SongDetailScreen(
        Row(
            modifier = Modifier
                .fillMaxWidth()
-               .height(60.dp)
+               .height(80.dp)
                .padding(horizontal = 10.dp, vertical = 10.dp),
            verticalAlignment = Alignment.Top
        ) {
@@ -52,9 +49,9 @@ fun SongDetailScreen(
            }
            Spacer(modifier = Modifier.width(10.dp))
            Text(
-               text = "aaaa", // song title
+               text = "${currentPlaying.title}\nby ${currentPlaying.artist}", // song title
                color = White80,
-               fontSize = 16.sp,
+               fontSize = 14.sp,
                textAlign = TextAlign.Center,
                fontWeight = FontWeight.Light,
                modifier = Modifier

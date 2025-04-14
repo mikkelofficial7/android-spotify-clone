@@ -48,6 +48,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun HomeScreen(
     viewModel: HomePageViewModel = koinViewModel(),
+    currentPlaying: Track,
     isShowPlayerButton: Boolean,
     onClickMusic: (Track) -> Unit
 ) {

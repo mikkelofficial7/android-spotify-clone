@@ -84,7 +84,10 @@ fun MainPage() {
             modifier = Modifier.padding(padding)
         ) {
             composable(ScreenRoute.Home.route) {
-                HomeScreen(isShowPlayerButton = isShowPlayerButton) {
+                HomeScreen(
+                    isShowPlayerButton = isShowPlayerButton,
+                    currentPlaying = currentPlaying) {
+
                    if (currentPlaying.id == it.id) {
                        currentPlaying = Track.empty
                        isShowPlayerButton = !isShowPlayerButton
@@ -95,7 +98,11 @@ fun MainPage() {
                 }
             }
             composable(ScreenRoute.Search.route) {
-                SearchScreen(isShowPlayerButton = isShowPlayerButton, navController = navController) {
+                SearchScreen(
+                    isShowPlayerButton = isShowPlayerButton,
+                    navController = navController,
+                    currentPlaying = currentPlaying) {
+
                     if (currentPlaying.id == it.id) {
                         currentPlaying = Track.empty
                         isShowPlayerButton = !isShowPlayerButton
@@ -113,7 +120,12 @@ fun MainPage() {
                 arguments = listOf(navArgument("albumGenre") { type = NavType.StringType })
             ) { backStackEntry ->
                 val albumGenre = backStackEntry.arguments?.getString("albumGenre").orEmpty()
-                AlbumDetailScreen(navController = navController, isShowPlayerButton = isShowPlayerButton, albumGenre = albumGenre) {
+                AlbumDetailScreen(
+                    navController = navController,
+                    isShowPlayerButton = isShowPlayerButton,
+                    albumGenre = albumGenre,
+                    currentPlaying = currentPlaying,
+                ) {
                     if (currentPlaying.id == it.id) {
                         currentPlaying = Track.empty
                         isShowPlayerButton = !isShowPlayerButton
@@ -127,8 +139,10 @@ fun MainPage() {
                 route = ScreenRoute.MusicDetail.route,
                 arguments = listOf(navArgument("musicTitle") { type = NavType.StringType })
             ) { backStackEntry ->
-                val musicTitle = backStackEntry.arguments?.getString("musicTitle").orEmpty()
-                SongDetailScreen(navController = navController, isShowPlayerButton = isShowPlayerButton, musicTitle = musicTitle) {
+                SongDetailScreen(
+                    navController = navController,
+                    currentPlaying = currentPlaying
+                ) {
                     if (currentPlaying.id == it.id) {
                         currentPlaying = Track.empty
                         isShowPlayerButton = !isShowPlayerButton

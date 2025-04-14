@@ -68,6 +68,7 @@ fun AlbumDetailScreen(
     navController: NavController,
     isShowPlayerButton: Boolean,
     albumGenre: String,
+    currentPlaying: Track,
     onClickMusic: (Track) -> Unit
 ) {
     val context = LocalContext.current
@@ -310,7 +311,7 @@ fun AlbumDetailScreen(
                             title = artist.title,
                             description = "by ${artist.artist} (${context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber())})",
                             imageUrl = artist.imageUrl,
-                            isShowThreeDot = true,
+                            isShowThreeDot = currentPlaying.id == artist.id,
                             onClick = {
                                 onClickMusic(artist)
                             },
