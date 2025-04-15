@@ -18,6 +18,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -47,6 +48,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -60,6 +62,7 @@ import com.view.musicplayer.spotifyclone.navigation.addOrRemoveToPlaylist
 import com.view.musicplayer.spotifyclone.navigation.routeToDetail
 import com.view.musicplayer.spotifyclone.network.response.Track
 import com.view.musicplayer.spotifyclone.ui.theme.Black100
+import com.view.musicplayer.spotifyclone.ui.theme.Black60
 import com.view.musicplayer.spotifyclone.ui.theme.Black80
 import com.view.musicplayer.spotifyclone.ui.theme.Blue500
 import com.view.musicplayer.spotifyclone.ui.theme.Red500
@@ -168,6 +171,58 @@ fun AddToListButton(size: Int = 30, color: Color = White80, onClick: () -> Unit 
             .width(size.dp)
             .clickable { onClick() }
     )
+}
+
+@Composable
+fun ItemTrackLayout(
+    @DrawableRes icon: Int? = null,
+    imageUrl: String? = null,
+    title: String = "",
+    message: String = ""
+) {
+    val iconSize = 50
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 10.dp, top = 5.dp, start = 16.dp, end = 16.dp)
+    ) {
+        icon?.let {
+            Image(
+                imageVector = loadIconToVector(icon = icon),
+                contentDescription = null,
+                modifier = Modifier
+                    .height(iconSize.dp)
+                    .width(iconSize.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(Black60)
+            )
+        }
+        imageUrl?.let {
+            ImageLoader(url = it, otherModifier = Modifier
+                .height(iconSize.dp)
+                .width(iconSize.dp))
+        }
+        Spacer(modifier = Modifier.width(10.dp))
+        Column(
+            verticalArrangement = Arrangement.Center
+        ) {
+            Text(
+                text = title,
+                color = White80,
+                fontSize = 16.sp
+            )
+            if (message.isNotBlank()) {
+                Text(
+                    text = message,
+                    color = White80,
+                    fontSize = 12.sp,
+                    fontStyle = FontStyle.Italic
+                )
+            }
+        }
+    }
 }
 
 @Composable

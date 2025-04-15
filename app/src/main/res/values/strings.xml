@@ -5,4 +5,8 @@
     <string name="add_playlist">Add to Playlist</string>
     <string name="show_detail">Show Detail</string>
     <string name="add_favorite">Add to Favorite</string>
+    <string name="your_playlists">Your Playlists</string>
+    <string name="your_favorite">Your Favorite Tracks</string>
+    <string name="create_playlist">Create Playlist</string>
+    <string name="song_in_playlist">%1$s Songs</string>
 </resources>
