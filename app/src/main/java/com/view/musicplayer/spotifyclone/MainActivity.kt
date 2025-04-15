@@ -85,6 +85,7 @@ fun MainPage() {
         ) {
             composable(ScreenRoute.Home.route) {
                 HomeScreen(
+                    navController = navController,
                     isShowPlayerButton = isShowPlayerButton,
                     currentPlaying = currentPlaying) {
 

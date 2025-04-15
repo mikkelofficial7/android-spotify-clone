@@ -53,6 +53,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.view.musicplayer.spotifyclone.R
+import com.view.musicplayer.spotifyclone.constants.Constants
 import com.view.musicplayer.spotifyclone.ext.roundedNumber
 import com.view.musicplayer.spotifyclone.navigation.ScreenRoute
 import com.view.musicplayer.spotifyclone.network.response.Genre
@@ -60,6 +61,7 @@ import com.view.musicplayer.spotifyclone.network.response.Track
 import com.view.musicplayer.spotifyclone.screen.shared.BackButton
 import com.view.musicplayer.spotifyclone.screen.shared.EmptyView
 import com.view.musicplayer.spotifyclone.screen.shared.ImageLoader
+import com.view.musicplayer.spotifyclone.screen.shared.MusicItemCard
 import com.view.musicplayer.spotifyclone.screen.shared.PlayerButton
 import com.view.musicplayer.spotifyclone.screen.shared.loadIconToVector
 import com.view.musicplayer.spotifyclone.screen.shared.showLoading
@@ -140,7 +142,7 @@ fun SearchScreen(
                         keyboardController?.hide()
                         onClickMusic(it)
                     })
-                false -> showDefaultSearchPage(currentPlaying, recommendTopTrack, genreData ?: listOf(),
+                false -> showDefaultSearchPage(currentPlaying, navController, recommendTopTrack, genreData ?: listOf(),
                     onClickMusic = {
                         keyboardController?.hide()
                         onClickMusic(it)
@@ -248,7 +250,12 @@ fun SearchMusicBar(interactSource: MutableInteractionSource, musicSearched: Stri
 }
 
 @Composable
-fun showDefaultSearchPage(currentPlaying: Track, recommendTopTrack: List<Track>?, genreData: List<Genre>, onClickMusic: (Track) -> Unit = {}, onClickGenre: (Genre) -> Unit = {}) {
+fun showDefaultSearchPage(currentPlaying: Track,
+                          navController: NavController,
+                          recommendTopTrack: List<Track>?,
+                          genreData: List<Genre>,
+                          onClickMusic: (Track) -> Unit = {},
+                          onClickGenre: (Genre) -> Unit = {}) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -264,11 +271,13 @@ fun showDefaultSearchPage(currentPlaying: Track, recommendTopTrack: List<Track>?
         ) {
             items(recommendTopTrack.orEmpty()) { track ->
                 MusicItemCard(
+                    navController = navController,
+                    currentPlaying = currentPlaying,
                     id = track.id,
                     title = track.title,
                     description = "by ${track.artist}",
                     imageUrl = track.imageUrl,
-                    isShowThreeDot = currentPlaying.id == track.id,
+                    isShowGotoDetailButton = currentPlaying.id == track.id,
                     onClick = { onClickMusic(track) }
                 )
             }
@@ -308,7 +317,7 @@ fun showQuerySearchPage(currentPlaying: Track, navController: NavController, vie
             return@LaunchedEffect
         }
 
-        delay(2500) // delay 2.5 second after typing
+        delay(Constants.DELAY_SEARCH) // delay 2.5 second after typing
         viewModel.searchArtistOrSong(context, query)
     }
 
@@ -335,19 +344,14 @@ fun showQuerySearchPage(currentPlaying: Track, navController: NavController, vie
             } else {
                 itemsIndexed(listArtistSearch.orEmpty()) { i, artist ->
                     MusicItemCard(
+                        navController = navController,
+                        currentPlaying = currentPlaying,
                         id = artist.id,
                         title = artist.title,
                         description = "by ${artist.artist} (${context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber())})",
                         imageUrl = artist.imageUrl,
-                        isShowThreeDot = currentPlaying.id == artist.id,
-                        onClick = { onClick(artist) },
-                        onThreeDotClick = {
-                            navController.navigate(ScreenRoute.MusicDetail.route(artist.id)) {
-                                popUpTo(ScreenRoute.Search.route) { saveState = true }
-                                launchSingleTop = true
-                                restoreState = false
-                            }
-                        }
+                        isShowGotoDetailButton = currentPlaying.id == artist.id,
+                        onClick = { onClick(artist) }
                     )
                 }
             }

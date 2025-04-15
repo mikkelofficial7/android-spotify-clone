@@ -67,7 +67,7 @@ fun SongDetailScreen(
                .weight(1f)
        ) {
            ImageLoader(
-               url = "",
+               url = currentPlaying.imageUrl,
                otherModifier = Modifier
                    .padding(20.dp)
                    .fillMaxSize()

@@ -9,22 +9,36 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -35,11 +49,16 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.view.musicplayer.spotifyclone.R
 import com.view.musicplayer.spotifyclone.ext.formatTimeTrackRunning
+import com.view.musicplayer.spotifyclone.navigation.ScreenRoute
+import com.view.musicplayer.spotifyclone.network.response.Track
 import com.view.musicplayer.spotifyclone.ui.theme.Black100
+import com.view.musicplayer.spotifyclone.ui.theme.Black80
 import com.view.musicplayer.spotifyclone.ui.theme.SpotifyAccent80
 import com.view.musicplayer.spotifyclone.ui.theme.SpotifyGreen80
 import com.view.musicplayer.spotifyclone.ui.theme.SpotifyGreenGrey80
@@ -113,17 +132,30 @@ fun PlayerButton(
     onRefreshClick: () -> Unit = {}
 ) {
     val iconSize = 30
-    val middleIconSize = 50
+    val bigIconSize = 50
 
     Column {
         if (isShowTimeTrack) {
-            Text(
-                text = "${currentPosition.formatTimeTrackRunning()} / ${totalDuration.formatTimeTrackRunning()}",
-                color = White80,
-                modifier = Modifier
-                    .padding(horizontal = 20.dp, vertical = 10.dp)
-                    .align(Alignment.End)
-            )
+            Row {
+                Text(
+                    text = currentPosition.formatTimeTrackRunning(),
+                    color = White80,
+                    textAlign = TextAlign.Start,
+                    modifier = Modifier
+                        .padding(horizontal = 20.dp, vertical = 10.dp)
+                        .fillMaxWidth()
+                        .weight(1f)
+                )
+                Text(
+                    text = totalDuration.formatTimeTrackRunning(),
+                    color = White80,
+                    textAlign = TextAlign.End,
+                    modifier = Modifier
+                        .padding(horizontal = 20.dp, vertical = 10.dp)
+                        .fillMaxWidth()
+                        .weight(1f)
+                )
+            }
         }
         CustomSeekBar(
             currentPosition = currentPosition,
@@ -161,8 +193,8 @@ fun PlayerButton(
                         imageVector = loadIconToVector(icon = R.drawable.ic_previous),
                         contentDescription = "Previous",
                         modifier = Modifier
-                            .height(iconSize.dp)
-                            .width(iconSize.dp)
+                            .height(bigIconSize.dp)
+                            .width(bigIconSize.dp)
                     )
                 }
                 IconButton(onClick = onPlayPauseClick, colors = IconButtonDefaults.iconButtonColors(
@@ -172,8 +204,8 @@ fun PlayerButton(
                         imageVector = if (isPlaying) loadIconToVector(icon = R.drawable.ic_pause) else loadIconToVector(icon = R.drawable.ic_play),
                         contentDescription = if (isPlaying) "Pause" else "Play",
                         modifier = Modifier
-                            .height(middleIconSize.dp)
-                            .width(middleIconSize.dp)
+                            .height(bigIconSize.dp)
+                            .width(bigIconSize.dp)
                     )
                 }
                 IconButton(onClick = onNextClick, colors = IconButtonDefaults.iconButtonColors(
@@ -183,8 +215,8 @@ fun PlayerButton(
                         imageVector = loadIconToVector(icon = R.drawable.ic_next),
                         contentDescription = "Next",
                         modifier = Modifier
-                            .height(iconSize.dp)
-                            .width(iconSize.dp)
+                            .height(bigIconSize.dp)
+                            .width(bigIconSize.dp)
                     )
                 }
                 IconButton(onClick = onRefreshClick, colors = IconButtonDefaults.iconButtonColors(
@@ -262,4 +294,120 @@ fun BackButton(onBack: () -> Unit) {
         tint = White80,
         modifier = Modifier.clickable { onBack() }
     )
+}
+
+@Composable
+fun MusicItemCard(navController: NavController,
+                  currentPlaying: Track,
+                  id: String,
+                  title: String,
+                  description: String,
+                  imageUrl: String,
+                  isShowGotoDetailButton: Boolean = false,
+                  onClick: () -> Unit = {}) {
+    var isOptionMenuExpand by remember { mutableStateOf(false) }
+
+    Card(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(80.dp)
+            .clickable { onClick() },
+        colors = CardDefaults.cardColors(containerColor = Black80),
+        shape = RoundedCornerShape(12.dp),
+        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .padding(8.dp)
+                .fillMaxWidth()
+        ) {
+            ImageLoader(imageUrl,
+                otherModifier = Modifier
+                    .size(64.dp)
+                    .padding(8.dp)
+                    .clip(RoundedCornerShape(8.dp)))
+            Column(
+                modifier = Modifier
+                    .padding(start = 8.dp)
+            ) {
+                Text(
+                    text = title,
+                    color = if (currentPlaying.id == id) SpotifyGreenGrey80 else White80,
+                    style = MaterialTheme.typography.bodySmall,
+                    fontSize = 14.sp
+                )
+                Text(
+                    text = description,
+                    color = if (currentPlaying.id == id) SpotifyGreenGrey80 else White80,
+                    style = MaterialTheme.typography.bodySmall,
+                    fontSize = 12.sp
+                )
+            }
+            Spacer(modifier = Modifier
+                .fillMaxWidth()
+                .weight(1f))
+            Column {
+                Image(
+                    imageVector = loadIconToVector(icon = R.drawable.ic_three_dots),
+                    contentDescription = "Three dots",
+                    alignment = Alignment.CenterEnd,
+                    modifier = Modifier
+                        .height(30.dp)
+                        .wrapContentWidth()
+                        .clickable {
+                            isOptionMenuExpand = true
+                        }
+                )
+                if (isOptionMenuExpand) {
+                    ShowOptionMenu(
+                        isOptionMenuExpand = isOptionMenuExpand,
+                        isShowGotoDetailButton = isShowGotoDetailButton,
+                        onDismiss = { isOptionMenuExpand = false },
+                        onShowDetail = {
+                            isOptionMenuExpand = false
+
+                            navController.navigate(ScreenRoute.MusicDetail.route(id)) {
+                                popUpTo(ScreenRoute.AlbumDetail.route) { saveState = true }
+                                launchSingleTop = true
+                                restoreState = false
+                            }
+                        },
+                        onAddFavorite = {
+                            isOptionMenuExpand = false
+                        }
+                    )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun ShowOptionMenu(isOptionMenuExpand: Boolean,
+                   isShowGotoDetailButton: Boolean,
+                   onDismiss: () -> Unit,
+                   onShowDetail: () -> Unit,
+                   onAddFavorite: () -> Unit,
+) {
+    DropdownMenu(
+        expanded = isOptionMenuExpand,
+        onDismissRequest = { onDismiss() }
+    ) {
+        if (isShowGotoDetailButton) {
+            DropdownMenuItem(
+                text = { Text(LocalContext.current.getString(R.string.show_detail)) },
+                onClick = {
+                    onShowDetail()
+                }
+            )
+        }
+        DropdownMenuItem(
+            text = { Text(LocalContext.current.getString(R.string.add_favorite)) },
+            onClick = {
+                onAddFavorite()
+            }
+        )
+    }
+
 }

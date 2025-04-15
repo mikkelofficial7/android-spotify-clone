@@ -1,45 +1,31 @@
 package com.view.musicplayer.spotifyclone.screen
 
 import android.content.Context
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import androidx.navigation.NavController
 import com.view.musicplayer.spotifyclone.R
 import com.view.musicplayer.spotifyclone.ext.roundedNumber
 import com.view.musicplayer.spotifyclone.network.response.Track
 import com.view.musicplayer.spotifyclone.screen.shared.EmptyView
-import com.view.musicplayer.spotifyclone.screen.shared.ImageLoader
+import com.view.musicplayer.spotifyclone.screen.shared.MusicItemCard
 import com.view.musicplayer.spotifyclone.screen.shared.PlayerButton
-import com.view.musicplayer.spotifyclone.screen.shared.loadIconToVector
 import com.view.musicplayer.spotifyclone.ui.theme.Black80
 import com.view.musicplayer.spotifyclone.ui.theme.Transparent
 import com.view.musicplayer.spotifyclone.ui.theme.White80
@@ -49,6 +35,7 @@ import org.koin.androidx.compose.koinViewModel
 @Composable
 fun HomeScreen(
     viewModel: HomePageViewModel = koinViewModel(),
+    navController: NavController,
     currentPlaying: Track,
     isShowPlayerButton: Boolean,
     onClickMusic: (Track) -> Unit
@@ -89,11 +76,13 @@ fun HomeScreen(
                 ) {
                     items(firstTrack.orEmpty()) {  artist ->
                         MusicItemCard(
+                            navController = navController,
+                            currentPlaying = currentPlaying,
                             id = artist.id,
                             title = artist.title,
                             description = context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber()),
                             imageUrl = artist.imageUrl,
-                            isShowThreeDot = currentPlaying.id == artist.id,
+                            isShowGotoDetailButton = currentPlaying.id == artist.id,
                             onClick = {
                                 onClickMusic(artist)
                             }
@@ -123,11 +112,13 @@ fun HomeScreen(
                 ) {
                     items(secondTrack.orEmpty()) {  artist ->
                         MusicItemCard(
+                            navController = navController,
+                            currentPlaying = currentPlaying,
                             id = artist.id,
                             title = artist.title,
                             description = context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber()),
                             imageUrl = artist.imageUrl,
-                            isShowThreeDot = currentPlaying.id == artist.id,
+                            isShowGotoDetailButton = currentPlaying.id == artist.id,
                             onClick = {
                                 onClickMusic(artist)
                             }
@@ -158,11 +149,13 @@ fun HomeScreen(
                 ) {
                     items(thirdTrack.orEmpty()) { artist ->
                         MusicItemCard(
+                            navController = navController,
+                            currentPlaying = currentPlaying,
                             id = artist.id,
                             title = artist.title,
                             description = context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber()),
                             imageUrl = artist.imageUrl,
-                            isShowThreeDot = currentPlaying.id == artist.id,
+                            isShowGotoDetailButton = currentPlaying.id == artist.id,
                             onClick = {
                                 onClickMusic(artist)
                             }
@@ -193,11 +186,13 @@ fun HomeScreen(
                 ) {
                     items(fourthTrack.orEmpty()) { artist ->
                         MusicItemCard(
+                            navController = navController,
+                            currentPlaying = currentPlaying,
                             id = artist.id,
                             title = artist.title,
                             description = context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber()),
                             imageUrl = artist.imageUrl,
-                            isShowThreeDot = currentPlaying.id == artist.id,
+                            isShowGotoDetailButton = currentPlaying.id == artist.id,
                             onClick = {
                                 onClickMusic(artist)
                             }
@@ -214,69 +209,6 @@ fun HomeScreen(
 
         if (isShowPlayerButton) {
             PlayerButton()
-        }
-    }
-}
-
-@Composable
-fun MusicItemCard(id: String,
-                  title: String,
-                  description: String,
-                  imageUrl: String,
-                  isShowThreeDot: Boolean = false,
-                  onClick: () -> Unit = {},
-                  onThreeDotClick: () -> Unit = {}) {
-    Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(80.dp)
-            .clickable { onClick() },
-        colors = CardDefaults.cardColors(containerColor = Black80),
-        shape = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .padding(8.dp)
-                .fillMaxWidth()
-        ) {
-            ImageLoader(imageUrl,
-                otherModifier = Modifier
-                    .size(64.dp)
-                    .padding(8.dp)
-                    .clip(RoundedCornerShape(8.dp)))
-            Column(
-                modifier = Modifier
-                    .padding(start = 8.dp)
-            ) {
-                Text(
-                    text = title,
-                    color = White80,
-                    style = MaterialTheme.typography.bodySmall,
-                    fontSize = 14.sp
-                )
-                Text(
-                    text = description,
-                    color = White80,
-                    style = MaterialTheme.typography.bodySmall,
-                    fontSize = 12.sp
-                )
-            }
-            Spacer(modifier = Modifier.fillMaxWidth().weight(1f))
-            if (isShowThreeDot) {
-                Image(
-                    imageVector = loadIconToVector(icon = R.drawable.ic_three_dots),
-                    contentDescription = "Three dots",
-                    alignment = Alignment.CenterEnd,
-                    modifier = Modifier
-                        .height(30.dp)
-                        .wrapContentWidth()
-                        .clickable { onThreeDotClick() }
-                )
-            } else {
-                Spacer(modifier = Modifier.width(30.dp))
-            }
         }
     }
 }

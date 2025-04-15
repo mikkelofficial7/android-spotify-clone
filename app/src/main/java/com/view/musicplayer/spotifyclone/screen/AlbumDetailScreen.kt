@@ -48,6 +48,7 @@ import com.view.musicplayer.spotifyclone.screen.shared.BackButton
 import com.view.musicplayer.spotifyclone.screen.shared.EmptyView
 import com.view.musicplayer.spotifyclone.screen.shared.GreenPlayButton
 import com.view.musicplayer.spotifyclone.screen.shared.ImageLoader
+import com.view.musicplayer.spotifyclone.screen.shared.MusicItemCard
 import com.view.musicplayer.spotifyclone.screen.shared.PlayerButton
 import com.view.musicplayer.spotifyclone.screen.shared.getDeviceScreenRatio
 import com.view.musicplayer.spotifyclone.screen.shared.loadIconToVector
@@ -307,20 +308,15 @@ fun AlbumDetailScreen(
                             .padding(start = 15.dp, end = 15.dp, top = 5.dp)
                     ) {
                         MusicItemCard(
+                            navController = navController,
+                            currentPlaying = currentPlaying,
                             id = artist.id,
                             title = artist.title,
                             description = "by ${artist.artist} (${context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber())})",
                             imageUrl = artist.imageUrl,
-                            isShowThreeDot = currentPlaying.id == artist.id,
+                            isShowGotoDetailButton = currentPlaying.id == artist.id,
                             onClick = {
                                 onClickMusic(artist)
-                            },
-                            onThreeDotClick = {
-                                navController.navigate(ScreenRoute.MusicDetail.route(artist.id)) {
-                                    popUpTo(ScreenRoute.AlbumDetail.route) { saveState = true }
-                                    launchSingleTop = true
-                                    restoreState = false
-                                }
                             }
                         )
                     }
