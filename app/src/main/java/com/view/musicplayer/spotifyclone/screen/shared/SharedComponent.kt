@@ -55,10 +55,14 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.view.musicplayer.spotifyclone.R
 import com.view.musicplayer.spotifyclone.ext.formatTimeTrackRunning
-import com.view.musicplayer.spotifyclone.navigation.ScreenRoute
+import com.view.musicplayer.spotifyclone.navigation.addOrRemoveFavorite
+import com.view.musicplayer.spotifyclone.navigation.addOrRemoveToPlaylist
+import com.view.musicplayer.spotifyclone.navigation.routeToDetail
 import com.view.musicplayer.spotifyclone.network.response.Track
 import com.view.musicplayer.spotifyclone.ui.theme.Black100
 import com.view.musicplayer.spotifyclone.ui.theme.Black80
+import com.view.musicplayer.spotifyclone.ui.theme.Blue500
+import com.view.musicplayer.spotifyclone.ui.theme.Red500
 import com.view.musicplayer.spotifyclone.ui.theme.SpotifyAccent80
 import com.view.musicplayer.spotifyclone.ui.theme.SpotifyGreen80
 import com.view.musicplayer.spotifyclone.ui.theme.SpotifyGreenGrey80
@@ -114,6 +118,55 @@ fun ImageLoader(url: String, otherModifier: Modifier = Modifier) {
         modifier = Modifier.then(otherModifier),
         placeholder = painterResource(R.drawable.is_spotify_green),
         error = painterResource(R.drawable.is_spotify_green)
+    )
+}
+
+@Composable
+fun BackButton(onBack: () -> Unit) {
+    Icon(
+        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+        contentDescription = "",
+        tint = White80,
+        modifier = Modifier.clickable { onBack() }
+    )
+}
+
+@Composable
+fun AddToFavoriteButton(size: Int = 30, color: Color = White80, onClick: () -> Unit = {}) {
+    Image(
+        imageVector = loadIconToVector(icon = R.drawable.ic_favorite),
+        contentDescription = "Icon favorite",
+        colorFilter = ColorFilter.tint(color),
+        modifier = Modifier
+            .height(size.dp)
+            .width(size.dp)
+            .clickable { onClick() }
+    )
+}
+
+@Composable
+fun ShowDetailButton(size: Int = 30, color: Color = White80, onClick: () -> Unit = {}) {
+    Image(
+        imageVector = loadIconToVector(icon = R.drawable.ic_hamburger),
+        contentDescription = "Icon go to detail",
+        colorFilter = ColorFilter.tint(color),
+        modifier = Modifier
+            .height(size.dp)
+            .width(size.dp)
+            .clickable { onClick() }
+    )
+}
+
+@Composable
+fun AddToListButton(size: Int = 30, color: Color = White80, onClick: () -> Unit = {}) {
+    Image(
+        imageVector = loadIconToVector(icon = R.drawable.ic_add),
+        contentDescription = "Icon add",
+        colorFilter = ColorFilter.tint(color),
+        modifier = Modifier
+            .height(size.dp)
+            .width(size.dp)
+            .clickable { onClick() }
     )
 }
 
@@ -287,16 +340,6 @@ fun GreenPlayButton(padding: Int = 0, onClick: () -> Unit) {
 }
 
 @Composable
-fun BackButton(onBack: () -> Unit) {
-    Icon(
-        imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-        contentDescription = "",
-        tint = White80,
-        modifier = Modifier.clickable { onBack() }
-    )
-}
-
-@Composable
 fun MusicItemCard(navController: NavController,
                   currentPlaying: Track,
                   id: String,
@@ -366,15 +409,15 @@ fun MusicItemCard(navController: NavController,
                         onDismiss = { isOptionMenuExpand = false },
                         onShowDetail = {
                             isOptionMenuExpand = false
-
-                            navController.navigate(ScreenRoute.MusicDetail.route(id)) {
-                                popUpTo(ScreenRoute.AlbumDetail.route) { saveState = true }
-                                launchSingleTop = true
-                                restoreState = false
-                            }
+                            navController.routeToDetail(id)
                         },
                         onAddFavorite = {
                             isOptionMenuExpand = false
+                            navController.addOrRemoveFavorite(id)
+                        },
+                        onAddPlaylist = {
+                            isOptionMenuExpand = false
+                            navController.addOrRemoveToPlaylist(id)
                         }
                     )
                 }
@@ -389,6 +432,7 @@ fun ShowOptionMenu(isOptionMenuExpand: Boolean,
                    onDismiss: () -> Unit,
                    onShowDetail: () -> Unit,
                    onAddFavorite: () -> Unit,
+                   onAddPlaylist: () -> Unit,
 ) {
     DropdownMenu(
         expanded = isOptionMenuExpand,
@@ -396,15 +440,54 @@ fun ShowOptionMenu(isOptionMenuExpand: Boolean,
     ) {
         if (isShowGotoDetailButton) {
             DropdownMenuItem(
-                text = { Text(LocalContext.current.getString(R.string.show_detail)) },
-                onClick = {
+                text = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        ShowDetailButton(color = Black80, size = 20)
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = LocalContext.current.getString(R.string.show_detail),
+                            color = Black80,
+                            fontSize = 12.sp
+                        )
+                    }
+                }, onClick = {
                     onShowDetail()
                 }
             )
         }
         DropdownMenuItem(
-            text = { Text(LocalContext.current.getString(R.string.add_favorite)) },
-            onClick = {
+            text = {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    AddToListButton(color = Blue500, size = 20)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = LocalContext.current.getString(R.string.add_playlist),
+                        color = Blue500,
+                        fontSize = 12.sp
+                    )
+                }
+            }, onClick = {
+                onAddPlaylist()
+            }
+        )
+        DropdownMenuItem(
+            text = {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    AddToFavoriteButton(color = Red500, size = 20)
+                    Spacer(modifier = Modifier.width(8.dp))
+                    Text(
+                        text = LocalContext.current.getString(R.string.add_favorite),
+                        color = Red500,
+                        fontSize = 12.sp
+                    )
+                }
+            }, onClick = {
                 onAddFavorite()
             }
         )

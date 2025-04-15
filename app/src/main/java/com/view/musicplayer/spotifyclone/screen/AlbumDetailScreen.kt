@@ -43,7 +43,11 @@ import com.view.musicplayer.spotifyclone.ext.convertMillisToTime
 import com.view.musicplayer.spotifyclone.ext.roundedNumber
 import com.view.musicplayer.spotifyclone.ext.toSecond
 import com.view.musicplayer.spotifyclone.navigation.ScreenRoute
+import com.view.musicplayer.spotifyclone.navigation.addOrRemoveFavorite
+import com.view.musicplayer.spotifyclone.navigation.addOrRemoveToPlaylist
 import com.view.musicplayer.spotifyclone.network.response.Track
+import com.view.musicplayer.spotifyclone.screen.shared.AddToFavoriteButton
+import com.view.musicplayer.spotifyclone.screen.shared.AddToListButton
 import com.view.musicplayer.spotifyclone.screen.shared.BackButton
 import com.view.musicplayer.spotifyclone.screen.shared.EmptyView
 import com.view.musicplayer.spotifyclone.screen.shared.GreenPlayButton
@@ -270,23 +274,17 @@ fun AlbumDetailScreen(
                             .fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Image(
-                            imageVector = loadIconToVector(icon = R.drawable.ic_favorite),
-                            contentDescription = "Icon favorite",
-                            colorFilter = ColorFilter.tint(White80),
-                            modifier = Modifier
-                                .padding(end = 10.dp)
-                                .height(30.dp)
-                                .width(30.dp)
-                        )
-                        Image(
-                            imageVector = loadIconToVector(icon = R.drawable.ic_add),
-                            contentDescription = "Icon add",
-                            colorFilter = ColorFilter.tint(White80),
-                            modifier = Modifier
-                                .height(30.dp)
-                                .width(30.dp)
-                        )
+                        AddToFavoriteButton {
+                            listMusicByGenre?.map { track ->
+                                navController.addOrRemoveFavorite(track.id)
+                            }
+                        }
+                        Spacer(modifier = Modifier.width(10.dp))
+                        AddToListButton {
+                            listMusicByGenre?.map { track ->
+                                navController.addOrRemoveToPlaylist(track.id)
+                            }
+                        }
                         Spacer(modifier = Modifier
                             .fillMaxWidth()
                             .weight(1f))

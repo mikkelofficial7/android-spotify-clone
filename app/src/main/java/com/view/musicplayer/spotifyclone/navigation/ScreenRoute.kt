@@ -1,6 +1,7 @@
 package com.view.musicplayer.spotifyclone.navigation
 
 import androidx.annotation.DrawableRes
+import androidx.navigation.NavController
 import com.view.musicplayer.spotifyclone.R
 
 sealed class ScreenRoute(val route: String, val title: String, @DrawableRes val icon: Int) {
@@ -13,4 +14,20 @@ sealed class ScreenRoute(val route: String, val title: String, @DrawableRes val 
     object MusicDetail : ScreenRoute("music_detail/{musicTitle}", "Song Detail", 0) {
         fun route(musicTitle: String): String = "music_detail/$musicTitle"
     }
+}
+
+fun NavController.routeToDetail(id: String) {
+    this.navigate(ScreenRoute.MusicDetail.route(id)) {
+        popUpTo(ScreenRoute.AlbumDetail.route) { saveState = true }
+        launchSingleTop = true
+        restoreState = false
+    }
+}
+
+fun NavController.addOrRemoveFavorite(id: String) {
+
+}
+
+fun NavController.addOrRemoveToPlaylist(id: String) {
+
 }
