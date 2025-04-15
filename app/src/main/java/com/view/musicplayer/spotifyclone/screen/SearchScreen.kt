@@ -58,6 +58,7 @@ import com.view.musicplayer.spotifyclone.ext.roundedNumber
 import com.view.musicplayer.spotifyclone.navigation.ScreenRoute
 import com.view.musicplayer.spotifyclone.network.response.Genre
 import com.view.musicplayer.spotifyclone.network.response.Track
+import com.view.musicplayer.spotifyclone.room.model.FavoriteTrack
 import com.view.musicplayer.spotifyclone.screen.shared.BackButton
 import com.view.musicplayer.spotifyclone.screen.shared.EmptyView
 import com.view.musicplayer.spotifyclone.screen.shared.ImageLoader
@@ -89,6 +90,7 @@ fun SearchScreen(
     val searchInteractSource = remember { MutableInteractionSource() }
     val genreData by viewModel.allGenre.observeAsState()
     val recommendTopTrack by viewModel.topTrack.observeAsState()
+    val favoriteTrack by viewModel.favoriteTrack.observeAsState()
 
     val focusManager = LocalFocusManager.current
     var isSearchActive by remember { mutableStateOf(false) }
@@ -105,6 +107,7 @@ fun SearchScreen(
     }
 
     LaunchedEffect(Unit) {
+        viewModel.getAllFavoriteTrack(context)
         viewModel.getAllGenre(context)
         viewModel.getSongRecommendation(context)
     }
@@ -137,12 +140,15 @@ fun SearchScreen(
                 }
             }
             when (isSearchActive) {
-                true -> showQuerySearchPage(currentPlaying, navController, viewModel, context, querySearch,
+                true -> showQuerySearchPage(favoriteTrack ?: listOf(), currentPlaying, navController, viewModel, context, querySearch,
                     onClick = {
                         keyboardController?.hide()
                         onClickMusic(it)
+                    },
+                    onClickFavorite = {
+                        viewModel.addOrRemoveFavorite(context, it)
                     })
-                false -> showDefaultSearchPage(currentPlaying, navController, recommendTopTrack, genreData ?: listOf(),
+                false -> showDefaultSearchPage(favoriteTrack ?: listOf(), currentPlaying, navController, recommendTopTrack, genreData ?: listOf(),
                     onClickMusic = {
                         keyboardController?.hide()
                         onClickMusic(it)
@@ -154,6 +160,9 @@ fun SearchScreen(
                             launchSingleTop = true
                             restoreState = false
                         }
+                    },
+                    onClickFavorite = {
+                        viewModel.addOrRemoveFavorite(context, it)
                     })
             }
         }
@@ -250,12 +259,15 @@ fun SearchMusicBar(interactSource: MutableInteractionSource, musicSearched: Stri
 }
 
 @Composable
-fun showDefaultSearchPage(currentPlaying: Track,
+fun showDefaultSearchPage(favoriteTrack: List<Track>,
+                          currentPlaying: Track,
                           navController: NavController,
                           recommendTopTrack: List<Track>?,
                           genreData: List<Genre>,
                           onClickMusic: (Track) -> Unit = {},
-                          onClickGenre: (Genre) -> Unit = {}) {
+                          onClickGenre: (Genre) -> Unit = {},
+                          onClickFavorite: (Track) -> Unit = {},
+) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -273,12 +285,15 @@ fun showDefaultSearchPage(currentPlaying: Track,
                 MusicItemCard(
                     navController = navController,
                     currentPlaying = currentPlaying,
-                    id = track.id,
-                    title = track.title,
-                    description = "by ${track.artist}",
-                    imageUrl = track.imageUrl,
+                    track = track,
+                    isFavorite = favoriteTrack.find { it.id == track.id } != null,
                     isShowGotoDetailButton = currentPlaying.id == track.id,
-                    onClick = { onClickMusic(track) }
+                    onClick = {
+                        onClickMusic(track)
+                    },
+                    onAddFavorite = { track ->
+                        onClickFavorite(track)
+                    }
                 )
             }
         }
@@ -308,7 +323,15 @@ fun showDefaultSearchPage(currentPlaying: Track,
 }
 
 @Composable
-fun showQuerySearchPage(currentPlaying: Track, navController: NavController, viewModel: SearchViewModel, context: Context, query: String, onClick: (Track) -> Unit = {}) {
+fun showQuerySearchPage(favoriteTrack: List<Track>,
+                        currentPlaying: Track,
+                        navController: NavController,
+                        viewModel: SearchViewModel,
+                        context: Context,
+                        query: String,
+                        onClick: (Track) -> Unit = {},
+                        onClickFavorite: (Track) -> Unit = {}
+) {
     val listArtistSearch by viewModel.listSearchArtist.observeAsState()
     val isLoading by viewModel.isLoadingEvent.observeAsState()
 
@@ -346,12 +369,15 @@ fun showQuerySearchPage(currentPlaying: Track, navController: NavController, vie
                     MusicItemCard(
                         navController = navController,
                         currentPlaying = currentPlaying,
-                        id = artist.id,
-                        title = artist.title,
-                        description = "by ${artist.artist} (${context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber())})",
-                        imageUrl = artist.imageUrl,
+                        track = artist,
+                        isFavorite = favoriteTrack.find { it.id == artist.id } != null,
                         isShowGotoDetailButton = currentPlaying.id == artist.id,
-                        onClick = { onClick(artist) }
+                        onClick = {
+                            onClick(artist)
+                        },
+                        onAddFavorite = { track ->
+                            onClickFavorite(track)
+                        }
                     )
                 }
             }

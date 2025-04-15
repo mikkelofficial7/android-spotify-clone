@@ -114,7 +114,19 @@ fun MainPage() {
                 }
             }
             composable(ScreenRoute.Profile.route) {
-                ProfileScreen()
+                ProfileScreen(
+                    navController = navController,
+                    isShowPlayerButton = isShowPlayerButton,
+                    currentPlaying = currentPlaying,
+                ) {
+                    if (currentPlaying.id == it.id) {
+                        currentPlaying = Track.empty
+                        isShowPlayerButton = !isShowPlayerButton
+                    } else {
+                        currentPlaying = it
+                        isShowPlayerButton = true
+                    }
+                }
             }
             composable(
                 route = ScreenRoute.AlbumDetail.route,

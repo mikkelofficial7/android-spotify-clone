@@ -20,8 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import com.view.musicplayer.spotifyclone.R
-import com.view.musicplayer.spotifyclone.ext.roundedNumber
 import com.view.musicplayer.spotifyclone.network.response.Track
 import com.view.musicplayer.spotifyclone.screen.shared.EmptyView
 import com.view.musicplayer.spotifyclone.screen.shared.MusicItemCard
@@ -46,8 +44,10 @@ fun HomeScreen(
     val secondTrack by viewModel.secondTrack.observeAsState()
     val thirdTrack by viewModel.thirdTrack.observeAsState()
     val fourthTrack by viewModel.fourthTrack.observeAsState()
+    val favoriteTrack by viewModel.favoriteTrack.observeAsState()
 
     LaunchedEffect(Unit) {
+        viewModel.getAllFavoriteTrack(context)
         viewModel.getRecommendation(context)
         viewModel.getSongRecommendation(context)
     }
@@ -78,13 +78,14 @@ fun HomeScreen(
                         MusicItemCard(
                             navController = navController,
                             currentPlaying = currentPlaying,
-                            id = artist.id,
-                            title = artist.title,
-                            description = context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber()),
-                            imageUrl = artist.imageUrl,
+                            track = artist,
                             isShowGotoDetailButton = currentPlaying.id == artist.id,
+                            isFavorite = favoriteTrack?.find { it.id == artist.id } != null,
                             onClick = {
                                 onClickMusic(artist)
+                            },
+                            onAddFavorite = {
+                                viewModel.addOrRemoveFavorite(context, it)
                             }
                         )
                     }
@@ -114,13 +115,14 @@ fun HomeScreen(
                         MusicItemCard(
                             navController = navController,
                             currentPlaying = currentPlaying,
-                            id = artist.id,
-                            title = artist.title,
-                            description = context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber()),
-                            imageUrl = artist.imageUrl,
+                            track = artist,
                             isShowGotoDetailButton = currentPlaying.id == artist.id,
+                            isFavorite = favoriteTrack?.find { it.id == artist.id } != null,
                             onClick = {
                                 onClickMusic(artist)
+                            },
+                            onAddFavorite = {
+                                viewModel.addOrRemoveFavorite(context, it)
                             }
                         )
                     }
@@ -151,13 +153,14 @@ fun HomeScreen(
                         MusicItemCard(
                             navController = navController,
                             currentPlaying = currentPlaying,
-                            id = artist.id,
-                            title = artist.title,
-                            description = context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber()),
-                            imageUrl = artist.imageUrl,
+                            track = artist,
                             isShowGotoDetailButton = currentPlaying.id == artist.id,
+                            isFavorite = favoriteTrack?.find { it.id == artist.id } != null,
                             onClick = {
                                 onClickMusic(artist)
+                            },
+                            onAddFavorite = {
+                                viewModel.addOrRemoveFavorite(context, it)
                             }
                         )
                     }
@@ -188,13 +191,14 @@ fun HomeScreen(
                         MusicItemCard(
                             navController = navController,
                             currentPlaying = currentPlaying,
-                            id = artist.id,
-                            title = artist.title,
-                            description = context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber()),
-                            imageUrl = artist.imageUrl,
+                            track = artist,
                             isShowGotoDetailButton = currentPlaying.id == artist.id,
+                            isFavorite = favoriteTrack?.find { it.id == artist.id } != null,
                             onClick = {
                                 onClickMusic(artist)
+                            },
+                            onAddFavorite = {
+                                viewModel.addOrRemoveFavorite(context, it)
                             }
                         )
                     }

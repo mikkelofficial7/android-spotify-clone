@@ -40,11 +40,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.view.musicplayer.spotifyclone.R
 import com.view.musicplayer.spotifyclone.ext.convertMillisToTime
-import com.view.musicplayer.spotifyclone.ext.roundedNumber
 import com.view.musicplayer.spotifyclone.ext.toSecond
-import com.view.musicplayer.spotifyclone.navigation.ScreenRoute
-import com.view.musicplayer.spotifyclone.navigation.addOrRemoveFavorite
-import com.view.musicplayer.spotifyclone.navigation.addOrRemoveToPlaylist
 import com.view.musicplayer.spotifyclone.network.response.Track
 import com.view.musicplayer.spotifyclone.screen.shared.AddToFavoriteButton
 import com.view.musicplayer.spotifyclone.screen.shared.AddToListButton
@@ -80,6 +76,7 @@ fun AlbumDetailScreen(
     val screenHeightDp = getDeviceScreenRatio().screenHeightDp
     val listMusicByGenre by viewModel.listArtistByGenre.observeAsState()
     val genreData by viewModel.genreData.observeAsState()
+    val favoriteTrack by viewModel.favoriteTrack.observeAsState()
 
     val listState = rememberLazyListState()
     var isShowToolbar by remember { mutableStateOf(false) }
@@ -88,6 +85,7 @@ fun AlbumDetailScreen(
     var visibleItemIndex: Int
 
     LaunchedEffect(Unit) {
+        viewModel.getAllFavoriteTrack(context)
         viewModel.getAllArtistByGenre(context, albumGenre)
         viewModel.getGenreByName(context, albumGenre)
     }
@@ -276,13 +274,13 @@ fun AlbumDetailScreen(
                     ) {
                         AddToFavoriteButton {
                             listMusicByGenre?.map { track ->
-                                navController.addOrRemoveFavorite(track.id)
+                                viewModel.addOrRemoveFavorite(context, track)
                             }
                         }
                         Spacer(modifier = Modifier.width(10.dp))
                         AddToListButton {
                             listMusicByGenre?.map { track ->
-                                navController.addOrRemoveToPlaylist(track.id)
+                                // navController.addOrRemoveToPlaylist(track.id)
                             }
                         }
                         Spacer(modifier = Modifier
@@ -308,13 +306,14 @@ fun AlbumDetailScreen(
                         MusicItemCard(
                             navController = navController,
                             currentPlaying = currentPlaying,
-                            id = artist.id,
-                            title = artist.title,
-                            description = "by ${artist.artist} (${context.getString(R.string.total_listener, artist.totalListener.toInt().roundedNumber())})",
-                            imageUrl = artist.imageUrl,
+                            track = artist,
+                            isFavorite = favoriteTrack?.find { it.id == artist.id } != null,
                             isShowGotoDetailButton = currentPlaying.id == artist.id,
                             onClick = {
                                 onClickMusic(artist)
+                            },
+                            onAddFavorite = { track ->
+                                viewModel.addOrRemoveFavorite(context, track)
                             }
                         )
                     }

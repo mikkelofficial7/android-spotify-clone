@@ -6,13 +6,15 @@ import com.view.musicplayer.spotifyclone.ext.flowOnValue
 import com.view.musicplayer.spotifyclone.network.Api
 import com.view.musicplayer.spotifyclone.network.response.SongRecommendation
 import com.view.musicplayer.spotifyclone.network.response.Track
+import com.view.musicplayer.spotifyclone.room.AppDb
 import com.view.musicplayer.spotifyclone.viewmodel.base.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class HomePageViewModel(private val api: Api): BaseViewModel<Any?>() {
+class HomePageViewModel(private val api: Api, private val db: AppDb): BaseViewModel<Any?>() {
     val recommendationChart = SingleLiveEvent<List<SongRecommendation>>()
+    val favoriteTrack = SingleLiveEvent<List<Track>>()
     val firstTrack = SingleLiveEvent<List<Track>>()
     val secondTrack = SingleLiveEvent<List<Track>>()
     val thirdTrack = SingleLiveEvent<List<Track>>()
@@ -39,6 +41,31 @@ class HomePageViewModel(private val api: Api): BaseViewModel<Any?>() {
                     thirdTrack.postValue(response.data?.shuffled()?.take(5))
                     fourthTrack.postValue(response.data?.shuffled()?.take(5))
                 }
+            }
+        }
+    }
+
+    internal fun getAllFavoriteTrack(context: Context) {
+        executeJob(context) {
+            safeScopeFun(context).launch(Dispatchers.IO) {
+                val dataExist = db.trackDao().getAllFavoriteTrack()
+                favoriteTrack.postValue(dataExist.map { it.toTrack })
+            }
+        }
+    }
+
+    internal fun addOrRemoveFavorite(context: Context, track: Track) {
+        executeJob(context) {
+            safeScopeFun(context).launch(Dispatchers.IO) {
+                val dataExist = db.trackDao().getFavoriteTrackById(track.id)
+
+                dataExist?.let {
+                    db.trackDao().delete(it)
+                } ?: kotlin.run {
+                    db.trackDao().insert(track.toFavoriteTrack)
+                }
+
+                getAllFavoriteTrack(context)
             }
         }
     }

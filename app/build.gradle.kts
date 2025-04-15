@@ -89,4 +89,9 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
     implementation("io.insert-koin:koin-androidx-compose:3.5.3") // If using Jetpack Compose
     implementation("io.insert-koin:koin-core:3.5.3")
+
+    // room
+    implementation("androidx.room:room-runtime:2.6.1")
+    kapt("androidx.room:room-compiler:2.6.1")
+    implementation("androidx.room:room-ktx:2.6.1")
 }

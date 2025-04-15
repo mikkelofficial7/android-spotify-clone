@@ -3,6 +3,7 @@ package com.view.musicplayer.spotifyclone.navigation
 import androidx.annotation.DrawableRes
 import androidx.navigation.NavController
 import com.view.musicplayer.spotifyclone.R
+import com.view.musicplayer.spotifyclone.network.response.Track
 
 sealed class ScreenRoute(val route: String, val title: String, @DrawableRes val icon: Int) {
     object Home : ScreenRoute("home", "Home Page", R.drawable.ic_home)
@@ -22,12 +23,4 @@ fun NavController.routeToDetail(id: String) {
         launchSingleTop = true
         restoreState = false
     }
-}
-
-fun NavController.addOrRemoveFavorite(id: String) {
-
-}
-
-fun NavController.addOrRemoveToPlaylist(id: String) {
-
 }

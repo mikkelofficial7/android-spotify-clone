@@ -2,6 +2,7 @@ package com.view.musicplayer.spotifyclone.screen.shared
 
 import android.content.res.Configuration
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -18,7 +19,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
@@ -57,8 +57,7 @@ import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.view.musicplayer.spotifyclone.R
 import com.view.musicplayer.spotifyclone.ext.formatTimeTrackRunning
-import com.view.musicplayer.spotifyclone.navigation.addOrRemoveFavorite
-import com.view.musicplayer.spotifyclone.navigation.addOrRemoveToPlaylist
+import com.view.musicplayer.spotifyclone.ext.roundedNumber
 import com.view.musicplayer.spotifyclone.navigation.routeToDetail
 import com.view.musicplayer.spotifyclone.network.response.Track
 import com.view.musicplayer.spotifyclone.ui.theme.Black100
@@ -397,12 +396,13 @@ fun GreenPlayButton(padding: Int = 0, onClick: () -> Unit) {
 @Composable
 fun MusicItemCard(navController: NavController,
                   currentPlaying: Track,
-                  id: String,
-                  title: String,
-                  description: String,
-                  imageUrl: String,
+                  track: Track,
                   isShowGotoDetailButton: Boolean = false,
-                  onClick: () -> Unit = {}) {
+                  isFavorite: Boolean = false,
+                  onClick: () -> Unit = {},
+                  onAddFavorite: (Track) -> Unit = {},
+                  onAddPlaylist:() -> Unit = {}
+    ) {
     var isOptionMenuExpand by remember { mutableStateOf(false) }
 
     Card(
@@ -420,24 +420,39 @@ fun MusicItemCard(navController: NavController,
                 .padding(8.dp)
                 .fillMaxWidth()
         ) {
-            ImageLoader(imageUrl,
-                otherModifier = Modifier
-                    .size(64.dp)
-                    .padding(8.dp)
-                    .clip(RoundedCornerShape(8.dp)))
+            Box {
+                Box {
+                    ImageLoader(track.imageUrl,
+                        otherModifier = Modifier
+                            .size(64.dp)
+                            .padding(8.dp)
+                            .clip(RoundedCornerShape(8.dp)))
+
+                    if (isFavorite) {
+                        Icon(
+                            imageVector = loadIconToVector(icon = R.drawable.ic_favorite),
+                            contentDescription = null,
+                            tint = Red500,
+                            modifier = Modifier
+                                .height(25.dp)
+                                .width(25.dp)
+                        )
+                    }
+                }
+            }
             Column(
                 modifier = Modifier
                     .padding(start = 8.dp)
             ) {
                 Text(
-                    text = title,
-                    color = if (currentPlaying.id == id) SpotifyGreenGrey80 else White80,
+                    text = track.title,
+                    color = if (currentPlaying.id == track.id) SpotifyGreenGrey80 else White80,
                     style = MaterialTheme.typography.bodySmall,
                     fontSize = 14.sp
                 )
                 Text(
-                    text = description,
-                    color = if (currentPlaying.id == id) SpotifyGreenGrey80 else White80,
+                    text = "by ${track.artist} (${LocalContext.current.getString(R.string.total_listener, track.totalListener.toInt().roundedNumber())})",
+                    color = if (currentPlaying.id == track.id) SpotifyGreenGrey80 else White80,
                     style = MaterialTheme.typography.bodySmall,
                     fontSize = 12.sp
                 )
@@ -461,18 +476,19 @@ fun MusicItemCard(navController: NavController,
                     ShowOptionMenu(
                         isOptionMenuExpand = isOptionMenuExpand,
                         isShowGotoDetailButton = isShowGotoDetailButton,
+                        isFavorite = isFavorite,
                         onDismiss = { isOptionMenuExpand = false },
                         onShowDetail = {
                             isOptionMenuExpand = false
-                            navController.routeToDetail(id)
+                            navController.routeToDetail(track.id)
                         },
                         onAddFavorite = {
                             isOptionMenuExpand = false
-                            navController.addOrRemoveFavorite(id)
+                            onAddFavorite(track)
                         },
                         onAddPlaylist = {
                             isOptionMenuExpand = false
-                            navController.addOrRemoveToPlaylist(id)
+                            onAddPlaylist()
                         }
                     )
                 }
@@ -484,11 +500,18 @@ fun MusicItemCard(navController: NavController,
 @Composable
 fun ShowOptionMenu(isOptionMenuExpand: Boolean,
                    isShowGotoDetailButton: Boolean,
+                   isFavorite: Boolean,
                    onDismiss: () -> Unit,
                    onShowDetail: () -> Unit,
                    onAddFavorite: () -> Unit,
                    onAddPlaylist: () -> Unit,
 ) {
+    val favoriteOptionText = if (isFavorite) {
+        LocalContext.current.getString(R.string.remove_favorite)
+    } else {
+        LocalContext.current.getString(R.string.add_favorite)
+    }
+
     DropdownMenu(
         expanded = isOptionMenuExpand,
         onDismissRequest = { onDismiss() }
@@ -537,7 +560,7 @@ fun ShowOptionMenu(isOptionMenuExpand: Boolean,
                     AddToFavoriteButton(color = Red500, size = 20)
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
-                        text = LocalContext.current.getString(R.string.add_favorite),
+                        text = favoriteOptionText,
                         color = Red500,
                         fontSize = 12.sp
                     )
