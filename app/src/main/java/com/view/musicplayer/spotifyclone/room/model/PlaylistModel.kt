@@ -10,5 +10,6 @@ data class PlaylistModel(
     val idPk: Int = 0,
     val playlistName: String,
     val playlistCreated: Long,
+    val playlistIcon: String,
     val playlistTrack: ArrayList<Track>
 )

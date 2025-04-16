@@ -63,10 +63,10 @@ class SearchViewModel(private val api: Api, private val db: AppDb): BaseViewMode
     internal fun getAllFavoriteTrack(context: Context) {
         executeJob(context) {
             safeScopeFun(context).launch(Dispatchers.IO) {
-                val dataExist = db.trackDao().getAllFavoriteTrack()
-
-                isLoadingEvent.postValue(false)
-                favoriteTrack.postValue(dataExist.map { it.toTrack })
+                flowOnValue(db.trackDao().getAllFavoriteTrack()).collectLatest {
+                    isLoadingEvent.postValue(false)
+                    favoriteTrack.postValue(it.map { it.toTrack })
+                }
             }
         }
     }
@@ -77,9 +77,9 @@ class SearchViewModel(private val api: Api, private val db: AppDb): BaseViewMode
                 val dataExist = db.trackDao().getFavoriteTrackById(track.id)
 
                 dataExist?.let {
-                    db.trackDao().delete(it)
+                    flowOnValue(db.trackDao().delete(it))
                 } ?: kotlin.run {
-                    db.trackDao().insert(track.toFavoriteTrack)
+                    flowOnValue(db.trackDao().insert(track.toFavoriteTrack))
                 }
 
                 isLoadingEvent.postValue(false)

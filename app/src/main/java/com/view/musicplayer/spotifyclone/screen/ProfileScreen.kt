@@ -1,7 +1,9 @@
 package com.view.musicplayer.spotifyclone.screen
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -11,7 +13,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -20,6 +24,7 @@ import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -29,12 +34,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.view.musicplayer.spotifyclone.R
+import com.view.musicplayer.spotifyclone.navigation.ScreenRoute
+import com.view.musicplayer.spotifyclone.navigation.routeToPlaylistDetail
 import com.view.musicplayer.spotifyclone.network.response.Track
 import com.view.musicplayer.spotifyclone.room.model.FavoriteTrack
 import com.view.musicplayer.spotifyclone.room.model.PlaylistModel
@@ -141,7 +150,10 @@ fun ProfileScreen(
                             isShowAddPlaylistDialog = true
                         },
                         onDeletePlaylist = {
-                            // show dialog delete playlist
+                            viewModel.removePlaylist(context, it)
+                        },
+                        onNavigatePlaylistDetail = {
+                            navController.routeToPlaylistDetail(it.toString())
                         }
                     )
                 }
@@ -160,9 +172,9 @@ fun ProfileScreen(
                 onDismiss = {
                     isShowAddPlaylistDialog = false
                 },
-                onConfirm = {
+                onConfirm = { name, icon ->
                     isShowAddPlaylistDialog = false
-                    viewModel.addPlaylist(context, it)
+                    viewModel.addPlaylist(context, name, icon)
                 }
             )
         }
@@ -218,8 +230,8 @@ fun PlaylistListContent(
     listPlaylist: List<PlaylistModel>,
     navController: NavController,
     onAddNewPlaylist: () -> Unit = {},
-    onDeletePlaylist: (PlaylistModel) -> Unit = {}
-
+    onDeletePlaylist: (PlaylistModel) -> Unit = {},
+    onNavigatePlaylistDetail: (Int) -> Unit = {}
 ) {
     val context = LocalContext.current
 
@@ -231,19 +243,19 @@ fun PlaylistListContent(
         LazyColumn {
             stickyHeader {
                 ItemTrackLayout(
-                    icon = R.drawable.ic_add_no_round,
+                    iconDefault = R.drawable.ic_add_no_round,
                     title = context.getString(R.string.create_playlist),
                     onClick = onAddNewPlaylist
                )
             }
             items(listPlaylist) {
                 ItemTrackLayout(
-                    icon = R.drawable.is_spotify_green,
+                    icon = it.playlistIcon,
                     isShowDelete = true,
                     title = it.playlistName,
                     message = context.getString(R.string.song_in_playlist, it.playlistTrack.size.toString()),
                     onClick = {
-                        // navigate to playlist detail
+                        onNavigatePlaylistDetail(it.idPk)
                     },
                     onDelete = {
                         onDeletePlaylist(it)
@@ -255,8 +267,9 @@ fun PlaylistListContent(
 }
 
 @Composable
-fun ShowDialogCreatePlaylist(onDismiss: () -> Unit, onConfirm: (String) -> Unit) {
+fun ShowDialogCreatePlaylist(onDismiss: () -> Unit, onConfirm: (String, Int) -> Unit) {
     var playlistName by remember { mutableStateOf("") }
+    var playlistIcon by remember { mutableStateOf(R.drawable.pattern1) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -265,19 +278,94 @@ fun ShowDialogCreatePlaylist(onDismiss: () -> Unit, onConfirm: (String) -> Unit)
         },
         text = {
             Column {
+                Text(LocalContext.current.getString(R.string.background_playlist))
+                Spacer(modifier = Modifier.height(8.dp))
+                LazyRow(modifier = Modifier.fillMaxWidth()) {
+                    item {
+                        Box(modifier = Modifier
+                            .padding(10.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(if (playlistIcon == R.drawable.pattern1) SpotifyGreen80 else Transparent)
+                        ) {
+                            Image(
+                                painter = painterResource(R.drawable.pattern1),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .height(50.dp)
+                                    .width(50.dp)
+                                    .clickable { playlistIcon = R.drawable.pattern1 }
+                            )
+                        }
+                    }
+                    item {
+                        Box(modifier = Modifier
+                            .padding(10.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(if (playlistIcon == R.drawable.pattern2) SpotifyGreen80 else Transparent)
+                        ) {
+                            Image(
+                                painter = painterResource(R.drawable.pattern2),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .height(50.dp)
+                                    .width(50.dp)
+                                    .clickable { playlistIcon = R.drawable.pattern2 }
+                            )
+                        }
+                    }
+                    item {
+                        Box(modifier = Modifier
+                            .padding(10.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(if (playlistIcon == R.drawable.pattern3) SpotifyGreen80 else Transparent)
+                        ) {
+                            Image(
+                                painter = painterResource(R.drawable.pattern3),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .height(50.dp)
+                                    .width(50.dp)
+                                    .clickable { playlistIcon = R.drawable.pattern3 }
+                            )
+                        }
+                    }
+                    item {
+                        Box(modifier = Modifier
+                            .padding(10.dp)
+                            .clip(RoundedCornerShape(16.dp))
+                            .background(if (playlistIcon == R.drawable.pattern4) SpotifyGreen80 else Transparent)
+                        ) {
+                            Image(
+                                painter = painterResource(R.drawable.pattern4),
+                                contentDescription = null,
+                                modifier = Modifier
+                                    .height(50.dp)
+                                    .width(50.dp)
+                                    .clickable { playlistIcon = R.drawable.pattern4 }
+                            )
+                        }
+                    }
+                }
+                Spacer(modifier = Modifier.height(15.dp))
                 Text(LocalContext.current.getString(R.string.input_playlist))
                 Spacer(modifier = Modifier.height(8.dp))
                 TextField(
                     value = playlistName,
                     onValueChange = { playlistName = it },
                     singleLine = true,
+                    colors = TextFieldDefaults.colors(
+                        focusedIndicatorColor = Transparent,
+                        unfocusedIndicatorColor = Transparent,
+                        disabledIndicatorColor = Transparent
+                    ),
                     modifier = Modifier.fillMaxWidth()
                 )
             }
         },
         confirmButton = {
             TextButton(onClick = {
-                onConfirm(playlistName)
+                if (playlistName.isEmpty()) return@TextButton
+                onConfirm(playlistName, playlistIcon)
             }) {
                 Text(LocalContext.current.getString(R.string.confirm))
             }

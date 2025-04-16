@@ -54,11 +54,9 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.view.musicplayer.spotifyclone.R
 import com.view.musicplayer.spotifyclone.constants.Constants
-import com.view.musicplayer.spotifyclone.ext.roundedNumber
-import com.view.musicplayer.spotifyclone.navigation.ScreenRoute
+import com.view.musicplayer.spotifyclone.navigation.routeToAlbumDetail
 import com.view.musicplayer.spotifyclone.network.response.Genre
 import com.view.musicplayer.spotifyclone.network.response.Track
-import com.view.musicplayer.spotifyclone.room.model.FavoriteTrack
 import com.view.musicplayer.spotifyclone.screen.shared.BackButton
 import com.view.musicplayer.spotifyclone.screen.shared.EmptyView
 import com.view.musicplayer.spotifyclone.screen.shared.ImageLoader
@@ -155,11 +153,7 @@ fun SearchScreen(
                     },
                     onClickGenre = {
                         keyboardController?.hide()
-                        navController.navigate(ScreenRoute.AlbumDetail.route(it.name)) {
-                            popUpTo(ScreenRoute.Search.route) { saveState = true }
-                            launchSingleTop = true
-                            restoreState = false
-                        }
+                        navController.routeToAlbumDetail(it.name)
                     },
                     onClickFavorite = {
                         viewModel.addOrRemoveFavorite(context, it)

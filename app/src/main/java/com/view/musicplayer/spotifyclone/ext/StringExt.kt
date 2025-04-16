@@ -1,5 +1,8 @@
 package com.view.musicplayer.spotifyclone.ext
 
+import android.content.Context
+import android.net.Uri
+
 fun Int.roundedNumber(): String {
     return if (this > 5000) return "5000+"
     else if (this > 3000) return "3000+"
@@ -28,4 +31,8 @@ fun Float.formatTimeTrackRunning(): String {
     val minutes = totalSeconds / 60
     val seconds = totalSeconds % 60
     return String.format("%02d:%02d", minutes, seconds)
+}
+
+fun Int.convertToUri(context: Context): Uri? {
+    return Uri.parse("android.resource://${context.packageName}/$this")
 }

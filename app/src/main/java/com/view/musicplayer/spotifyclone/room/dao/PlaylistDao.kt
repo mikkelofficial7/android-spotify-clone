@@ -16,6 +16,9 @@ interface PlaylistDao {
     @Query("SELECT * FROM tbl_track_playlist where idPk = :id")
     suspend fun getPlaylistTrackById(id: Int): PlaylistModel?
 
+    @Query("SELECT * FROM tbl_track_playlist where playlistName = :name")
+    suspend fun getPlaylistTrackByName(name: String): PlaylistModel?
+
     @Query("UPDATE tbl_track_playlist SET playlistTrack = :trackListJson WHERE idPk = :id")
     suspend fun updateTracksInPlaylist(id: Int, trackListJson: String)
     @Delete

@@ -36,6 +36,7 @@ import com.view.musicplayer.spotifyclone.navigation.ScreenRoute
 import com.view.musicplayer.spotifyclone.network.response.Track
 import com.view.musicplayer.spotifyclone.screen.AlbumDetailScreen
 import com.view.musicplayer.spotifyclone.screen.HomeScreen
+import com.view.musicplayer.spotifyclone.screen.PlaylistDetailScreen
 import com.view.musicplayer.spotifyclone.screen.ProfileScreen
 import com.view.musicplayer.spotifyclone.screen.SearchScreen
 import com.view.musicplayer.spotifyclone.screen.SongDetailScreen
@@ -155,6 +156,26 @@ fun MainPage() {
                 SongDetailScreen(
                     navController = navController,
                     currentPlaying = currentPlaying
+                ) {
+                    if (currentPlaying.id == it.id) {
+                        currentPlaying = Track.empty
+                        isShowPlayerButton = !isShowPlayerButton
+                    } else {
+                        currentPlaying = it
+                        isShowPlayerButton = true
+                    }
+                }
+            }
+            composable(
+                route = ScreenRoute.PlaylistDetail.route,
+                arguments = listOf(navArgument("id") { type = NavType.StringType })
+            ) { backStackEntry ->
+                val playlistId = backStackEntry.arguments?.getString("id").orEmpty()
+                PlaylistDetailScreen(
+                    navController = navController,
+                    isShowPlayerButton = isShowPlayerButton,
+                    playlistId = playlistId,
+                    currentPlaying = currentPlaying,
                 ) {
                     if (currentPlaying.id == it.id) {
                         currentPlaying = Track.empty

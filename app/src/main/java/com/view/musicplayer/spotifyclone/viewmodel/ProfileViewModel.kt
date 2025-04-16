@@ -2,6 +2,7 @@ package com.view.musicplayer.spotifyclone.viewmodel
 
 import android.content.Context
 import com.view.musicplayer.spotifyclone.ext.SingleLiveEvent
+import com.view.musicplayer.spotifyclone.ext.convertToUri
 import com.view.musicplayer.spotifyclone.ext.flowOnValue
 import com.view.musicplayer.spotifyclone.network.response.Track
 import com.view.musicplayer.spotifyclone.room.AppDb
@@ -33,9 +34,9 @@ class ProfileViewModel(private val db: AppDb): BaseViewModel<Any?>() {
                 val dataExist = db.trackDao().getFavoriteTrackById(track.id)
 
                 dataExist?.let {
-                    db.trackDao().delete(it)
+                    flowOnValue(db.trackDao().delete(it))
                 } ?: kotlin.run {
-                    db.trackDao().insert(track.toFavoriteTrack)
+                    flowOnValue(db.trackDao().insert(track.toFavoriteTrack))
                 }
 
                 isLoadingEvent.postValue(false)
@@ -47,24 +48,36 @@ class ProfileViewModel(private val db: AppDb): BaseViewModel<Any?>() {
     internal fun getAllPlaylist(context: Context) {
         executeJob(context) {
             safeScopeFun(context).launch(Dispatchers.IO) {
-                val dataExist = db.playlistDao().getAllPlaylistTrack()
-
-                isLoadingEvent.postValue(false)
-                listPlaylist.postValue(dataExist)
+                flowOnValue(db.playlistDao().getAllPlaylistTrack()).collectLatest {
+                    isLoadingEvent.postValue(false)
+                    listPlaylist.postValue(it)
+                }
             }
         }
     }
 
-    internal fun addPlaylist(context: Context, playlistName: String) {
+    internal fun addPlaylist(context: Context, playlistName: String, playlistIcon: Int) {
         val newPlaylist = PlaylistModel(
             playlistName = playlistName,
+            playlistIcon = playlistIcon.convertToUri(context).toString(),
             playlistCreated = System.currentTimeMillis(),
             playlistTrack = arrayListOf()
         )
 
         executeJob(context) {
             safeScopeFun(context).launch(Dispatchers.IO) {
-                db.playlistDao().insert(newPlaylist)
+                flowOnValue(db.playlistDao().insert(newPlaylist))
+                isLoadingEvent.postValue(false)
+
+                getAllPlaylist(context)
+            }
+        }
+    }
+
+    internal fun removePlaylist(context: Context, playlist: PlaylistModel) {
+        executeJob(context) {
+            safeScopeFun(context).launch(Dispatchers.IO) {
+                flowOnValue(db.playlistDao().delete(playlist))
                 isLoadingEvent.postValue(false)
 
                 getAllPlaylist(context)

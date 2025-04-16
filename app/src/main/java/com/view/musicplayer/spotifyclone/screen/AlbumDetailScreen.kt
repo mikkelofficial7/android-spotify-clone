@@ -56,6 +56,7 @@ import com.view.musicplayer.spotifyclone.ui.theme.Black100
 import com.view.musicplayer.spotifyclone.ui.theme.Black60
 import com.view.musicplayer.spotifyclone.ui.theme.Black80
 import com.view.musicplayer.spotifyclone.ui.theme.Red500
+import com.view.musicplayer.spotifyclone.ui.theme.SpotifyGreenGrey40
 import com.view.musicplayer.spotifyclone.ui.theme.Transparent
 import com.view.musicplayer.spotifyclone.ui.theme.White80
 import com.view.musicplayer.spotifyclone.viewmodel.AlbumDetailViewModel
@@ -78,6 +79,7 @@ fun AlbumDetailScreen(
     val listMusicByGenre by viewModel.listArtistByGenre.observeAsState()
     val genreData by viewModel.genreData.observeAsState()
     val favoriteTrack by viewModel.favoriteTrack.observeAsState()
+    val isThisPlaylistNameExist by viewModel.isThisPlaylistExist.observeAsState()
 
     val listState = rememberLazyListState()
     var isShowToolbar by remember { mutableStateOf(false) }
@@ -87,6 +89,7 @@ fun AlbumDetailScreen(
     var visibleItemIndex: Int
 
     LaunchedEffect(Unit) {
+        viewModel.getPlaylistByName(context, albumGenre)
         viewModel.getAllFavoriteTrack(context)
         viewModel.getAllArtistByGenre(context, albumGenre)
         viewModel.getGenreByName(context, albumGenre)
@@ -287,8 +290,12 @@ fun AlbumDetailScreen(
                         }
 
                         Spacer(modifier = Modifier.width(10.dp))
-                        AddToListButton {
-                            // add collective tracks to playlist
+                        AddToListButton(
+                            color = if (isThisPlaylistNameExist == true) SpotifyGreenGrey40 else White80,
+                            title = if (isThisPlaylistNameExist == true) R.string.added_to_playlist else null
+                        ) {
+                            if (isThisPlaylistNameExist == true) return@AddToListButton
+                            viewModel.createPlaylist(context, genreData?.name.orEmpty(), genreData?.imageUrl.orEmpty(), listMusicByGenre ?: arrayListOf())
                         }
                         Spacer(modifier = Modifier
                             .fillMaxWidth()

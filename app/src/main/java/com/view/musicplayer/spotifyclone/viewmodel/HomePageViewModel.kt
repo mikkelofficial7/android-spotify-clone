@@ -48,8 +48,9 @@ class HomePageViewModel(private val api: Api, private val db: AppDb): BaseViewMo
     internal fun getAllFavoriteTrack(context: Context) {
         executeJob(context) {
             safeScopeFun(context).launch(Dispatchers.IO) {
-                val dataExist = db.trackDao().getAllFavoriteTrack()
-                favoriteTrack.postValue(dataExist.map { it.toTrack })
+                flowOnValue(db.trackDao().getAllFavoriteTrack()).collectLatest {
+                    favoriteTrack.postValue(it.map { it.toTrack })
+                }
             }
         }
     }
@@ -60,9 +61,9 @@ class HomePageViewModel(private val api: Api, private val db: AppDb): BaseViewMo
                 val dataExist = db.trackDao().getFavoriteTrackById(track.id)
 
                 dataExist?.let {
-                    db.trackDao().delete(it)
+                    flowOnValue(db.trackDao().delete(it))
                 } ?: kotlin.run {
-                    db.trackDao().insert(track.toFavoriteTrack)
+                    flowOnValue(db.trackDao().insert(track.toFavoriteTrack))
                 }
 
                 getAllFavoriteTrack(context)

@@ -2,6 +2,7 @@ package com.view.musicplayer.spotifyclone.screen.shared
 
 import android.content.res.Configuration
 import androidx.annotation.DrawableRes
+import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -57,7 +58,7 @@ import coil.request.ImageRequest
 import com.view.musicplayer.spotifyclone.R
 import com.view.musicplayer.spotifyclone.ext.formatTimeTrackRunning
 import com.view.musicplayer.spotifyclone.ext.roundedNumber
-import com.view.musicplayer.spotifyclone.navigation.routeToDetail
+import com.view.musicplayer.spotifyclone.navigation.routeToMusicDetail
 import com.view.musicplayer.spotifyclone.network.response.Track
 import com.view.musicplayer.spotifyclone.ui.theme.Black100
 import com.view.musicplayer.spotifyclone.ui.theme.Black60
@@ -66,6 +67,7 @@ import com.view.musicplayer.spotifyclone.ui.theme.Blue500
 import com.view.musicplayer.spotifyclone.ui.theme.Red500
 import com.view.musicplayer.spotifyclone.ui.theme.SpotifyAccent80
 import com.view.musicplayer.spotifyclone.ui.theme.SpotifyGreen80
+import com.view.musicplayer.spotifyclone.ui.theme.SpotifyGreenGrey40
 import com.view.musicplayer.spotifyclone.ui.theme.SpotifyGreenGrey80
 import com.view.musicplayer.spotifyclone.ui.theme.White80
 
@@ -159,21 +161,37 @@ fun ShowDetailButton(size: Int = 30, color: Color = White80, onClick: () -> Unit
 }
 
 @Composable
-fun AddToListButton(size: Int = 30, color: Color = White80, onClick: () -> Unit = {}) {
-    Image(
-        imageVector = loadIconToVector(icon = R.drawable.ic_add),
-        contentDescription = "Icon add",
-        colorFilter = ColorFilter.tint(color),
-        modifier = Modifier
-            .height(size.dp)
-            .width(size.dp)
-            .clickable { onClick() }
-    )
+fun AddToListButton(size: Int = 30,
+                    color: Color = White80,
+                    @StringRes title: Int? = null,
+                    onClick: () -> Unit = {}) {
+    Row(
+       verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            imageVector = loadIconToVector(icon = R.drawable.ic_add),
+            contentDescription = "Icon add",
+            colorFilter = ColorFilter.tint(color),
+            modifier = Modifier
+                .height(size.dp)
+                .width(size.dp)
+                .clickable { onClick() }
+        )
+        title?.let {
+            Text(
+                text = LocalContext.current.getString(title),
+                color = SpotifyGreenGrey40,
+                fontSize = 12.sp,
+                modifier = Modifier.padding(horizontal = 8.dp)
+            )
+        }
+    }
 }
 
 @Composable
 fun ItemTrackLayout(
-    @DrawableRes icon: Int? = null,
+    @DrawableRes iconDefault: Int? = null,
+    icon: String? = null,
     title: String = "",
     message: String = "",
     isShowDelete: Boolean = false,
@@ -189,11 +207,21 @@ fun ItemTrackLayout(
             .padding(bottom = 10.dp, top = 10.dp, start = 16.dp, end = 16.dp)
             .clickable { onClick() }
     ) {
-        icon?.let {
+        iconDefault?.let {
             Image(
-                imageVector = loadIconToVector(icon = icon),
+                imageVector = loadIconToVector(icon = it),
                 contentDescription = null,
                 modifier = Modifier
+                    .height(iconSize.dp)
+                    .width(iconSize.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(Black60)
+            )
+        }
+        icon?.let {
+            ImageLoader(
+                url = it,
+                otherModifier = Modifier
                     .height(iconSize.dp)
                     .width(iconSize.dp)
                     .clip(RoundedCornerShape(8.dp))
@@ -494,7 +522,7 @@ fun MusicItemCard(navController: NavController,
                         onDismiss = { isOptionMenuExpand = false },
                         onShowDetail = {
                             isOptionMenuExpand = false
-                            navController.routeToDetail(track.id)
+                            navController.routeToMusicDetail(track.id)
                         },
                         onAddFavorite = {
                             isOptionMenuExpand = false

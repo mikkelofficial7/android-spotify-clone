@@ -10,6 +10,8 @@
     <string name="your_favorite">Your Favorite Tracks</string>
     <string name="create_playlist">Create Playlist</string>
     <string name="input_playlist">Input playlist name</string>
+    <string name="added_to_playlist">Added to your playlist</string>
+    <string name="background_playlist">Choose Background playlist</string>
     <string name="song_in_playlist">%1$s Songs</string>
     <string name="cancel">Cancel</string>
     <string name="confirm">Confirm</string>

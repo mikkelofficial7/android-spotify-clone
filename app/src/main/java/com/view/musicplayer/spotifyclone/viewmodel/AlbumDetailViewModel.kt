@@ -7,6 +7,7 @@ import com.view.musicplayer.spotifyclone.network.Api
 import com.view.musicplayer.spotifyclone.network.response.Genre
 import com.view.musicplayer.spotifyclone.network.response.Track
 import com.view.musicplayer.spotifyclone.room.AppDb
+import com.view.musicplayer.spotifyclone.room.model.PlaylistModel
 import com.view.musicplayer.spotifyclone.viewmodel.base.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
@@ -16,6 +17,7 @@ class AlbumDetailViewModel(private val api: Api, private val db: AppDb): BaseVie
     val favoriteTrack = SingleLiveEvent<List<Track>>()
     val genreData = SingleLiveEvent<Genre>()
     val listArtistByGenre = SingleLiveEvent<ArrayList<Track>>()
+    val isThisPlaylistExist = SingleLiveEvent<Boolean>()
 
     internal fun getGenreByName(context: Context, genre: String) {
         executeJob(context) {
@@ -51,8 +53,10 @@ class AlbumDetailViewModel(private val api: Api, private val db: AppDb): BaseVie
     internal fun getAllFavoriteTrack(context: Context) {
         executeJob(context) {
             safeScopeFun(context).launch(Dispatchers.IO) {
-                val dataExist = db.trackDao().getAllFavoriteTrack()
-                favoriteTrack.postValue(dataExist.map { it.toTrack })
+                flowOnValue(db.trackDao().getAllFavoriteTrack()).collectLatest {
+                    isLoadingEvent.postValue(false)
+                    favoriteTrack.postValue(it.map { it.toTrack })
+                }
             }
         }
     }
@@ -79,10 +83,10 @@ class AlbumDetailViewModel(private val api: Api, private val db: AppDb): BaseVie
                 trackList.map {
                     val dataExist = db.trackDao().getFavoriteTrackById(it.id)
                     dataExist?.let { favTrack ->
-                        db.trackDao().delete(favTrack)
+                        flowOnValue(db.trackDao().delete(favTrack))
                     }
 
-                    db.trackDao().insert(it.toFavoriteTrack)
+                    flowOnValue(db.trackDao().insert(it.toFavoriteTrack))
                 }
 
                 getAllFavoriteTrack(context)
@@ -95,10 +99,42 @@ class AlbumDetailViewModel(private val api: Api, private val db: AppDb): BaseVie
             safeScopeFun(context).launch(Dispatchers.IO) {
                 trackList.map {
                     val dataExist = db.trackDao().getFavoriteTrackById(it.id)
-                    dataExist?.let { favTrack -> db.trackDao().delete(favTrack) }
+                    dataExist?.let { favTrack ->
+                        flowOnValue(db.trackDao().delete(favTrack))
+                    }
                 }
 
                 getAllFavoriteTrack(context)
+            }
+        }
+    }
+
+    internal fun getPlaylistByName(context: Context, name: String) {
+        executeJob(context) {
+            safeScopeFun(context).launch(Dispatchers.IO) {
+                isLoadingEvent.postValue(false)
+                val dataExist = db.playlistDao().getPlaylistTrackByName(name)
+                dataExist?.let {
+                    isThisPlaylistExist.postValue(true)
+                } ?: kotlin.run {
+                    isThisPlaylistExist.postValue(false)
+                }
+            }
+        }
+    }
+
+    internal fun createPlaylist(context: Context, name: String, icon: String, listTrack: ArrayList<Track>) {
+        executeJob(context) {
+            safeScopeFun(context).launch(Dispatchers.IO) {
+                val playlist = PlaylistModel(
+                    playlistName = name,
+                    playlistCreated = System.currentTimeMillis(),
+                    playlistIcon = icon,
+                    playlistTrack = listTrack
+                )
+                flowOnValue(db.playlistDao().insert(playlist))
+
+                getPlaylistByName(context, name)
             }
         }
     }
