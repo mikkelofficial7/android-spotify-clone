@@ -18,6 +18,7 @@ class AlbumDetailViewModel(private val api: Api, private val db: AppDb): BaseVie
     val genreData = SingleLiveEvent<Genre>()
     val listArtistByGenre = SingleLiveEvent<ArrayList<Track>>()
     val isThisPlaylistExist = SingleLiveEvent<Boolean>()
+    val listPlaylist = SingleLiveEvent<List<PlaylistModel>>()
 
     internal fun getGenreByName(context: Context, genre: String) {
         executeJob(context) {
@@ -135,6 +136,42 @@ class AlbumDetailViewModel(private val api: Api, private val db: AppDb): BaseVie
                 flowOnValue(db.playlistDao().insert(playlist))
 
                 getPlaylistByName(context, name)
+            }
+        }
+    }
+
+    internal fun getAllPlaylist(context: Context) {
+        executeJob(context) {
+            safeScopeFun(context).launch(Dispatchers.IO) {
+                flowOnValue(db.playlistDao().getAllPlaylistTrack()).collectLatest {
+                    isLoadingEvent.postValue(false)
+                    listPlaylist.postValue(it)
+                }
+            }
+        }
+    }
+
+    internal fun addTrackToPlaylist(context: Context, track: Track, playlist: PlaylistModel?) {
+        if (playlist == null) return
+        executeJob(context) {
+            safeScopeFun(context).launch(Dispatchers.IO) {
+                val playlistFound = db.playlistDao().getPlaylistTrackById(playlist.idPk)
+
+                val listAllTrackInPlaylist = arrayListOf<Track>()
+                listAllTrackInPlaylist.addAll(playlistFound?.playlistTrack ?: arrayListOf())
+                listAllTrackInPlaylist.add(track)
+
+                val newSetPlaylist = PlaylistModel(
+                    playlistName = playlistFound?.playlistName.toString(),
+                    playlistIcon = playlistFound?.playlistIcon.toString(),
+                    playlistCreated = playlistFound?.playlistCreated ?: 0,
+                    playlistTrack = listAllTrackInPlaylist
+                )
+
+                db.playlistDao().delete(playlist)
+                db.playlistDao().insert(newSetPlaylist)
+
+                getAllPlaylist(context)
             }
         }
     }

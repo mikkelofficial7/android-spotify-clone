@@ -45,11 +45,13 @@ fun HomeScreen(
     val thirdTrack by viewModel.thirdTrack.observeAsState()
     val fourthTrack by viewModel.fourthTrack.observeAsState()
     val favoriteTrack by viewModel.favoriteTrack.observeAsState()
+    val listPlaylist by viewModel.listPlaylist.observeAsState()
 
     LaunchedEffect(Unit) {
         viewModel.getAllFavoriteTrack(context)
         viewModel.getRecommendation(context)
         viewModel.getSongRecommendation(context)
+        viewModel.getAllPlaylist(context)
     }
 
     Column {
@@ -79,6 +81,7 @@ fun HomeScreen(
                             navController = navController,
                             currentPlaying = currentPlaying,
                             track = artist,
+                            listPlaylist = listPlaylist,
                             isShowGotoDetailButton = currentPlaying.id == artist.id,
                             isFavorite = favoriteTrack?.find { it.id == artist.id } != null,
                             onClick = {
@@ -86,6 +89,9 @@ fun HomeScreen(
                             },
                             onAddFavorite = {
                                 viewModel.addOrRemoveFavorite(context, it)
+                            },
+                            onAddPlaylist = { track, playlist ->
+                                viewModel.addTrackToPlaylist(context, track, playlist)
                             }
                         )
                     }
@@ -116,6 +122,7 @@ fun HomeScreen(
                             navController = navController,
                             currentPlaying = currentPlaying,
                             track = artist,
+                            listPlaylist = listPlaylist,
                             isShowGotoDetailButton = currentPlaying.id == artist.id,
                             isFavorite = favoriteTrack?.find { it.id == artist.id } != null,
                             onClick = {
@@ -123,6 +130,9 @@ fun HomeScreen(
                             },
                             onAddFavorite = {
                                 viewModel.addOrRemoveFavorite(context, it)
+                            },
+                            onAddPlaylist = { track, playlist ->
+                                viewModel.addTrackToPlaylist(context, track, playlist)
                             }
                         )
                     }
@@ -154,6 +164,7 @@ fun HomeScreen(
                             navController = navController,
                             currentPlaying = currentPlaying,
                             track = artist,
+                            listPlaylist = listPlaylist,
                             isShowGotoDetailButton = currentPlaying.id == artist.id,
                             isFavorite = favoriteTrack?.find { it.id == artist.id } != null,
                             onClick = {
@@ -161,6 +172,9 @@ fun HomeScreen(
                             },
                             onAddFavorite = {
                                 viewModel.addOrRemoveFavorite(context, it)
+                            },
+                            onAddPlaylist = { track, playlist ->
+                                viewModel.addTrackToPlaylist(context, track, playlist)
                             }
                         )
                     }
@@ -192,6 +206,7 @@ fun HomeScreen(
                             navController = navController,
                             currentPlaying = currentPlaying,
                             track = artist,
+                            listPlaylist = listPlaylist,
                             isShowGotoDetailButton = currentPlaying.id == artist.id,
                             isFavorite = favoriteTrack?.find { it.id == artist.id } != null,
                             onClick = {
@@ -199,6 +214,9 @@ fun HomeScreen(
                             },
                             onAddFavorite = {
                                 viewModel.addOrRemoveFavorite(context, it)
+                            },
+                            onAddPlaylist = { track, playlist ->
+                                viewModel.addTrackToPlaylist(context, track, playlist)
                             }
                         )
                     }

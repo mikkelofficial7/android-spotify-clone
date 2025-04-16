@@ -1,6 +1,7 @@
 package com.view.musicplayer.spotifyclone.screen.shared
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
@@ -14,14 +15,18 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.layout.wrapContentWidth
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -32,6 +37,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -55,11 +61,13 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
+import com.google.gson.Gson
 import com.view.musicplayer.spotifyclone.R
 import com.view.musicplayer.spotifyclone.ext.formatTimeTrackRunning
 import com.view.musicplayer.spotifyclone.ext.roundedNumber
 import com.view.musicplayer.spotifyclone.navigation.routeToMusicDetail
 import com.view.musicplayer.spotifyclone.network.response.Track
+import com.view.musicplayer.spotifyclone.room.model.PlaylistModel
 import com.view.musicplayer.spotifyclone.ui.theme.Black100
 import com.view.musicplayer.spotifyclone.ui.theme.Black60
 import com.view.musicplayer.spotifyclone.ui.theme.Black80
@@ -69,6 +77,7 @@ import com.view.musicplayer.spotifyclone.ui.theme.SpotifyAccent80
 import com.view.musicplayer.spotifyclone.ui.theme.SpotifyGreen80
 import com.view.musicplayer.spotifyclone.ui.theme.SpotifyGreenGrey40
 import com.view.musicplayer.spotifyclone.ui.theme.SpotifyGreenGrey80
+import com.view.musicplayer.spotifyclone.ui.theme.Transparent
 import com.view.musicplayer.spotifyclone.ui.theme.White80
 
 @Composable
@@ -194,6 +203,7 @@ fun ItemTrackLayout(
     icon: String? = null,
     title: String = "",
     message: String = "",
+    textColor: Color = White80,
     isShowDelete: Boolean = false,
     onClick: () -> Unit,
     onDelete: () -> Unit = {}
@@ -234,13 +244,13 @@ fun ItemTrackLayout(
         ) {
             Text(
                 text = title,
-                color = White80,
+                color = textColor,
                 fontSize = 16.sp
             )
             if (message.isNotBlank()) {
                 Text(
                     text = message,
-                    color = White80,
+                    color = textColor,
                     fontSize = 12.sp,
                     fontStyle = FontStyle.Italic
                 )
@@ -436,16 +446,23 @@ fun GreenPlayButton(padding: Int = 0, onClick: () -> Unit) {
 }
 
 @Composable
-fun MusicItemCard(navController: NavController,
-                  currentPlaying: Track,
-                  track: Track,
-                  isShowGotoDetailButton: Boolean = false,
-                  isFavorite: Boolean = false,
-                  onClick: () -> Unit = {},
-                  onAddFavorite: (Track) -> Unit = {},
-                  onAddPlaylist:() -> Unit = {}
-    ) {
+fun MusicItemCard(
+    navController: NavController,
+    currentPlaying: Track,
+    track: Track,
+    listPlaylist: List<PlaylistModel>? = arrayListOf(),
+    isShowGotoDetailButton: Boolean = false,
+    isFavorite: Boolean = false,
+    onClick: () -> Unit = {},
+    onAddFavorite: (Track) -> Unit = {},
+    onAddPlaylist:(Track, PlaylistModel?) -> Unit = { track, playlist -> }
+) {
     var isOptionMenuExpand by remember { mutableStateOf(false) }
+    var isShowSelectorTrack by remember { mutableStateOf(false) }
+
+    val listPlaylistFiltered = listPlaylist?.filter { playlist ->
+        playlist.playlistTrack.all { it.id != track.id }
+    }
 
     Card(
         modifier = Modifier
@@ -518,6 +535,7 @@ fun MusicItemCard(navController: NavController,
                     ShowOptionMenu(
                         isOptionMenuExpand = isOptionMenuExpand,
                         isShowGotoDetailButton = isShowGotoDetailButton,
+                        isShowAddToPlaylist = !listPlaylistFiltered.isNullOrEmpty(),
                         isFavorite = isFavorite,
                         onDismiss = { isOptionMenuExpand = false },
                         onShowDetail = {
@@ -527,26 +545,41 @@ fun MusicItemCard(navController: NavController,
                         onAddFavorite = {
                             isOptionMenuExpand = false
                             onAddFavorite(track)
-                        },
-                        onAddPlaylist = {
-                            isOptionMenuExpand = false
-                            onAddPlaylist()
                         }
-                    )
+                    ) {
+                        isOptionMenuExpand = false
+                        isShowSelectorTrack = true
+                    }
                 }
             }
         }
     }
+
+    if (isShowSelectorTrack) {
+        ShowSelectorPlaylist(
+            track,
+            listPlaylistFiltered,
+            onDismiss = {
+                isShowSelectorTrack = false
+            },
+            onConfirm = { track, playlist ->
+                isShowSelectorTrack = false
+                onAddPlaylist(track, playlist)
+            }
+        )
+    }
 }
 
 @Composable
-fun ShowOptionMenu(isOptionMenuExpand: Boolean,
-                   isShowGotoDetailButton: Boolean,
-                   isFavorite: Boolean,
-                   onDismiss: () -> Unit,
-                   onShowDetail: () -> Unit,
-                   onAddFavorite: () -> Unit,
-                   onAddPlaylist: () -> Unit,
+fun ShowOptionMenu(
+    isOptionMenuExpand: Boolean,
+    isShowGotoDetailButton: Boolean,
+    isShowAddToPlaylist: Boolean,
+    isFavorite: Boolean,
+    onDismiss: () -> Unit,
+    onShowDetail: () -> Unit,
+    onAddFavorite: () -> Unit,
+    onAddPlaylist: () -> Unit,
 ) {
     val favoriteOptionText = if (isFavorite) {
         LocalContext.current.getString(R.string.remove_favorite)
@@ -577,29 +610,35 @@ fun ShowOptionMenu(isOptionMenuExpand: Boolean,
                 }
             )
         }
-        DropdownMenuItem(
-            text = {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    AddToListButton(color = Blue500, size = 20)
-                    Spacer(modifier = Modifier.width(8.dp))
-                    Text(
-                        text = LocalContext.current.getString(R.string.add_playlist),
-                        color = Blue500,
-                        fontSize = 12.sp
-                    )
+        if (isShowAddToPlaylist) {
+            DropdownMenuItem(
+                text = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        AddToListButton(color = Blue500, size = 20) {
+                            onAddPlaylist()
+                        }
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = LocalContext.current.getString(R.string.add_playlist),
+                            color = Blue500,
+                            fontSize = 12.sp
+                        )
+                    }
+                }, onClick = {
+                    onAddPlaylist()
                 }
-            }, onClick = {
-                onAddPlaylist()
-            }
-        )
+            )
+        }
         DropdownMenuItem(
             text = {
                 Row(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    AddToFavoriteButton(color = Red500, size = 20)
+                    AddToFavoriteButton(color = Red500, size = 20){
+                        onAddFavorite()
+                    }
                     Spacer(modifier = Modifier.width(8.dp))
                     Text(
                         text = favoriteOptionText,
@@ -612,5 +651,61 @@ fun ShowOptionMenu(isOptionMenuExpand: Boolean,
             }
         )
     }
+}
 
+@Composable
+fun ShowSelectorPlaylist(
+    track: Track,
+    listPlaylistFiltered: List<PlaylistModel>?,
+    onDismiss: () -> Unit,
+    onConfirm: (Track, PlaylistModel?) -> Unit
+) {
+    var selectedPlaylist: PlaylistModel? by remember { mutableStateOf(null) }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(
+                text = LocalContext.current.getString(R.string.choose_playlist),
+                color = Black80,
+                fontSize = 16.sp
+            )
+        },
+        text = {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = 300.dp)
+            ) {
+                items(listPlaylistFiltered.orEmpty()) {
+                    Box(modifier = Modifier
+                        .padding(5.dp)
+                        .clip(RoundedCornerShape(16.dp))
+                        .background(if (selectedPlaylist?.playlistName == it.playlistName) SpotifyGreen80 else Transparent)
+                    ) {
+                        ItemTrackLayout(
+                            icon = it.playlistIcon,
+                            title = it.playlistName,
+                            textColor = Black80,
+                            onClick = { selectedPlaylist = it }
+                        )
+                        Spacer(modifier = Modifier.fillMaxWidth().height(8.dp))
+                    }
+                }
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = {
+                if (selectedPlaylist == null) return@TextButton
+                onConfirm(track, selectedPlaylist)
+            }) {
+                Text(LocalContext.current.getString(R.string.confirm))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(LocalContext.current.getString(R.string.cancel))
+            }
+        }
+    )
 }

@@ -5,9 +5,9 @@ import com.view.musicplayer.spotifyclone.ext.SingleLiveEvent
 import com.view.musicplayer.spotifyclone.ext.flowOnValue
 import com.view.musicplayer.spotifyclone.network.Api
 import com.view.musicplayer.spotifyclone.network.response.Genre
-import com.view.musicplayer.spotifyclone.network.response.SongRecommendation
 import com.view.musicplayer.spotifyclone.network.response.Track
 import com.view.musicplayer.spotifyclone.room.AppDb
+import com.view.musicplayer.spotifyclone.room.model.PlaylistModel
 import com.view.musicplayer.spotifyclone.viewmodel.base.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
@@ -18,6 +18,7 @@ class SearchViewModel(private val api: Api, private val db: AppDb): BaseViewMode
     val allGenre = SingleLiveEvent<List<Genre>>()
     val topTrack = SingleLiveEvent<List<Track>>()
     val listSearchArtist = SingleLiveEvent<ArrayList<Track>>()
+    val listPlaylist = SingleLiveEvent<List<PlaylistModel>>()
 
     internal fun getAllGenre(context: Context) {
         executeJob(context) {
@@ -84,6 +85,42 @@ class SearchViewModel(private val api: Api, private val db: AppDb): BaseViewMode
 
                 isLoadingEvent.postValue(false)
                 getAllFavoriteTrack(context)
+            }
+        }
+    }
+    internal fun getAllPlaylist(context: Context) {
+        executeJob(context) {
+            safeScopeFun(context).launch(Dispatchers.IO) {
+                flowOnValue(db.playlistDao().getAllPlaylistTrack()).collectLatest {
+                    isLoadingEvent.postValue(false)
+                    listPlaylist.postValue(it)
+                }
+            }
+        }
+    }
+
+    internal fun addTrackToPlaylist(context: Context, track: Track, playlist: PlaylistModel?) {
+        if (playlist == null) return
+        executeJob(context) {
+            safeScopeFun(context).launch(Dispatchers.IO) {
+                val playlistFound = db.playlistDao().getPlaylistTrackById(playlist.idPk)
+
+                val listAllTrackInPlaylist = arrayListOf<Track>()
+                listAllTrackInPlaylist.addAll(playlistFound?.playlistTrack ?: arrayListOf())
+                listAllTrackInPlaylist.add(track)
+
+                val newSetPlaylist = PlaylistModel(
+                    playlistName = playlistFound?.playlistName.toString(),
+                    playlistIcon = playlistFound?.playlistIcon.toString(),
+                    playlistCreated = playlistFound?.playlistCreated ?: 0,
+                    playlistTrack = listAllTrackInPlaylist
+                )
+
+                db.playlistDao().delete(playlist)
+                db.playlistDao().insert(newSetPlaylist)
+
+                isLoadingEvent.postValue(false)
+                getAllPlaylist(context)
             }
         }
     }

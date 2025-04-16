@@ -57,6 +57,7 @@ import com.view.musicplayer.spotifyclone.constants.Constants
 import com.view.musicplayer.spotifyclone.navigation.routeToAlbumDetail
 import com.view.musicplayer.spotifyclone.network.response.Genre
 import com.view.musicplayer.spotifyclone.network.response.Track
+import com.view.musicplayer.spotifyclone.room.model.PlaylistModel
 import com.view.musicplayer.spotifyclone.screen.shared.BackButton
 import com.view.musicplayer.spotifyclone.screen.shared.EmptyView
 import com.view.musicplayer.spotifyclone.screen.shared.ImageLoader
@@ -89,6 +90,7 @@ fun SearchScreen(
     val genreData by viewModel.allGenre.observeAsState()
     val recommendTopTrack by viewModel.topTrack.observeAsState()
     val favoriteTrack by viewModel.favoriteTrack.observeAsState()
+    val listPlaylist by viewModel.listPlaylist.observeAsState()
 
     val focusManager = LocalFocusManager.current
     var isSearchActive by remember { mutableStateOf(false) }
@@ -105,6 +107,7 @@ fun SearchScreen(
     }
 
     LaunchedEffect(Unit) {
+        viewModel.getAllPlaylist(context)
         viewModel.getAllFavoriteTrack(context)
         viewModel.getAllGenre(context)
         viewModel.getSongRecommendation(context)
@@ -138,15 +141,32 @@ fun SearchScreen(
                 }
             }
             when (isSearchActive) {
-                true -> showQuerySearchPage(favoriteTrack ?: listOf(), currentPlaying, navController, viewModel, context, querySearch,
+                true -> showQuerySearchPage(
+                    favoriteTrack ?: listOf(),
+                    listPlaylist,
+                    currentPlaying,
+                    navController,
+                    viewModel,
+                    context,
+                    querySearch,
                     onClick = {
                         keyboardController?.hide()
                         onClickMusic(it)
                     },
                     onClickFavorite = {
                         viewModel.addOrRemoveFavorite(context, it)
+                    },
+                    onAddPlaylist = { track, playlist ->
+                        viewModel.addTrackToPlaylist(context, track, playlist)
                     })
-                false -> showDefaultSearchPage(favoriteTrack ?: listOf(), currentPlaying, navController, recommendTopTrack, genreData ?: listOf(),
+                false -> showDefaultSearchPage(
+                    viewModel,
+                    favoriteTrack ?: listOf(),
+                    listPlaylist,
+                    currentPlaying,
+                    navController,
+                    recommendTopTrack,
+                    genreData ?: listOf(),
                     onClickMusic = {
                         keyboardController?.hide()
                         onClickMusic(it)
@@ -157,7 +177,10 @@ fun SearchScreen(
                     },
                     onClickFavorite = {
                         viewModel.addOrRemoveFavorite(context, it)
-                    })
+                    }
+                ) { track, playlist ->
+                    viewModel.addTrackToPlaylist(context, track, playlist)
+                }
             }
         }
 
@@ -253,14 +276,18 @@ fun SearchMusicBar(interactSource: MutableInteractionSource, musicSearched: Stri
 }
 
 @Composable
-fun showDefaultSearchPage(favoriteTrack: List<Track>,
-                          currentPlaying: Track,
-                          navController: NavController,
-                          recommendTopTrack: List<Track>?,
-                          genreData: List<Genre>,
-                          onClickMusic: (Track) -> Unit = {},
-                          onClickGenre: (Genre) -> Unit = {},
-                          onClickFavorite: (Track) -> Unit = {},
+fun showDefaultSearchPage(
+    viewModel: SearchViewModel,
+    favoriteTrack: List<Track>,
+    listPlaylist: List<PlaylistModel>?,
+    currentPlaying: Track,
+    navController: NavController,
+    recommendTopTrack: List<Track>?,
+    genreData: List<Genre>,
+    onClickMusic: (Track) -> Unit = {},
+    onClickGenre: (Genre) -> Unit = {},
+    onClickFavorite: (Track) -> Unit = {},
+    onAddPlaylist: (Track, PlaylistModel?) -> Unit,
 ) {
     Column(
         modifier = Modifier
@@ -280,6 +307,7 @@ fun showDefaultSearchPage(favoriteTrack: List<Track>,
                     navController = navController,
                     currentPlaying = currentPlaying,
                     track = track,
+                    listPlaylist = listPlaylist,
                     isFavorite = favoriteTrack.find { it.id == track.id } != null,
                     isShowGotoDetailButton = currentPlaying.id == track.id,
                     onClick = {
@@ -287,6 +315,9 @@ fun showDefaultSearchPage(favoriteTrack: List<Track>,
                     },
                     onAddFavorite = { track ->
                         onClickFavorite(track)
+                    },
+                    onAddPlaylist = { track, playlist ->
+                        onAddPlaylist(track, playlist)
                     }
                 )
             }
@@ -318,13 +349,15 @@ fun showDefaultSearchPage(favoriteTrack: List<Track>,
 
 @Composable
 fun showQuerySearchPage(favoriteTrack: List<Track>,
+                        listPlaylist: List<PlaylistModel>?,
                         currentPlaying: Track,
                         navController: NavController,
                         viewModel: SearchViewModel,
                         context: Context,
                         query: String,
                         onClick: (Track) -> Unit = {},
-                        onClickFavorite: (Track) -> Unit = {}
+                        onClickFavorite: (Track) -> Unit = {},
+                        onAddPlaylist: (Track, PlaylistModel?) -> Unit
 ) {
     val listArtistSearch by viewModel.listSearchArtist.observeAsState()
     val isLoading by viewModel.isLoadingEvent.observeAsState()
@@ -364,6 +397,7 @@ fun showQuerySearchPage(favoriteTrack: List<Track>,
                         navController = navController,
                         currentPlaying = currentPlaying,
                         track = artist,
+                        listPlaylist = listPlaylist,
                         isFavorite = favoriteTrack.find { it.id == artist.id } != null,
                         isShowGotoDetailButton = currentPlaying.id == artist.id,
                         onClick = {
@@ -371,6 +405,9 @@ fun showQuerySearchPage(favoriteTrack: List<Track>,
                         },
                         onAddFavorite = { track ->
                             onClickFavorite(track)
+                        },
+                        onAddPlaylist = { track, playlist ->
+                            onAddPlaylist(track, playlist)
                         }
                     )
                 }

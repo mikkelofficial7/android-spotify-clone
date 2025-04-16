@@ -80,6 +80,7 @@ fun AlbumDetailScreen(
     val genreData by viewModel.genreData.observeAsState()
     val favoriteTrack by viewModel.favoriteTrack.observeAsState()
     val isThisPlaylistNameExist by viewModel.isThisPlaylistExist.observeAsState()
+    val listPlaylist by viewModel.listPlaylist.observeAsState()
 
     val listState = rememberLazyListState()
     var isShowToolbar by remember { mutableStateOf(false) }
@@ -89,6 +90,7 @@ fun AlbumDetailScreen(
     var visibleItemIndex: Int
 
     LaunchedEffect(Unit) {
+        viewModel.getAllPlaylist(context)
         viewModel.getPlaylistByName(context, albumGenre)
         viewModel.getAllFavoriteTrack(context)
         viewModel.getAllArtistByGenre(context, albumGenre)
@@ -321,6 +323,7 @@ fun AlbumDetailScreen(
                             navController = navController,
                             currentPlaying = currentPlaying,
                             track = artist,
+                            listPlaylist = listPlaylist,
                             isFavorite = favoriteTrack?.find { it.id == artist.id } != null,
                             isShowGotoDetailButton = currentPlaying.id == artist.id,
                             onClick = {
@@ -328,6 +331,9 @@ fun AlbumDetailScreen(
                             },
                             onAddFavorite = { track ->
                                 viewModel.addOrRemoveFavorite(context, track)
+                            },
+                            onAddPlaylist = { track, playlist ->
+                                viewModel.addTrackToPlaylist(context, track, playlist)
                             }
                         )
                     }
