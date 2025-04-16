@@ -98,9 +98,9 @@ fun ProfileScreen(
                     .width(80.dp)
             )
             Spacer(modifier = Modifier.height(12.dp))
-            Text(text = "name", color = White80, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-            Text(text = "email", color = White80, fontSize = 14.sp)
-            Text(text = "Age", color = White80, fontSize = 14.sp)
+            Text(text = "{{name}}", color = White80, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            Text(text = "{{email}}", color = White80, fontSize = 14.sp)
+            Text(text = "{{age}}", color = White80, fontSize = 14.sp)
             Spacer(modifier = Modifier.height(24.dp))
             Column(
                 modifier = Modifier
