@@ -55,6 +55,7 @@ import com.view.musicplayer.spotifyclone.screen.shared.loadIconToVector
 import com.view.musicplayer.spotifyclone.ui.theme.Black100
 import com.view.musicplayer.spotifyclone.ui.theme.Black60
 import com.view.musicplayer.spotifyclone.ui.theme.Black80
+import com.view.musicplayer.spotifyclone.ui.theme.Red500
 import com.view.musicplayer.spotifyclone.ui.theme.Transparent
 import com.view.musicplayer.spotifyclone.ui.theme.White80
 import com.view.musicplayer.spotifyclone.viewmodel.AlbumDetailViewModel
@@ -80,6 +81,7 @@ fun AlbumDetailScreen(
 
     val listState = rememberLazyListState()
     var isShowToolbar by remember { mutableStateOf(false) }
+    var allListIncludedInFavorite by remember { mutableStateOf(true) }
     var targetedPx = 0
     var currentScrollYPosition = 0
     var visibleItemIndex: Int
@@ -272,16 +274,21 @@ fun AlbumDetailScreen(
                             .fillMaxWidth(),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        AddToFavoriteButton {
-                            listMusicByGenre?.map { track ->
-                                viewModel.addOrRemoveFavorite(context, track)
+                        allListIncludedInFavorite = listMusicByGenre?.all { track -> favoriteTrack?.contains(track) == true } == true
+
+                        AddToFavoriteButton(
+                            color = if (allListIncludedInFavorite) Red500 else White80
+                        ) {
+                            if (allListIncludedInFavorite) {
+                                viewModel.removeAllTrackFromFavorite(context, listMusicByGenre ?: arrayListOf())
+                            } else {
+                                viewModel.addAllTrackToFavorite(context, listMusicByGenre ?: arrayListOf())
                             }
                         }
+
                         Spacer(modifier = Modifier.width(10.dp))
                         AddToListButton {
-                            listMusicByGenre?.map { track ->
-                                // navController.addOrRemoveToPlaylist(track.id)
-                            }
+                            // add collective tracks to playlist
                         }
                         Spacer(modifier = Modifier
                             .fillMaxWidth()

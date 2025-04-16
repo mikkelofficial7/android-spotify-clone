@@ -12,11 +12,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -34,6 +37,7 @@ import androidx.navigation.NavController
 import com.view.musicplayer.spotifyclone.R
 import com.view.musicplayer.spotifyclone.network.response.Track
 import com.view.musicplayer.spotifyclone.room.model.FavoriteTrack
+import com.view.musicplayer.spotifyclone.room.model.PlaylistModel
 import com.view.musicplayer.spotifyclone.screen.shared.EmptyView
 import com.view.musicplayer.spotifyclone.screen.shared.ImageLoader
 import com.view.musicplayer.spotifyclone.screen.shared.ItemTrackLayout
@@ -59,9 +63,12 @@ fun ProfileScreen(
     var selectedTabIndex by remember { mutableStateOf(0) }
 
     val listFavorite by viewModel.listFavTrack.observeAsState()
+    val listPlaylist by viewModel.listPlaylist.observeAsState()
+    var isShowAddPlaylistDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
         viewModel.getAllFavoriteTrack(context)
+        viewModel.getAllPlaylist(context)
     }
 
     Box(
@@ -119,13 +126,24 @@ fun ProfileScreen(
                 }
                 when (selectedTabIndex) {
                     0 -> FavoriteListContent(
-                        viewModel,
                         listFavorite ?: listOf(),
                         navController,
                         currentPlaying,
-                        onClickMusic = onClickMusic
+                        onClickMusic = onClickMusic,
+                        onClickFavorit = {
+                            viewModel.addOrRemoveFavorite(context, it)
+                        }
                     )
-                    1 -> PlaylistListContent()
+                    1 -> PlaylistListContent(
+                        listPlaylist ?: listOf(),
+                        navController,
+                        onAddNewPlaylist = {
+                            isShowAddPlaylistDialog = true
+                        },
+                        onDeletePlaylist = {
+                            // show dialog delete playlist
+                        }
+                    )
                 }
             }
             if (isShowPlayerButton) {
@@ -137,19 +155,28 @@ fun ProfileScreen(
         if (isShowPlayerButton) {
             PlayerButton()
         }
+        if (isShowAddPlaylistDialog) {
+            ShowDialogCreatePlaylist(
+                onDismiss = {
+                    isShowAddPlaylistDialog = false
+                },
+                onConfirm = {
+                    isShowAddPlaylistDialog = false
+                    viewModel.addPlaylist(context, it)
+                }
+            )
+        }
     }
 }
 
 @Composable
 fun FavoriteListContent(
-    viewModel: ProfileViewModel,
     listFavorite: List<FavoriteTrack>,
     navController: NavController,
     currentPlaying: Track,
-    onClickMusic: (Track) -> Unit
+    onClickMusic: (Track) -> Unit,
+    onClickFavorit: (Track) -> Unit,
 ) {
-    val context = LocalContext.current
-
     LazyColumn(
         modifier = Modifier
             .background(Transparent)
@@ -174,7 +201,7 @@ fun FavoriteListContent(
                         onClickMusic(favTrack.toTrack)
                     },
                     onAddFavorite = {
-                        viewModel.addOrRemoveFavorite(context, favTrack.toTrack)
+                        onClickFavorit(favTrack.toTrack)
                     }
                 )
                 Spacer(modifier = Modifier
@@ -187,7 +214,13 @@ fun FavoriteListContent(
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun PlaylistListContent() {
+fun PlaylistListContent(
+    listPlaylist: List<PlaylistModel>,
+    navController: NavController,
+    onAddNewPlaylist: () -> Unit = {},
+    onDeletePlaylist: (PlaylistModel) -> Unit = {}
+
+) {
     val context = LocalContext.current
 
     Column(
@@ -199,9 +232,60 @@ fun PlaylistListContent() {
             stickyHeader {
                 ItemTrackLayout(
                     icon = R.drawable.ic_add_no_round,
-                    title = context.getString(R.string.create_playlist)
+                    title = context.getString(R.string.create_playlist),
+                    onClick = onAddNewPlaylist
                )
+            }
+            items(listPlaylist) {
+                ItemTrackLayout(
+                    icon = R.drawable.is_spotify_green,
+                    isShowDelete = true,
+                    title = it.playlistName,
+                    message = context.getString(R.string.song_in_playlist, it.playlistTrack.size.toString()),
+                    onClick = {
+                        // navigate to playlist detail
+                    },
+                    onDelete = {
+                        onDeletePlaylist(it)
+                    }
+                )
             }
         }
     }
+}
+
+@Composable
+fun ShowDialogCreatePlaylist(onDismiss: () -> Unit, onConfirm: (String) -> Unit) {
+    var playlistName by remember { mutableStateOf("") }
+
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text(text = LocalContext.current.getString(R.string.create_playlist))
+        },
+        text = {
+            Column {
+                Text(LocalContext.current.getString(R.string.input_playlist))
+                Spacer(modifier = Modifier.height(8.dp))
+                TextField(
+                    value = playlistName,
+                    onValueChange = { playlistName = it },
+                    singleLine = true,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        },
+        confirmButton = {
+            TextButton(onClick = {
+                onConfirm(playlistName)
+            }) {
+                Text(LocalContext.current.getString(R.string.confirm))
+            }
+        },
+        dismissButton = {
+            TextButton(onClick = onDismiss) {
+                Text(LocalContext.current.getString(R.string.cancel))
+            }
+        }
+    )
 }

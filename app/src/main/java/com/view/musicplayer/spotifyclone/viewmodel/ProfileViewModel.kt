@@ -6,6 +6,7 @@ import com.view.musicplayer.spotifyclone.ext.flowOnValue
 import com.view.musicplayer.spotifyclone.network.response.Track
 import com.view.musicplayer.spotifyclone.room.AppDb
 import com.view.musicplayer.spotifyclone.room.model.FavoriteTrack
+import com.view.musicplayer.spotifyclone.room.model.PlaylistModel
 import com.view.musicplayer.spotifyclone.viewmodel.base.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
@@ -13,6 +14,8 @@ import kotlinx.coroutines.launch
 
 class ProfileViewModel(private val db: AppDb): BaseViewModel<Any?>() {
     val listFavTrack = SingleLiveEvent<List<FavoriteTrack>>()
+    val listPlaylist = SingleLiveEvent<List<PlaylistModel>>()
+
     internal fun getAllFavoriteTrack(context: Context) {
         executeJob(context) {
             safeScopeFun(context).launch(Dispatchers.IO) {
@@ -37,6 +40,34 @@ class ProfileViewModel(private val db: AppDb): BaseViewModel<Any?>() {
 
                 isLoadingEvent.postValue(false)
                 getAllFavoriteTrack(context)
+            }
+        }
+    }
+
+    internal fun getAllPlaylist(context: Context) {
+        executeJob(context) {
+            safeScopeFun(context).launch(Dispatchers.IO) {
+                val dataExist = db.playlistDao().getAllPlaylistTrack()
+
+                isLoadingEvent.postValue(false)
+                listPlaylist.postValue(dataExist)
+            }
+        }
+    }
+
+    internal fun addPlaylist(context: Context, playlistName: String) {
+        val newPlaylist = PlaylistModel(
+            playlistName = playlistName,
+            playlistCreated = System.currentTimeMillis(),
+            playlistTrack = arrayListOf()
+        )
+
+        executeJob(context) {
+            safeScopeFun(context).launch(Dispatchers.IO) {
+                db.playlistDao().insert(newPlaylist)
+                isLoadingEvent.postValue(false)
+
+                getAllPlaylist(context)
             }
         }
     }

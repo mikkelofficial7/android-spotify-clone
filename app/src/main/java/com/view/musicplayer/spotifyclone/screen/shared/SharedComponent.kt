@@ -2,7 +2,6 @@ package com.view.musicplayer.spotifyclone.screen.shared
 
 import android.content.res.Configuration
 import androidx.annotation.DrawableRes
-import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -175,9 +174,11 @@ fun AddToListButton(size: Int = 30, color: Color = White80, onClick: () -> Unit 
 @Composable
 fun ItemTrackLayout(
     @DrawableRes icon: Int? = null,
-    imageUrl: String? = null,
     title: String = "",
-    message: String = ""
+    message: String = "",
+    isShowDelete: Boolean = false,
+    onClick: () -> Unit,
+    onDelete: () -> Unit = {}
 ) {
     val iconSize = 50
 
@@ -185,7 +186,8 @@ fun ItemTrackLayout(
         verticalAlignment = Alignment.CenterVertically,
         modifier = Modifier
             .fillMaxWidth()
-            .padding(bottom = 10.dp, top = 5.dp, start = 16.dp, end = 16.dp)
+            .padding(bottom = 10.dp, top = 10.dp, start = 16.dp, end = 16.dp)
+            .clickable { onClick() }
     ) {
         icon?.let {
             Image(
@@ -197,11 +199,6 @@ fun ItemTrackLayout(
                     .clip(RoundedCornerShape(8.dp))
                     .background(Black60)
             )
-        }
-        imageUrl?.let {
-            ImageLoader(url = it, otherModifier = Modifier
-                .height(iconSize.dp)
-                .width(iconSize.dp))
         }
         Spacer(modifier = Modifier.width(10.dp))
         Column(
@@ -220,6 +217,23 @@ fun ItemTrackLayout(
                     fontStyle = FontStyle.Italic
                 )
             }
+        }
+        Spacer(modifier = Modifier
+            .fillMaxWidth()
+            .weight(1f)
+        )
+        if(isShowDelete) {
+            Image(
+                imageVector = loadIconToVector(icon = R.drawable.ic_delete),
+                contentDescription = null,
+                alignment = Alignment.CenterEnd,
+                colorFilter = ColorFilter.tint(White80),
+                modifier = Modifier
+                    .height(20.dp)
+                    .width(20.dp)
+                    .clickable { onDelete() }
+
+            )
         }
     }
 }

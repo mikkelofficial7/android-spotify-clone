@@ -9,5 +9,8 @@
     <string name="your_playlists">Your Playlists</string>
     <string name="your_favorite">Your Favorite Tracks</string>
     <string name="create_playlist">Create Playlist</string>
+    <string name="input_playlist">Input playlist name</string>
     <string name="song_in_playlist">%1$s Songs</string>
+    <string name="cancel">Cancel</string>
+    <string name="confirm">Confirm</string>
 </resources>

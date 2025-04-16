@@ -72,4 +72,34 @@ class AlbumDetailViewModel(private val api: Api, private val db: AppDb): BaseVie
             }
         }
     }
+
+    internal fun addAllTrackToFavorite(context: Context, trackList: ArrayList<Track>) {
+        executeJob(context) {
+            safeScopeFun(context).launch(Dispatchers.IO) {
+                trackList.map {
+                    val dataExist = db.trackDao().getFavoriteTrackById(it.id)
+                    dataExist?.let { favTrack ->
+                        db.trackDao().delete(favTrack)
+                    }
+
+                    db.trackDao().insert(it.toFavoriteTrack)
+                }
+
+                getAllFavoriteTrack(context)
+            }
+        }
+    }
+
+    internal fun removeAllTrackFromFavorite(context: Context, trackList: ArrayList<Track>) {
+        executeJob(context) {
+            safeScopeFun(context).launch(Dispatchers.IO) {
+                trackList.map {
+                    val dataExist = db.trackDao().getFavoriteTrackById(it.id)
+                    dataExist?.let { favTrack -> db.trackDao().delete(favTrack) }
+                }
+
+                getAllFavoriteTrack(context)
+            }
+        }
+    }
 }
