@@ -1,5 +1,6 @@
 package com.view.musicplayer.spotifyclone.screen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -88,6 +89,10 @@ fun AlbumDetailScreen(
     var targetedPx = 0
     var currentScrollYPosition = 0
     var visibleItemIndex: Int
+
+    BackHandler {
+        navController.popBackStack()
+    }
 
     LaunchedEffect(Unit) {
         viewModel.getAllPlaylist(context)

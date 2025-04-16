@@ -1,9 +1,9 @@
 package com.view.musicplayer.spotifyclone.viewmodel
 
 import android.content.Context
+import com.google.gson.Gson
 import com.view.musicplayer.spotifyclone.ext.SingleLiveEvent
 import com.view.musicplayer.spotifyclone.ext.flowOnValue
-import com.view.musicplayer.spotifyclone.network.Api
 import com.view.musicplayer.spotifyclone.network.response.Track
 import com.view.musicplayer.spotifyclone.room.AppDb
 import com.view.musicplayer.spotifyclone.room.model.PlaylistModel
@@ -47,6 +47,17 @@ class PlaylistDetailViewModel(private val db: AppDb): BaseViewModel<Any?>() {
                 }
 
                 getAllFavoriteTrack(context)
+            }
+        }
+    }
+
+    internal fun removeTrackFromPlaylist(context: Context, track: Track, playlistModel: PlaylistModel?) {
+        executeJob(context) {
+            safeScopeFun(context).launch(Dispatchers.IO) {
+                val newTrackFiltered = playlistModel?.playlistTrack?.filter { it.id != track.id }
+
+                flowOnValue(db.playlistDao().updateTracksInPlaylist(playlistModel?.idPk ?: 0, Gson().toJson(newTrackFiltered)))
+                getAllPlaylistById(context, playlistModel?.idPk.toString())
             }
         }
     }

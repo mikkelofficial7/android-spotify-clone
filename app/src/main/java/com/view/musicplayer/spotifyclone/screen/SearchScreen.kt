@@ -1,6 +1,7 @@
 package com.view.musicplayer.spotifyclone.screen
 
 import android.content.Context
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.FocusInteraction
@@ -111,6 +112,12 @@ fun SearchScreen(
         viewModel.getAllFavoriteTrack(context)
         viewModel.getAllGenre(context)
         viewModel.getSongRecommendation(context)
+    }
+
+    BackHandler {
+        querySearch = ""
+        focusManager.clearFocus(force = true)
+        isSearchActive = false
     }
 
     Column(

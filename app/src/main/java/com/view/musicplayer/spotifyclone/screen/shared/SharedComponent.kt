@@ -1,7 +1,6 @@
 package com.view.musicplayer.spotifyclone.screen.shared
 
 import android.content.res.Configuration
-import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
@@ -61,7 +60,6 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
-import com.google.gson.Gson
 import com.view.musicplayer.spotifyclone.R
 import com.view.musicplayer.spotifyclone.ext.formatTimeTrackRunning
 import com.view.musicplayer.spotifyclone.ext.roundedNumber
@@ -179,6 +177,34 @@ fun AddToListButton(size: Int = 30,
     ) {
         Image(
             imageVector = loadIconToVector(icon = R.drawable.ic_add),
+            contentDescription = "Icon add",
+            colorFilter = ColorFilter.tint(color),
+            modifier = Modifier
+                .height(size.dp)
+                .width(size.dp)
+                .clickable { onClick() }
+        )
+        title?.let {
+            Text(
+                text = LocalContext.current.getString(title),
+                color = SpotifyGreenGrey40,
+                fontSize = 12.sp,
+                modifier = Modifier.padding(horizontal = 8.dp)
+            )
+        }
+    }
+}
+
+@Composable
+fun RemoveFromListButton(size: Int = 30,
+                    color: Color = White80,
+                    @StringRes title: Int? = null,
+                    onClick: () -> Unit = {}) {
+    Row(
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Image(
+            imageVector = loadIconToVector(icon = R.drawable.ic_remove),
             contentDescription = "Icon add",
             colorFilter = ColorFilter.tint(color),
             modifier = Modifier
@@ -451,11 +477,13 @@ fun MusicItemCard(
     currentPlaying: Track,
     track: Track,
     listPlaylist: List<PlaylistModel>? = arrayListOf(),
+    isShowRemoveFromPlaylist: Boolean = false,
     isShowGotoDetailButton: Boolean = false,
     isFavorite: Boolean = false,
     onClick: () -> Unit = {},
     onAddFavorite: (Track) -> Unit = {},
-    onAddPlaylist:(Track, PlaylistModel?) -> Unit = { track, playlist -> }
+    onAddPlaylist:(Track, PlaylistModel?) -> Unit = { track, playlist -> },
+    onRemoveTrackPlaylist: (Track) -> Unit = {}
 ) {
     var isOptionMenuExpand by remember { mutableStateOf(false) }
     var isShowSelectorTrack by remember { mutableStateOf(false) }
@@ -534,6 +562,7 @@ fun MusicItemCard(
                 if (isOptionMenuExpand) {
                     ShowOptionMenu(
                         isOptionMenuExpand = isOptionMenuExpand,
+                        isShowRemoveFromPlaylist = isShowRemoveFromPlaylist,
                         isShowGotoDetailButton = isShowGotoDetailButton,
                         isShowAddToPlaylist = !listPlaylistFiltered.isNullOrEmpty(),
                         isFavorite = isFavorite,
@@ -545,6 +574,10 @@ fun MusicItemCard(
                         onAddFavorite = {
                             isOptionMenuExpand = false
                             onAddFavorite(track)
+                        },
+                        onRemoveTrackPlaylist = {
+                            isOptionMenuExpand = false
+                            onRemoveTrackPlaylist(track)
                         }
                     ) {
                         isOptionMenuExpand = false
@@ -573,9 +606,11 @@ fun MusicItemCard(
 @Composable
 fun ShowOptionMenu(
     isOptionMenuExpand: Boolean,
+    isShowRemoveFromPlaylist: Boolean,
     isShowGotoDetailButton: Boolean,
     isShowAddToPlaylist: Boolean,
     isFavorite: Boolean,
+    onRemoveTrackPlaylist: () -> Unit = {},
     onDismiss: () -> Unit,
     onShowDetail: () -> Unit,
     onAddFavorite: () -> Unit,
@@ -628,6 +663,27 @@ fun ShowOptionMenu(
                     }
                 }, onClick = {
                     onAddPlaylist()
+                }
+            )
+        }
+        if (isShowRemoveFromPlaylist) {
+            DropdownMenuItem(
+                text = {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        RemoveFromListButton(color = Blue500, size = 20) {
+                            onRemoveTrackPlaylist()
+                        }
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Text(
+                            text = LocalContext.current.getString(R.string.remove_playlist),
+                            color = Blue500,
+                            fontSize = 12.sp
+                        )
+                    }
+                }, onClick = {
+                    onRemoveTrackPlaylist()
                 }
             )
         }

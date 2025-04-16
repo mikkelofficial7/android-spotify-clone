@@ -17,14 +17,18 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.asFlow
 import androidx.navigation.NavController
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -170,6 +174,11 @@ fun MainPage() {
                 route = ScreenRoute.PlaylistDetail.route,
                 arguments = listOf(navArgument("id") { type = NavType.StringType })
             ) { backStackEntry ->
+                // onActivityResult in compose
+                GetBackStackViewResult<Boolean>(navController = navController, key = "onDeletedTrackItem") {
+                    navController.navigate(ScreenRoute.Profile.route)
+                }
+
                 val playlistId = backStackEntry.arguments?.getString("id").orEmpty()
                 PlaylistDetailScreen(
                     navController = navController,
@@ -222,4 +231,24 @@ fun BottomNavBar(navController: NavController) {
             )
         }
     }
+}
+
+@Composable
+fun <T>GetBackStackViewResult(navController: NavController, key: String, onComplete: () -> Unit) {
+    val backStackResult = navController.currentBackStackEntry?.savedStateHandle?.getLiveData<T>(key)?.asFlow()
+    LaunchedEffect(backStackResult) {
+        backStackResult?.collect { result ->
+            navController.currentBackStackEntry?.savedStateHandle?.remove<T>(key)
+            onComplete()
+        }
+    }
+}
+
+@Composable
+fun <T>SetBackStackViewResult(navController: NavController, key: String, value: T): State<() -> Boolean> {
+    val result = rememberUpdatedState {
+        navController.previousBackStackEntry?.savedStateHandle?.set(key, value)
+        navController.popBackStack()
+    }
+    return result
 }

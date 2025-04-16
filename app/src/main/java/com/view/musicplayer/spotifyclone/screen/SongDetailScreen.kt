@@ -1,5 +1,6 @@
 package com.view.musicplayer.spotifyclone.screen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,6 +33,10 @@ fun SongDetailScreen(
     currentPlaying: Track,
     onClickMusic: (Track) -> Unit
 ) {
+    BackHandler {
+        navController.popBackStack()
+    }
+
    Column(
        modifier = Modifier
            .fillMaxSize()
