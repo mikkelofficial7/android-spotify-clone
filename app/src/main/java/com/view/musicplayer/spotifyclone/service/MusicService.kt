@@ -90,7 +90,10 @@ class MusicService : Service() {
                             playerStatus = PlayerStatus.PAUSE
                             countdownTimer?.cancel()
 
-                            if (exoplayer.isPlaying) exoplayer.playWhenReady = false
+                            updateStatus()
+                            if (exoplayer.isPlaying) {
+                                exoplayer.playWhenReady = false
+                            }
                             removeNotification()
                         }
                         ActionDetail.RESTART_MODE -> {
@@ -291,6 +294,12 @@ class MusicService : Service() {
         intent.putExtra(INTENT.PENDING_DURATION_TEXT, durationRunningString)
         intent.putExtra(INTENT.PENDING_DURATION_TOTAL_TEXT, durationTotalString)
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
+    }
+
+    private fun updateStatus() {
+        val intent = Intent(Notification.BROADCAST_NAME)
+        intent.putExtra(INTENT.PENDING_MUSIC_STATUS, playerStatus?.status)
+        LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
     }
 
     object ActionDetail {

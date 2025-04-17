@@ -194,16 +194,24 @@ fun MainPage(
                     trackProgressTotal = trackProgressTotal ?: 0L,
                     trackProgressText = trackProgressText.orEmpty(),
                     trackProgressTotalText = trackProgressTotalText.orEmpty(),
-                    currentPlaying = currentPlaying
-                ) {
-                   if (currentPlaying.id == it.id) {
-                       currentPlaying = Track.empty
-                       isShowPlayerButton = !isShowPlayerButton
-                   } else {
-                       currentPlaying = it
-                       isShowPlayerButton = true
-                   }
-                }
+                    currentPlaying = currentPlaying,
+                    onClickMusic = {
+                        if (currentPlaying.id == it.id) {
+                            currentPlaying = Track.empty
+                            isShowPlayerButton = !isShowPlayerButton
+                        } else {
+                            currentPlaying = it
+                            isShowPlayerButton = true
+                        }
+                    },
+                    onPlayPauseClick = {
+                        if (playerStatus == MusicService.PlayerStatus.PLAY.status) {
+                            listener.onPause(context)
+                        } else {
+                            listener.onPlay(context, currentPlaying.id)
+                        }
+                    }
+                )
             }
             composable(ScreenRoute.Search.route) {
                 SearchScreen(

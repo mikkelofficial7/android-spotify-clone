@@ -42,7 +42,8 @@ fun HomeScreen(
     trackProgressTotal: Long,
     trackProgressText: String,
     trackProgressTotalText: String,
-    onClickMusic: (Track) -> Unit
+    onClickMusic: (Track) -> Unit,
+    onPlayPauseClick: () -> Unit = {}
 ) {
     val context: Context = LocalContext.current
     val recommendChart by viewModel.recommendationChart.observeAsState()
@@ -241,7 +242,8 @@ fun HomeScreen(
                 durationTotal = trackProgressTotal,
                 durationText = trackProgressText,
                 durationTotalText = trackProgressTotalText,
-                isPlaying = playerStatus == MusicService.PlayerStatus.PLAY.status
+                isPlaying = playerStatus == MusicService.PlayerStatus.PLAY.status,
+                onPlayPauseClick = onPlayPauseClick
             )
         }
     }
