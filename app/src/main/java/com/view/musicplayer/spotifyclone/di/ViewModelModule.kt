@@ -1,5 +1,6 @@
 package com.view.musicplayer.spotifyclone.di
 import com.view.musicplayer.spotifyclone.viewmodel.AlbumDetailViewModel
+import com.view.musicplayer.spotifyclone.viewmodel.BroadcastViewModel
 import com.view.musicplayer.spotifyclone.viewmodel.HomePageViewModel
 import com.view.musicplayer.spotifyclone.viewmodel.PlaylistDetailViewModel
 import com.view.musicplayer.spotifyclone.viewmodel.ProfileViewModel
@@ -15,6 +16,7 @@ class ViewModelModule {
             viewModel { AlbumDetailViewModel(get(), get()) }
             viewModel { ProfileViewModel(get()) }
             viewModel { PlaylistDetailViewModel(get()) }
+            viewModel { BroadcastViewModel() }
         }
     }
 }

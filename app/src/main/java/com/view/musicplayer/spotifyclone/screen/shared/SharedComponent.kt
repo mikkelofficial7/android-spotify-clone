@@ -1,6 +1,7 @@
 package com.view.musicplayer.spotifyclone.screen.shared
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
@@ -61,7 +62,6 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.view.musicplayer.spotifyclone.R
-import com.view.musicplayer.spotifyclone.ext.formatTimeTrackRunning
 import com.view.musicplayer.spotifyclone.ext.roundedNumber
 import com.view.musicplayer.spotifyclone.navigation.routeToMusicDetail
 import com.view.musicplayer.spotifyclone.network.response.Track
@@ -304,12 +304,14 @@ fun ItemTrackLayout(
 
 @Composable
 fun PlayerButton(
-    currentPosition: Float = 00f,
-    totalDuration: Float = 0f,
+    duration: Long = 0L,
+    durationTotal: Long = 0L,
+    durationText: String = "",
+    durationTotalText: String = "",
     isPlaying: Boolean = false,
     isShuffle: Boolean = false,
     isShowTimeTrack: Boolean = false,
-    onSliderChange: (Float) -> Unit = {},
+    onSliderChange: (Long) -> Unit = {},
     onPlayPauseClick: () -> Unit = {},
     onNextClick: () -> Unit = {},
     onPreviousClick: () -> Unit = {},
@@ -323,7 +325,7 @@ fun PlayerButton(
         if (isShowTimeTrack) {
             Row {
                 Text(
-                    text = currentPosition.formatTimeTrackRunning(),
+                    text = durationText,
                     color = White80,
                     textAlign = TextAlign.Start,
                     modifier = Modifier
@@ -332,7 +334,7 @@ fun PlayerButton(
                         .weight(1f)
                 )
                 Text(
-                    text = totalDuration.formatTimeTrackRunning(),
+                    text = durationTotalText,
                     color = White80,
                     textAlign = TextAlign.End,
                     modifier = Modifier
@@ -343,11 +345,9 @@ fun PlayerButton(
             }
         }
         CustomSeekBar(
-            currentPosition = currentPosition,
-            totalDuration = totalDuration,
-            onSeekBarChange = {
-               onSliderChange(it)
-            }
+            currentDuration = duration,
+            totalDuration = durationTotal,
+            onSeekBarChange = { onSliderChange(it) }
         )
         Box(modifier = Modifier
             .fillMaxWidth()
@@ -422,16 +422,17 @@ fun PlayerButton(
 
 @Composable
 fun CustomSeekBar(
-    currentPosition: Float = 0f,
-    totalDuration: Float = 0f,
+    currentDuration: Long = 0L,
+    totalDuration: Long = 0L,
     layoutHeight: Int = 14,
     seekbarHeight: Int = 5,
     seekBarActiveColor: Color = SpotifyGreen80,
     seekBarBackgroundColor: Color = White80,
-    onSeekBarChange: (Float) -> Unit = {}
+    onSeekBarChange: (Long) -> Unit = {}
 ) {
-    onSeekBarChange(currentPosition)
-    val aaa = currentPosition / totalDuration
+    onSeekBarChange(currentDuration)
+    val progress = if (totalDuration.toFloat() > 0f) currentDuration.toFloat() / totalDuration.toFloat() else 0f
+
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -448,7 +449,7 @@ fun CustomSeekBar(
             .padding(horizontal = 5.dp)
             .background(seekBarActiveColor)
             .height(seekbarHeight.dp)
-            .fillMaxWidth(aaa)
+            .fillMaxWidth(progress)
         )
     }
 }

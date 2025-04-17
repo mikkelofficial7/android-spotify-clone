@@ -24,6 +24,7 @@ import com.view.musicplayer.spotifyclone.network.response.Track
 import com.view.musicplayer.spotifyclone.screen.shared.EmptyView
 import com.view.musicplayer.spotifyclone.screen.shared.MusicItemCard
 import com.view.musicplayer.spotifyclone.screen.shared.PlayerButton
+import com.view.musicplayer.spotifyclone.service.MusicService
 import com.view.musicplayer.spotifyclone.ui.theme.Black80
 import com.view.musicplayer.spotifyclone.ui.theme.Transparent
 import com.view.musicplayer.spotifyclone.ui.theme.White80
@@ -36,6 +37,11 @@ fun HomeScreen(
     navController: NavController,
     currentPlaying: Track,
     isShowPlayerButton: Boolean,
+    playerStatus: String,
+    trackProgress: Long,
+    trackProgressTotal: Long,
+    trackProgressText: String,
+    trackProgressTotalText: String,
     onClickMusic: (Track) -> Unit
 ) {
     val context: Context = LocalContext.current
@@ -230,7 +236,13 @@ fun HomeScreen(
         }
 
         if (isShowPlayerButton) {
-            PlayerButton()
+            PlayerButton(
+                duration = trackProgress,
+                durationTotal = trackProgressTotal,
+                durationText = trackProgressText,
+                durationTotalText = trackProgressTotalText,
+                isPlaying = playerStatus == MusicService.PlayerStatus.PLAY.status
+            )
         }
     }
 }

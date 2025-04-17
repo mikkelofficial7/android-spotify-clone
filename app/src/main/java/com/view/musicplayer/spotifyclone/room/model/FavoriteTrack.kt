@@ -21,6 +21,6 @@ data class FavoriteTrack(
 ) {
     val toTrack: Track
         get() {
-            return Track(id, title, artist, releaseDate, totalListener, description, imageUrl, streamedUrl, duration, genre)
+            return Track(idPk, id, title, artist, releaseDate, totalListener, description, imageUrl, streamedUrl, duration, genre)
         }
 }

@@ -1,13 +1,21 @@
 package com.view.musicplayer.spotifyclone.network.response
 
+import android.os.Parcelable
+import androidx.room.Entity
+import androidx.room.PrimaryKey
 import com.view.musicplayer.spotifyclone.room.model.FavoriteTrack
+import kotlinx.parcelize.Parcelize
 
 data class SongRecommendation(
     val id: String,
     val title: String
 )
 
+@Parcelize
+@Entity(tableName = "tbl_item_track")
 data class Track (
+    @PrimaryKey(autoGenerate = true)
+    var idPk: Int = 0,
     val id: String,
     val title: String,
     val artist: String,
@@ -18,10 +26,11 @@ data class Track (
     val streamedUrl: String,
     val duration: Long,
     val genre: String
-) {
+): Parcelable {
     val toFavoriteTrack: FavoriteTrack
         get() {
             return FavoriteTrack(
+                idPk = idPk,
                 id = id,
                 title = title,
                 artist = artist,
@@ -38,6 +47,7 @@ data class Track (
         val empty: Track
             get() {
                 return Track(
+                    -1,
                     "",
                     "",
                     "",

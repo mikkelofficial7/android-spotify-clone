@@ -16,7 +16,7 @@ class NetworkModule {
 
         private fun provideNetworkHandler(context: Context) = NetworkHandler(context)
 
-        private fun provideOkHttpClient(context: Context) : OkHttpClient {
+        fun provideOkHttpClient(context: Context) : OkHttpClient {
             return RetrofitBuilder.initInterceptor(context)
         }
     }

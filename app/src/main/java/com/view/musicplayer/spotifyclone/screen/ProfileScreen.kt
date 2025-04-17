@@ -51,6 +51,7 @@ import com.view.musicplayer.spotifyclone.screen.shared.ImageLoader
 import com.view.musicplayer.spotifyclone.screen.shared.ItemTrackLayout
 import com.view.musicplayer.spotifyclone.screen.shared.MusicItemCard
 import com.view.musicplayer.spotifyclone.screen.shared.PlayerButton
+import com.view.musicplayer.spotifyclone.service.MusicService
 import com.view.musicplayer.spotifyclone.ui.theme.Black80
 import com.view.musicplayer.spotifyclone.ui.theme.SpotifyGreen80
 import com.view.musicplayer.spotifyclone.ui.theme.Transparent
@@ -64,6 +65,11 @@ fun ProfileScreen(
     navController: NavController,
     isShowPlayerButton: Boolean,
     currentPlaying: Track,
+    playerStatus: String,
+    trackProgress: Long,
+    trackProgressTotal: Long,
+    trackProgressText: String,
+    trackProgressTotalText: String,
     onClickMusic: (Track) -> Unit
 ) {
     val context = LocalContext.current
@@ -164,7 +170,13 @@ fun ProfileScreen(
             }
         }
         if (isShowPlayerButton) {
-            PlayerButton()
+            PlayerButton(
+                duration = trackProgress,
+                durationTotal = trackProgressTotal,
+                durationText = trackProgressText,
+                durationTotalText = trackProgressTotalText,
+                isPlaying = playerStatus == MusicService.PlayerStatus.PLAY.status
+            )
         }
         if (isShowAddPlaylistDialog) {
             ShowDialogCreatePlaylist(

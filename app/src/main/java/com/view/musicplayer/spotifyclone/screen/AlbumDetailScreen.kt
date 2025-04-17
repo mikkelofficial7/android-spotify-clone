@@ -53,6 +53,7 @@ import com.view.musicplayer.spotifyclone.screen.shared.MusicItemCard
 import com.view.musicplayer.spotifyclone.screen.shared.PlayerButton
 import com.view.musicplayer.spotifyclone.screen.shared.getDeviceScreenRatio
 import com.view.musicplayer.spotifyclone.screen.shared.loadIconToVector
+import com.view.musicplayer.spotifyclone.service.MusicService
 import com.view.musicplayer.spotifyclone.ui.theme.Black100
 import com.view.musicplayer.spotifyclone.ui.theme.Black60
 import com.view.musicplayer.spotifyclone.ui.theme.Black80
@@ -73,6 +74,11 @@ fun AlbumDetailScreen(
     isShowPlayerButton: Boolean,
     albumGenre: String,
     currentPlaying: Track,
+    playerStatus: String,
+    trackProgress: Long,
+    trackProgressTotal: Long,
+    trackProgressText: String,
+    trackProgressTotalText: String,
     onClickMusic: (Track) -> Unit
 ) {
     val context = LocalContext.current
@@ -359,7 +365,13 @@ fun AlbumDetailScreen(
             }
         }
         if (isShowPlayerButton) {
-            PlayerButton()
+            PlayerButton(
+                duration = trackProgress,
+                durationTotal = trackProgressTotal,
+                durationText = trackProgressText,
+                durationTotalText = trackProgressTotalText,
+                isPlaying = playerStatus == MusicService.PlayerStatus.PLAY.status
+            )
         }
     }
 }

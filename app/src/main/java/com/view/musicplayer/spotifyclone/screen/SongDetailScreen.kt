@@ -24,6 +24,7 @@ import com.view.musicplayer.spotifyclone.network.response.Track
 import com.view.musicplayer.spotifyclone.screen.shared.BackButton
 import com.view.musicplayer.spotifyclone.screen.shared.ImageLoader
 import com.view.musicplayer.spotifyclone.screen.shared.PlayerButton
+import com.view.musicplayer.spotifyclone.service.MusicService
 import com.view.musicplayer.spotifyclone.ui.theme.Black80
 import com.view.musicplayer.spotifyclone.ui.theme.White80
 
@@ -31,7 +32,11 @@ import com.view.musicplayer.spotifyclone.ui.theme.White80
 fun SongDetailScreen(
     navController: NavController,
     currentPlaying: Track,
-    onClickMusic: (Track) -> Unit
+    playerStatus: String,
+    trackProgress: Long,
+    trackProgressTotal: Long,
+    trackProgressText: String,
+    trackProgressTotalText: String
 ) {
     BackHandler {
         navController.popBackStack()
@@ -78,6 +83,13 @@ fun SongDetailScreen(
                    .fillMaxSize()
            )
        }
-       PlayerButton(isShowTimeTrack = true)
+       PlayerButton(
+           isShowTimeTrack = true,
+           duration = trackProgress,
+           durationTotal = trackProgressTotal,
+           durationText = trackProgressText,
+           durationTotalText = trackProgressTotalText,
+           isPlaying = playerStatus == MusicService.PlayerStatus.PLAY.status
+       )
    }
 }

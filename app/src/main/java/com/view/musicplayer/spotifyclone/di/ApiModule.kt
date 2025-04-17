@@ -12,7 +12,7 @@ class ApiModule {
             single { provideUserApi(get()) }
         }
 
-        private fun provideUserApi(okHttpClient: OkHttpClient): Api {
+        fun provideUserApi(okHttpClient: OkHttpClient): Api {
             return RetrofitBuilder.initRetrofit(Constants.BASE_URL, okHttpClient).create(Api::class.java)
         }
     }

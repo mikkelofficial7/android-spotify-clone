@@ -1,7 +1,6 @@
 package com.view.musicplayer.spotifyclone.screen
 
 import androidx.activity.compose.BackHandler
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -19,7 +18,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -32,7 +30,6 @@ import com.view.musicplayer.spotifyclone.screen.shared.BackButton
 import com.view.musicplayer.spotifyclone.screen.shared.EmptyView
 import com.view.musicplayer.spotifyclone.screen.shared.MusicItemCard
 import com.view.musicplayer.spotifyclone.screen.shared.PlayerButton
-import com.view.musicplayer.spotifyclone.ui.theme.Black100
 import com.view.musicplayer.spotifyclone.ui.theme.Black80
 import com.view.musicplayer.spotifyclone.ui.theme.White80
 import com.view.musicplayer.spotifyclone.viewmodel.PlaylistDetailViewModel
@@ -45,6 +42,11 @@ fun PlaylistDetailScreen(
     isShowPlayerButton: Boolean,
     playlistId: String,
     currentPlaying: Track,
+    playerStatus: String,
+    trackProgress: Long,
+    trackProgressTotal: Long,
+    trackProgressText: String,
+    trackProgressTotalText: String,
     onClickMusic: (Track) -> Unit
 ) {
     val context = LocalContext.current

@@ -13,6 +13,7 @@ import kotlinx.coroutines.plus
 open class BaseViewModel<T> : ViewModel() {
     internal val isLoadingEvent = SingleLiveEvent<Boolean>()
     internal val errorEvent = SingleLiveEvent<EmptyClass>()
+
     internal fun handleFailure() {
         isLoadingEvent.postValue( false)
         errorEvent.postValue(EmptyClass())

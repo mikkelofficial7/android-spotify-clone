@@ -15,7 +15,7 @@ class RoomModule {
             single { provideDB(androidContext()) }
         }
 
-        private fun provideDB(context: Context): AppDb {
+        fun provideDB(context: Context): AppDb {
             return Room.databaseBuilder(context, AppDb::class.java, "db_app_clone")
                 .fallbackToDestructiveMigration()
                 .build()

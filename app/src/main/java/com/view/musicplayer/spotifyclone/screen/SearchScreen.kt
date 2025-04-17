@@ -66,6 +66,7 @@ import com.view.musicplayer.spotifyclone.screen.shared.MusicItemCard
 import com.view.musicplayer.spotifyclone.screen.shared.PlayerButton
 import com.view.musicplayer.spotifyclone.screen.shared.loadIconToVector
 import com.view.musicplayer.spotifyclone.screen.shared.showLoading
+import com.view.musicplayer.spotifyclone.service.MusicService
 import com.view.musicplayer.spotifyclone.ui.theme.Black80
 import com.view.musicplayer.spotifyclone.ui.theme.Gray50
 import com.view.musicplayer.spotifyclone.ui.theme.SpotifyAccent40
@@ -82,6 +83,11 @@ fun SearchScreen(
     isShowPlayerButton: Boolean,
     currentPlaying: Track,
     navController: NavController,
+    playerStatus: String,
+    trackProgress: Long,
+    trackProgressTotal: Long,
+    trackProgressText: String,
+    trackProgressTotalText: String,
     onClickMusic: (Track) -> Unit
 ) {
     val context: Context = LocalContext.current
@@ -192,7 +198,13 @@ fun SearchScreen(
         }
 
         if (isShowPlayerButton) {
-            PlayerButton()
+            PlayerButton(
+                duration = trackProgress,
+                durationTotal = trackProgressTotal,
+                durationText = trackProgressText,
+                durationTotalText = trackProgressTotalText,
+                isPlaying = playerStatus == MusicService.PlayerStatus.PLAY.status
+            )
         }
     }
 }
