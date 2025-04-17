@@ -9,6 +9,7 @@ import android.os.IBinder
 import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.media3.common.MediaItem
+import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import com.view.musicplayer.spotifyclone.di.ApiModule
 import com.view.musicplayer.spotifyclone.di.NetworkModule
@@ -71,41 +72,47 @@ class MusicService : Service() {
             currentPlayingTrack = RoomModule.provideDB(applicationContext).trackDao().getTrackById(musicId)
 
             withContext(Dispatchers.Main) {
-                exoplayer.setMediaItem(MediaItem.fromUri(currentPlayingTrack?.streamedUrl.orEmpty()))
-                exoplayer.volume = 1f
-                exoplayer.prepare()
-
                 if (intent.action == Notification.START_FOREGROUND_ACTION) {
                     currentPlayerState = intent.getStringExtra(ActionKey.ACTION) ?: ""
 
                     when (currentPlayerState) {
                         ActionDetail.START_MODE -> {
+                            if (currentTrackId != musicId || exoplayer.playbackState == Player.STATE_IDLE) {
+                                exoplayer.setMediaItem(MediaItem.fromUri(currentPlayingTrack?.streamedUrl.orEmpty()))
+                                exoplayer.volume = 1f
+                                exoplayer.prepare()
+                            }
+
                             playerStatus = PlayerStatus.PLAY
                             currentTrackId = musicId
                             totalDuration = abs(currentPlayingTrack?.duration ?: 0) * 1000
 
+                            Log.d("TAG", "play")
+
                             playMusic(currentPlayingTrack?.idPk ?: 0, exoplayer.currentPosition)
                         }
                         ActionDetail.PAUSE_MODE -> {
+                            Log.d("TAG", "pause")
+                            
+                            if (exoplayer.isPlaying) exoplayer.pause()
                             playerStatus = PlayerStatus.PAUSE
                             countdownTimer?.cancel()
 
                             updateStatus()
-                            if (exoplayer.isPlaying) {
-                                exoplayer.playWhenReady = false
-                            }
                             removeNotification()
+                        }
+                        ActionDetail.STOP_MODE -> {
+                            Log.d("TAG", "stop")
+                            playerStatus = PlayerStatus.STOP
+
+                            exoplayer.release()
+                            removeNotification()
+                            killService()
                         }
                         ActionDetail.RESTART_MODE -> {
                             playerStatus = PlayerStatus.PLAY
                             currentTrackId = musicId
                             stopMusic(currentPlayingTrack?.idPk ?: 0, 0)
-                        }
-                        ActionDetail.STOP_MODE -> {
-                            playerStatus = PlayerStatus.STOP
-                            exoplayer.release()
-                            removeNotification()
-                            killService()
                         }
                         ActionDetail.SHUFFLE_MODE -> {
                             playerStatus = PlayerStatus.PLAY
@@ -150,14 +157,12 @@ class MusicService : Service() {
         exoplayer.seekTo(position, duration)
     }
 
-    private fun playMusic(position: Int, lastPosition: Long) {
-        if (!exoplayer.isPlaying) {
-            exoplayer.seekTo(position, lastPosition)
-            exoplayer.playWhenReady = true
+    private fun playMusic(position: Int, lastPlaybackPosition: Long) {
+        exoplayer.seekTo(position, lastPlaybackPosition)
+        exoplayer.play()
 
-            countdownTimer?.cancel()
-            startCountDown()
-        }
+        countdownTimer?.cancel()
+        startCountDown()
     }
 
     private fun showNotification(context: Context,
