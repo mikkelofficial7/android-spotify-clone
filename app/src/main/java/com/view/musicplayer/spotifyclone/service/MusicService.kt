@@ -36,10 +36,14 @@ class MusicService : Service() {
     private var isShuffleEnable: Boolean = false
     private var currentTrackId: String = ""
     private var currentPlayingTrack: Track? = null
-    private var currentPlayerState: String = ""
     private var totalDuration: Long = 0
     private var lastDuration: Long = 0
     private var playerStatus: PlayerStatus? = null
+
+    var durationRunning: Long = 0L
+    var durationTotal: Long = 0L
+    var durationRunningText: String = ""
+    var durationTotalText: String = ""
 
     private val serviceJob = SupervisorJob()
     private val serviceScope = CoroutineScope(Dispatchers.IO + serviceJob)
@@ -73,7 +77,7 @@ class MusicService : Service() {
 
             withContext(Dispatchers.Main) {
                 if (intent.action == Notification.START_FOREGROUND_ACTION) {
-                    currentPlayerState = intent.getStringExtra(ActionKey.ACTION) ?: ""
+                    val currentPlayerState = intent.getStringExtra(ActionKey.ACTION) ?: ""
 
                     when (currentPlayerState) {
                         ActionDetail.START_MODE -> {
@@ -90,15 +94,15 @@ class MusicService : Service() {
                             Log.d("TAG", "play")
 
                             playMusic(currentPlayingTrack?.idPk ?: 0, exoplayer.currentPosition)
+                            runCountDown()
                         }
                         ActionDetail.PAUSE_MODE -> {
                             Log.d("TAG", "pause")
-                            
+
                             if (exoplayer.isPlaying) exoplayer.pause()
                             playerStatus = PlayerStatus.PAUSE
-                            countdownTimer?.cancel()
 
-                            updateStatus()
+                            updateActivityValuePaused()
                             removeNotification()
                         }
                         ActionDetail.STOP_MODE -> {
@@ -160,7 +164,9 @@ class MusicService : Service() {
     private fun playMusic(position: Int, lastPlaybackPosition: Long) {
         exoplayer.seekTo(position, lastPlaybackPosition)
         exoplayer.play()
+    }
 
+    private fun runCountDown() {
         countdownTimer?.cancel()
         startCountDown()
     }
@@ -212,28 +218,29 @@ class MusicService : Service() {
                         image = imageAlbum
                     )
 
-                    updateActivityValue(
-                        durationRunning = seconds + (minutes * 60),
-                        durationTotal = currentPlayingTrack?.duration ?: 0L,
-                        durationRunningString = formattedTime,
-                        durationTotalString = formattedTimeTotal,
+                    durationRunning = seconds + (minutes * 60)
+                    durationTotal = currentPlayingTrack?.duration ?: 0L
+                    durationRunningText = formattedTime
+                    durationTotalText = formattedTimeTotal
+
+                    updateActivityValuePlayOrFinish(
                         title = currentPlayingTrack?.title.orEmpty(),
-                        descriptions = currentPlayingTrack?.artist.orEmpty(),
-                        status = playerStatus?.status.orEmpty()
+                        descriptions = currentPlayingTrack?.artist.orEmpty()
                     )
 
                     startForeground(Notification.NOTIFICATION_ID, notification)
                 }
             }
             override fun onFinish() {
-                updateActivityValue(
-                    durationRunning = 0L,
-                    durationTotal = currentPlayingTrack?.duration ?: 0L,
-                    durationRunningString = "00:00",
-                    durationTotalString = "00:00",
+                durationRunning = 0L
+                durationTotal = currentPlayingTrack?.duration ?: 0L
+                durationRunningText = "00:00"
+                durationTotalText = "00:00"
+                playerStatus = PlayerStatus.STOP
+
+                updateActivityValuePlayOrFinish(
                     title = currentPlayingTrack?.title.orEmpty(),
-                    descriptions = currentPlayingTrack?.artist.orEmpty(),
-                    status = PlayerStatus.STOP.status
+                    descriptions = currentPlayingTrack?.artist.orEmpty()
                 )
 
                 stopMusic(currentPlayingTrack?.idPk ?: 0, 0)
@@ -256,6 +263,7 @@ class MusicService : Service() {
             withContext(Dispatchers.Main) {
                 delay(1000)
                 playMusic(currentPlayingTrack?.idPk ?: 0, exoplayer.currentPosition)
+                runCountDown()
             }
         }
     }
@@ -277,33 +285,36 @@ class MusicService : Service() {
             withContext(Dispatchers.Main) {
                 delay(1000)
                 playMusic(currentPlayingTrack?.idPk ?: 0, exoplayer.currentPosition)
+                runCountDown()
             }
         }
     }
 
-    private fun updateActivityValue(durationRunning: Long,
-                                    durationTotal: Long,
-                                    durationRunningString: String,
-                                    durationTotalString: String,
-                                    title: String,
-                                    descriptions: String,
-                                    status: String) {
-
+    private fun updateActivityValuePlayOrFinish(title: String,
+                                                descriptions: String) {
         val intent = Intent(Notification.BROADCAST_NAME)
+
         intent.putExtra(INTENT.PENDING_MUSIC_ID, currentPlayingTrack?.id)
         intent.putExtra(INTENT.PENDING_TITLE, title)
-        intent.putExtra(INTENT.PENDING_MUSIC_STATUS, status)
         intent.putExtra(INTENT.PENDING_DESCRIPTION, descriptions)
+        intent.putExtra(INTENT.PENDING_MUSIC_STATUS,  playerStatus?.status)
         intent.putExtra(INTENT.PENDING_DURATION, durationRunning)
         intent.putExtra(INTENT.PENDING_DURATION_TOTAL, durationTotal)
-        intent.putExtra(INTENT.PENDING_DURATION_TEXT, durationRunningString)
-        intent.putExtra(INTENT.PENDING_DURATION_TOTAL_TEXT, durationTotalString)
+        intent.putExtra(INTENT.PENDING_DURATION_TEXT, durationRunningText)
+        intent.putExtra(INTENT.PENDING_DURATION_TOTAL_TEXT, durationTotalText)
+
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
     }
 
-    private fun updateStatus() {
+    private fun updateActivityValuePaused() {
         val intent = Intent(Notification.BROADCAST_NAME)
+
         intent.putExtra(INTENT.PENDING_MUSIC_STATUS, playerStatus?.status)
+        intent.putExtra(INTENT.PENDING_DURATION, durationRunning)
+        intent.putExtra(INTENT.PENDING_DURATION_TOTAL, durationTotal)
+        intent.putExtra(INTENT.PENDING_DURATION_TEXT, durationRunningText)
+        intent.putExtra(INTENT.PENDING_DURATION_TOTAL_TEXT, durationTotalText)
+
         LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
     }
 
