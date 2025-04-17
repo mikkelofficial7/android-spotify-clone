@@ -30,6 +30,7 @@ import com.view.musicplayer.spotifyclone.screen.shared.BackButton
 import com.view.musicplayer.spotifyclone.screen.shared.EmptyView
 import com.view.musicplayer.spotifyclone.screen.shared.MusicItemCard
 import com.view.musicplayer.spotifyclone.screen.shared.PlayerButton
+import com.view.musicplayer.spotifyclone.service.MusicService
 import com.view.musicplayer.spotifyclone.ui.theme.Black80
 import com.view.musicplayer.spotifyclone.ui.theme.White80
 import com.view.musicplayer.spotifyclone.viewmodel.PlaylistDetailViewModel
@@ -135,7 +136,13 @@ fun PlaylistDetailScreen(
             }
         }
         if (isShowPlayerButton) {
-            PlayerButton()
+            PlayerButton(
+                duration = trackProgress,
+                durationTotal = trackProgressTotal,
+                durationText = trackProgressText,
+                durationTotalText = trackProgressTotalText,
+                isPlaying = playerStatus == MusicService.PlayerStatus.PLAY.status
+            )
         }
     }
 }
