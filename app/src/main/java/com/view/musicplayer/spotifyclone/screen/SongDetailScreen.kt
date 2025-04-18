@@ -36,7 +36,10 @@ fun SongDetailScreen(
     trackProgress: Long,
     trackProgressTotal: Long,
     trackProgressText: String,
-    trackProgressTotalText: String
+    trackProgressTotalText: String,
+    onPlayPauseClick: () -> Unit = {},
+    onNextClick: () -> Unit = {},
+    onPreviousClick: () -> Unit = {},
 ) {
     BackHandler {
         navController.popBackStack()
@@ -89,7 +92,10 @@ fun SongDetailScreen(
            durationTotal = trackProgressTotal,
            durationText = trackProgressText,
            durationTotalText = trackProgressTotalText,
-           isPlaying = playerStatus == MusicService.PlayerStatus.PLAY.status
+           isPlaying = playerStatus == MusicService.PlayerStatus.PLAY.status,
+           onPlayPauseClick = onPlayPauseClick,
+           onNextClick = onNextClick,
+           onPreviousClick = onPreviousClick
        )
    }
 }

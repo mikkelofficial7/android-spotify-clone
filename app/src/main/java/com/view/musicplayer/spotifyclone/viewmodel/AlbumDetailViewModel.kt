@@ -36,15 +36,14 @@ class AlbumDetailViewModel(private val api: Api, private val db: AppDb): BaseVie
             safeScopeFun(context).launch(Dispatchers.IO) {
                 executeJob(context) {
                     safeScopeFun(context).launch(Dispatchers.IO) {
-                        flowOnValue(api.searchArtist()).collectLatest { response ->
-                            isLoadingEvent.postValue(false)
+                        val allTrack = db.trackDao().getAllTrack()
+                        isLoadingEvent.postValue(false)
 
-                            val matchingTracks = response.data?.filter {
-                                it.genre.equals(genre, ignoreCase = true)
-                            }
-
-                            listArtistByGenre.postValue(matchingTracks as ArrayList<Track>)
+                        val matchingTracks = allTrack?.filter {
+                            it.genre.equals(genre, ignoreCase = true)
                         }
+
+                        listArtistByGenre.postValue(matchingTracks as ArrayList<Track>)
                     }
                 }
             }

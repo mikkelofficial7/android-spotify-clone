@@ -20,6 +20,11 @@ interface TrackDao {
     @Delete
     suspend fun delete(track: FavoriteTrack)
 
+    // Track DB
+
+    @Query("SELECT * FROM tbl_item_track")
+    suspend fun getAllTrack(): List<Track>?
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertAllTrack(track: Track)
 
@@ -28,4 +33,7 @@ interface TrackDao {
 
     @Query("SELECT * FROM tbl_item_track where idPk = :id")
     suspend fun getTrackByIdPrimary(id: Int): Track?
+
+    @Query("DELETE FROM tbl_item_track")
+    suspend fun deleteAllTrack()
 }

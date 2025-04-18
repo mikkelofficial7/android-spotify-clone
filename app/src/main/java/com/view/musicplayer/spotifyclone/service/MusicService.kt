@@ -6,13 +6,10 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.os.CountDownTimer
 import android.os.IBinder
-import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
-import com.view.musicplayer.spotifyclone.di.ApiModule
-import com.view.musicplayer.spotifyclone.di.NetworkModule
 import com.view.musicplayer.spotifyclone.di.RoomModule
 import com.view.musicplayer.spotifyclone.ext.loadImageNotification
 import com.view.musicplayer.spotifyclone.network.response.Track
@@ -34,7 +31,6 @@ class MusicService : Service() {
     private var notification: android.app.Notification? = null
 
     private var isShuffleEnable: Boolean = false
-    private var currentTrackId: String = ""
     private var currentPlayingTrack: Track? = null
     private var totalDuration: Long = 0
     private var lastDuration: Long = 0
@@ -47,25 +43,6 @@ class MusicService : Service() {
 
     private val serviceJob = SupervisorJob()
     private val serviceScope = CoroutineScope(Dispatchers.IO + serviceJob)
-
-    override fun onCreate() {
-        super.onCreate()
-        serviceScope.launch {
-            try {
-                val api = ApiModule.provideUserApi(NetworkModule.provideOkHttpClient(this@MusicService))
-                val response = api.searchArtist()
-
-                if (!response.data.isNullOrEmpty()) {
-                    response.data?.map {
-                        RoomModule.provideDB(applicationContext).trackDao().insertAllTrack(it)
-                    }
-                }
-
-            } catch (e: Exception) {
-                e.printStackTrace()
-            }
-        }
-    }
 
     override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
         val musicId = intent.getStringExtra(TAG.MUSIC_ID) ?: ""
@@ -81,41 +58,22 @@ class MusicService : Service() {
 
                     when (currentPlayerState) {
                         ActionDetail.START_MODE -> {
-                            if (currentTrackId != musicId || exoplayer.playbackState == Player.STATE_IDLE) {
-                                exoplayer.setMediaItem(MediaItem.fromUri(currentPlayingTrack?.streamedUrl.orEmpty()))
-                                exoplayer.volume = 1f
-                                exoplayer.prepare()
-                            }
-
-                            playerStatus = PlayerStatus.PLAY
-                            currentTrackId = musicId
-                            totalDuration = abs(currentPlayingTrack?.duration ?: 0) * 1000
-
-                            Log.d("TAG", "play")
-
-                            playMusic(currentPlayingTrack?.idPk ?: 0, exoplayer.currentPosition)
-                            runCountDown()
+                            playPlayback()
                         }
                         ActionDetail.PAUSE_MODE -> {
-                            Log.d("TAG", "pause")
-
-                            if (exoplayer.isPlaying) exoplayer.pause()
-                            playerStatus = PlayerStatus.PAUSE
-
-                            updateActivityValuePaused()
-                            removeNotification()
+                            pausePlayback()
                         }
                         ActionDetail.STOP_MODE -> {
-                            Log.d("TAG", "stop")
-                            playerStatus = PlayerStatus.STOP
-
-                            exoplayer.release()
-                            removeNotification()
-                            killService()
+                            stopPlayback()
+                        }
+                        ActionDetail.NEXT_MODE -> {
+                            playPlayback()
+                        }
+                        ActionDetail.PREV_MODE -> {
+                            playPlayback()
                         }
                         ActionDetail.RESTART_MODE -> {
                             playerStatus = PlayerStatus.PLAY
-                            currentTrackId = musicId
                             stopMusic(currentPlayingTrack?.idPk ?: 0, 0)
                         }
                         ActionDetail.SHUFFLE_MODE -> {
@@ -210,7 +168,7 @@ class MusicService : Service() {
                     notification = showNotification(
                         this@MusicService,
                         progress = progress,
-                        musicID = currentTrackId,
+                        musicID = currentPlayingTrack?.id.orEmpty(),
                         durationText = formattedTime,
                         durationTotalText = formattedTimeTotal,
                         title = currentPlayingTrack?.title.orEmpty(),
@@ -223,7 +181,7 @@ class MusicService : Service() {
                     durationRunningText = formattedTime
                     durationTotalText = formattedTimeTotal
 
-                    updateActivityValuePlayOrFinish(
+                    updatePlaybackDurationToActivity(
                         title = currentPlayingTrack?.title.orEmpty(),
                         descriptions = currentPlayingTrack?.artist.orEmpty()
                     )
@@ -238,13 +196,13 @@ class MusicService : Service() {
                 durationTotalText = "00:00"
                 playerStatus = PlayerStatus.STOP
 
-                updateActivityValuePlayOrFinish(
+                updatePlaybackDurationToActivity(
                     title = currentPlayingTrack?.title.orEmpty(),
                     descriptions = currentPlayingTrack?.artist.orEmpty()
                 )
 
                 stopMusic(currentPlayingTrack?.idPk ?: 0, 0)
-                if (isShuffleEnable) setRandomPlaylistPosition() else setNextPosition()
+                if (isShuffleEnable) setRandomPlaylistPosition()
             }
         }
 
@@ -268,30 +226,41 @@ class MusicService : Service() {
         }
     }
 
-    private fun setNextPosition() {
-        playerStatus = PlayerStatus.PLAY
+    private fun playPlayback() {
+        if (exoplayer.currentMediaItem != MediaItem.fromUri(currentPlayingTrack?.streamedUrl.orEmpty())
+            || exoplayer.playbackState == Player.STATE_IDLE) {
 
-        serviceScope.launch {
-            val currentTrackPosition = currentPlayingTrack?.idPk ?: 0
-            val trackSize = RoomModule.provideDB(applicationContext).trackDao().getAllFavoriteTrack().size
-
-            currentPlayingTrack = if (currentTrackPosition >= trackSize - 1) {
-                RoomModule.provideDB(applicationContext).trackDao().getTrackByIdPrimary(0)
-            } else {
-                RoomModule.provideDB(applicationContext).trackDao().getTrackByIdPrimary(currentTrackPosition + 1)
-            }
-
-            totalDuration = abs(currentPlayingTrack?.duration ?: 0) * 1000
-            withContext(Dispatchers.Main) {
-                delay(1000)
-                playMusic(currentPlayingTrack?.idPk ?: 0, exoplayer.currentPosition)
-                runCountDown()
-            }
+            exoplayer.setMediaItem(MediaItem.fromUri(currentPlayingTrack?.streamedUrl.orEmpty()))
+            exoplayer.volume = 1f
+            exoplayer.prepare()
         }
+
+        playerStatus = PlayerStatus.PLAY
+        totalDuration = abs(currentPlayingTrack?.duration ?: 0) * 1000
+
+        playMusic(currentPlayingTrack?.idPk ?: 0, exoplayer.currentPosition)
+        runCountDown()
     }
 
-    private fun updateActivityValuePlayOrFinish(title: String,
-                                                descriptions: String) {
+    private fun pausePlayback() {
+        playerStatus = PlayerStatus.PAUSE
+        if (exoplayer.isPlaying) exoplayer.pause()
+
+        updatePlaybackDurationToActivity()
+        removeNotification()
+    }
+
+    private fun stopPlayback() {
+        playerStatus = PlayerStatus.STOP
+        exoplayer.release()
+
+        updatePlaybackDurationToActivity()
+        removeNotification()
+        killService()
+    }
+
+    private fun updatePlaybackDurationToActivity(title: String,
+                                                 descriptions: String) {
         val intent = Intent(Notification.BROADCAST_NAME)
 
         intent.putExtra(INTENT.PENDING_MUSIC_ID, currentPlayingTrack?.id)
@@ -306,7 +275,7 @@ class MusicService : Service() {
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
     }
 
-    private fun updateActivityValuePaused() {
+    private fun updatePlaybackDurationToActivity() {
         val intent = Intent(Notification.BROADCAST_NAME)
 
         intent.putExtra(INTENT.PENDING_MUSIC_STATUS, playerStatus?.status)
@@ -325,6 +294,8 @@ class MusicService : Service() {
         const val RESTART_MODE = "_MODE_RESTART_FOREGROUND"
         const val SHUFFLE_MODE = "_MODE_SHUFFLE_FOREGROUND"
         const val REPEAT_MODE = "_MODE_REPEAT_FOREGROUND"
+        const val NEXT_MODE = "_MODE_NEXT_FOREGROUND"
+        const val PREV_MODE = "_MODE_PREV_FOREGROUND"
     }
 
     object ActionKey {

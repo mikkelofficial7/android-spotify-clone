@@ -48,7 +48,10 @@ fun PlaylistDetailScreen(
     trackProgressTotal: Long,
     trackProgressText: String,
     trackProgressTotalText: String,
-    onClickMusic: (Track) -> Unit
+    onClickMusic: (Track) -> Unit,
+    onPlayPauseClick: () -> Unit = {},
+    onNextClick: () -> Unit = {},
+    onPreviousClick: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val playlistData by viewModel.playlistData.observeAsState()
@@ -141,7 +144,10 @@ fun PlaylistDetailScreen(
                 durationTotal = trackProgressTotal,
                 durationText = trackProgressText,
                 durationTotalText = trackProgressTotalText,
-                isPlaying = playerStatus == MusicService.PlayerStatus.PLAY.status
+                isPlaying = playerStatus == MusicService.PlayerStatus.PLAY.status,
+                onPlayPauseClick = onPlayPauseClick,
+                onNextClick = onNextClick,
+                onPreviousClick = onPreviousClick
             )
         }
     }

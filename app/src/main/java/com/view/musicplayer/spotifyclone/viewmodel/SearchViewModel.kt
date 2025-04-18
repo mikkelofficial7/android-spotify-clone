@@ -34,10 +34,10 @@ class SearchViewModel(private val api: Api, private val db: AppDb): BaseViewMode
     internal fun getSongRecommendation(context: Context) {
         executeJob(context) {
             safeScopeFun(context).launch(Dispatchers.IO) {
-                flowOnValue(api.searchArtist()).collectLatest { response ->
-                    isLoadingEvent.postValue(false)
-                    topTrack.postValue(response.data?.shuffled()?.take(5))
-                }
+                isLoadingEvent.postValue(false)
+                val allTrack = db.trackDao().getAllTrack()
+
+                topTrack.postValue(allTrack?.shuffled()?.take(5))
             }
         }
     }
@@ -46,17 +46,16 @@ class SearchViewModel(private val api: Api, private val db: AppDb): BaseViewMode
         if (artistName.isBlank()) return
         executeJob(context) {
             safeScopeFun(context).launch(Dispatchers.IO) {
-                flowOnValue(api.searchArtist()).collectLatest { response ->
-                    isLoadingEvent.postValue(false)
+                isLoadingEvent.postValue(false)
+                val allTrack = db.trackDao().getAllTrack()
 
-                    val matchingTracks = response.data?.filter {
-                            it.artist.contains(artistName, ignoreCase = true) ||
-                                    it.title.contains(artistName, ignoreCase = true)
-                        } ?: listOf()
+                val matchingTracks = allTrack?.filter {
+                    it.artist.contains(artistName, ignoreCase = true) ||
+                            it.title.contains(artistName, ignoreCase = true)
+                } ?: listOf()
 
-                    listSearchArtist.postValue(arrayListOf())
-                    listSearchArtist.postValue(matchingTracks as ArrayList<Track>)
-                }
+                listSearchArtist.postValue(arrayListOf())
+                listSearchArtist.postValue(matchingTracks as ArrayList<Track>)
             }
         }
     }

@@ -16,7 +16,7 @@ class ViewModelModule {
             viewModel { AlbumDetailViewModel(get(), get()) }
             viewModel { ProfileViewModel(get()) }
             viewModel { PlaylistDetailViewModel(get()) }
-            viewModel { BroadcastViewModel() }
+            viewModel { BroadcastViewModel(get(), get()) }
         }
     }
 }

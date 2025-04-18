@@ -7,10 +7,8 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import android.provider.Settings
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.activity.viewModels
 import androidx.appcompat.app.AlertDialog
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.fillMaxSize
@@ -64,16 +62,19 @@ import com.view.musicplayer.spotifyclone.ui.theme.Black80
 import com.view.musicplayer.spotifyclone.ui.theme.SpotifyAccent80
 import com.view.musicplayer.spotifyclone.ui.theme.Transparent
 import com.view.musicplayer.spotifyclone.viewmodel.BroadcastViewModel
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
     private val notificationListener: ServiceStartOrStopListener by lazy { NotificationReceiver() }
     private lateinit var broadcastReceiver: BroadcastReceiver
-    private val viewModel: BroadcastViewModel by viewModels()
+    private val viewModel: BroadcastViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         checkNotificationPermission()
         registerBroadcast()
+
+        viewModel.getAllTrackList(this)
 
         setContent {
             AndroidspotifycloneTheme {
@@ -171,11 +172,24 @@ fun MainPage(
     val trackProgressTotal by viewModel.currentTrackDurationTotal.observeAsState()
     val trackProgressText by viewModel.currentTrackDurationText.observeAsState()
     val trackProgressTotalText by viewModel.currentTrackDurationTotalText.observeAsState()
+    val nextTrack by viewModel.nextTrack.observeAsState()
+    val prevTrack by viewModel.prevTrack.observeAsState()
+
 
     if (isShowPlayerButton) {
         listener.onPlay(context, currentPlaying.id)
     } else {
         listener.onStop(context)
+    }
+
+    if (nextTrack != null && nextTrack != Track.empty) {
+        currentPlaying = nextTrack as Track
+        listener.onNext(context, currentPlaying.id)
+    }
+
+    if (prevTrack != null && prevTrack != Track.empty) {
+        currentPlaying = prevTrack as Track
+        listener.onPrevious(context, currentPlaying.id)
     }
 
     Scaffold(
@@ -211,6 +225,12 @@ fun MainPage(
                         } else {
                             listener.onPlay(context, currentPlaying.id)
                         }
+                    },
+                    onNextClick = {
+                        viewModel.getNextTrack(context, currentPlaying.idPk)
+                    },
+                    onPreviousClick = {
+                        viewModel.getPrevTrack(context, currentPlaying.idPk)
                     }
                 )
             }
@@ -224,16 +244,29 @@ fun MainPage(
                     trackProgressTotal = trackProgressTotal ?: 0L,
                     trackProgressText = trackProgressText.orEmpty(),
                     trackProgressTotalText = trackProgressTotalText.orEmpty(),
-                ) {
-
-                    if (currentPlaying.id == it.id) {
-                        currentPlaying = Track.empty
-                        isShowPlayerButton = !isShowPlayerButton
-                    } else {
-                        currentPlaying = it
-                        isShowPlayerButton = true
+                    onClickMusic = {
+                        if (currentPlaying.id == it.id) {
+                            currentPlaying = Track.empty
+                            isShowPlayerButton = !isShowPlayerButton
+                        } else {
+                            currentPlaying = it
+                            isShowPlayerButton = true
+                        }
+                    },
+                    onPlayPauseClick = {
+                        if (playerStatus == MusicService.PlayerStatus.PLAY.status) {
+                            listener.onPause(context)
+                        } else {
+                            listener.onPlay(context, currentPlaying.id)
+                        }
+                    },
+                    onNextClick = {
+                        viewModel.getNextTrack(context, currentPlaying.idPk)
+                    },
+                    onPreviousClick = {
+                        viewModel.getPrevTrack(context, currentPlaying.idPk)
                     }
-                }
+                )
             }
             composable(ScreenRoute.Profile.route) {
                 ProfileScreen(
@@ -245,15 +278,29 @@ fun MainPage(
                     trackProgressTotal = trackProgressTotal ?: 0L,
                     trackProgressText = trackProgressText.orEmpty(),
                     trackProgressTotalText = trackProgressTotalText.orEmpty(),
-                ) {
-                    if (currentPlaying.id == it.id) {
-                        currentPlaying = Track.empty
-                        isShowPlayerButton = !isShowPlayerButton
-                    } else {
-                        currentPlaying = it
-                        isShowPlayerButton = true
+                    onClickMusic = {
+                        if (currentPlaying.id == it.id) {
+                            currentPlaying = Track.empty
+                            isShowPlayerButton = !isShowPlayerButton
+                        } else {
+                            currentPlaying = it
+                            isShowPlayerButton = true
+                        }
+                    },
+                    onPlayPauseClick = {
+                        if (playerStatus == MusicService.PlayerStatus.PLAY.status) {
+                            listener.onPause(context)
+                        } else {
+                            listener.onPlay(context, currentPlaying.id)
+                        }
+                    },
+                    onNextClick = {
+                        viewModel.getNextTrack(context, currentPlaying.idPk)
+                    },
+                    onPreviousClick = {
+                        viewModel.getPrevTrack(context, currentPlaying.idPk)
                     }
-                }
+                )
             }
             composable(
                 route = ScreenRoute.AlbumDetail.route,
@@ -270,15 +317,29 @@ fun MainPage(
                     trackProgressTotal = trackProgressTotal ?: 0L,
                     trackProgressText = trackProgressText.orEmpty(),
                     trackProgressTotalText = trackProgressTotalText.orEmpty(),
-                ) {
-                    if (currentPlaying.id == it.id) {
-                        currentPlaying = Track.empty
-                        isShowPlayerButton = !isShowPlayerButton
-                    } else {
-                        currentPlaying = it
-                        isShowPlayerButton = true
+                    onClickMusic = {
+                        if (currentPlaying.id == it.id) {
+                            currentPlaying = Track.empty
+                            isShowPlayerButton = !isShowPlayerButton
+                        } else {
+                            currentPlaying = it
+                            isShowPlayerButton = true
+                        }
+                    },
+                    onPlayPauseClick = {
+                        if (playerStatus == MusicService.PlayerStatus.PLAY.status) {
+                            listener.onPause(context)
+                        } else {
+                            listener.onPlay(context, currentPlaying.id)
+                        }
+                    },
+                    onNextClick = {
+                        viewModel.getNextTrack(context, currentPlaying.idPk)
+                    },
+                    onPreviousClick = {
+                        viewModel.getPrevTrack(context, currentPlaying.idPk)
                     }
-                }
+                )
             }
             composable(
                 route = ScreenRoute.MusicDetail.route,
@@ -292,6 +353,19 @@ fun MainPage(
                     trackProgressText = trackProgressText.orEmpty(),
                     trackProgressTotalText = trackProgressTotalText.orEmpty(),
                     currentPlaying = currentPlaying,
+                    onPlayPauseClick = {
+                        if (playerStatus == MusicService.PlayerStatus.PLAY.status) {
+                            listener.onPause(context)
+                        } else {
+                            listener.onPlay(context, currentPlaying.id)
+                        }
+                    },
+                    onNextClick = {
+                        viewModel.getNextTrack(context, currentPlaying.idPk)
+                    },
+                    onPreviousClick = {
+                        viewModel.getPrevTrack(context, currentPlaying.idPk)
+                    }
                 )
             }
             composable(
@@ -314,15 +388,29 @@ fun MainPage(
                     trackProgressTotal = trackProgressTotal ?: 0L,
                     trackProgressText = trackProgressText.orEmpty(),
                     trackProgressTotalText = trackProgressTotalText.orEmpty(),
-                ) {
-                    if (currentPlaying.id == it.id) {
-                        currentPlaying = Track.empty
-                        isShowPlayerButton = !isShowPlayerButton
-                    } else {
-                        currentPlaying = it
-                        isShowPlayerButton = true
+                    onClickMusic = {
+                        if (currentPlaying.id == it.id) {
+                            currentPlaying = Track.empty
+                            isShowPlayerButton = !isShowPlayerButton
+                        } else {
+                            currentPlaying = it
+                            isShowPlayerButton = true
+                        }
+                    },
+                    onPlayPauseClick = {
+                        if (playerStatus == MusicService.PlayerStatus.PLAY.status) {
+                            listener.onPause(context)
+                        } else {
+                            listener.onPlay(context, currentPlaying.id)
+                        }
+                    },
+                    onNextClick = {
+                        viewModel.getNextTrack(context, currentPlaying.idPk)
+                    },
+                    onPreviousClick = {
+                        viewModel.getPrevTrack(context, currentPlaying.idPk)
                     }
-                }
+                )
             }
         }
     }
