@@ -27,8 +27,7 @@ class BroadcastViewModel(val db: AppDb, val api: Api): BaseViewModel<Any?>() {
     internal var currentTrackDurationText = SingleLiveEvent<String>().apply { value = "" }
     internal var currentTrackDurationTotalText = SingleLiveEvent<String>().apply { value = "" }
 
-    internal var nextTrack = SingleLiveEvent<Track>().apply { value = Track.empty }
-    internal var prevTrack = SingleLiveEvent<Track>().apply { value = Track.empty }
+    internal var newTrack = SingleLiveEvent<Track>().apply { value = Track.empty }
 
     internal fun getAllTrackList(context: Context) {
         executeJob(context) {
@@ -125,11 +124,7 @@ class BroadcastViewModel(val db: AppDb, val api: Api): BaseViewModel<Any?>() {
 
                 val track = db.trackDao().getTrackByIdPrimary(newId)
 
-                if (isNext) {
-                    nextTrack.postValue(track)
-                } else {
-                    prevTrack.postValue(track)
-                }
+                newTrack.postValue(track)
             }
         }
     }

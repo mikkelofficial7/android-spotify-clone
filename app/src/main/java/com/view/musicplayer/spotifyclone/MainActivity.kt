@@ -168,15 +168,14 @@ fun MainPage(
 
     var isShowPlayerButton by rememberSaveable { mutableStateOf(isShowPlayer) }
     var currentPlaying by remember { mutableStateOf(Track.empty) }
+    var isNextPlayback by remember { mutableStateOf(false) }
 
     val playerStatus by viewModel.currentTrackStatus.observeAsState()
     val trackProgress by viewModel.currentTrackDuration.observeAsState()
     val trackProgressTotal by viewModel.currentTrackDurationTotal.observeAsState()
     val trackProgressText by viewModel.currentTrackDurationText.observeAsState()
     val trackProgressTotalText by viewModel.currentTrackDurationTotalText.observeAsState()
-    val nextTrack by viewModel.nextTrack.observeAsState()
-    val prevTrack by viewModel.prevTrack.observeAsState()
-
+    val newTrack by viewModel.newTrack.observeAsState()
 
     if (isShowPlayerButton) {
         listener.onPlay(context, currentPlaying.id)
@@ -184,14 +183,14 @@ fun MainPage(
         listener.onStop(context)
     }
 
-    if (nextTrack != null && nextTrack != Track.empty) {
-        currentPlaying = nextTrack as Track
-        listener.onNext(context, currentPlaying.id)
-    }
+    if (newTrack != null && newTrack != Track.empty) {
+        currentPlaying = newTrack as Track
 
-    if (prevTrack != null && prevTrack != Track.empty) {
-        currentPlaying = prevTrack as Track
-        listener.onPrevious(context, currentPlaying.id)
+        if (isNextPlayback) {
+            listener.onNext(context, currentPlaying.id)
+        } else {
+            listener.onPrevious(context, currentPlaying.id)
+        }
     }
 
     Scaffold(
@@ -229,10 +228,12 @@ fun MainPage(
                         }
                     },
                     onNextClick = {
-                        viewModel.getTrack(context, currentPlaying.idPk, true)
+                        isNextPlayback = true
+                        viewModel.getTrack(context, currentPlaying.idPk, isNextPlayback)
                     },
                     onPreviousClick = {
-                        viewModel.getTrack(context, currentPlaying.idPk, false)
+                        isNextPlayback = false
+                        viewModel.getTrack(context, currentPlaying.idPk, isNextPlayback)
                     },
                     onRefreshClick = {
                         listener.onRestart(context, currentPlaying.id)
@@ -266,11 +267,13 @@ fun MainPage(
                         }
                     },
                     onNextClick = {
-                        viewModel.getTrack(context, currentPlaying.idPk, true)
+                        isNextPlayback = true
+                        viewModel.getTrack(context, currentPlaying.idPk, isNextPlayback)
                     },
                     onPreviousClick = {
-                        viewModel.getTrack(context, currentPlaying.idPk, false)
-                    },
+                        isNextPlayback = false
+                        viewModel.getTrack(context, currentPlaying.idPk, isNextPlayback)
+                    }
                 )
             }
             composable(ScreenRoute.Profile.route) {
@@ -300,11 +303,13 @@ fun MainPage(
                         }
                     },
                     onNextClick = {
-                        viewModel.getTrack(context, currentPlaying.idPk, true)
+                        isNextPlayback = true
+                        viewModel.getTrack(context, currentPlaying.idPk, isNextPlayback)
                     },
                     onPreviousClick = {
-                        viewModel.getTrack(context, currentPlaying.idPk, false)
-                    },
+                        isNextPlayback = false
+                        viewModel.getTrack(context, currentPlaying.idPk, isNextPlayback)
+                    }
                 )
             }
             composable(
@@ -339,10 +344,12 @@ fun MainPage(
                         }
                     },
                     onNextClick = {
-                        viewModel.getTrack(context, currentPlaying.idPk, true)
+                        isNextPlayback = true
+                        viewModel.getTrack(context, currentPlaying.idPk, isNextPlayback)
                     },
                     onPreviousClick = {
-                        viewModel.getTrack(context, currentPlaying.idPk, false)
+                        isNextPlayback = false
+                        viewModel.getTrack(context, currentPlaying.idPk, isNextPlayback)
                     },
                 )
             }
@@ -366,11 +373,13 @@ fun MainPage(
                         }
                     },
                     onNextClick = {
-                        viewModel.getTrack(context, currentPlaying.idPk, true)
+                        isNextPlayback = true
+                        viewModel.getTrack(context, currentPlaying.idPk, isNextPlayback)
                     },
                     onPreviousClick = {
-                        viewModel.getTrack(context, currentPlaying.idPk, false)
-                    },
+                        isNextPlayback = false
+                        viewModel.getTrack(context, currentPlaying.idPk, isNextPlayback)
+                    }
                 )
             }
             composable(
@@ -410,11 +419,13 @@ fun MainPage(
                         }
                     },
                     onNextClick = {
-                        viewModel.getTrack(context, currentPlaying.idPk, true)
+                        isNextPlayback = true
+                        viewModel.getTrack(context, currentPlaying.idPk, isNextPlayback)
                     },
                     onPreviousClick = {
-                        viewModel.getTrack(context, currentPlaying.idPk, false)
-                    },
+                        isNextPlayback = false
+                        viewModel.getTrack(context, currentPlaying.idPk, isNextPlayback)
+                    }
                 )
             }
         }
