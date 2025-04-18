@@ -43,20 +43,14 @@ class BroadcastViewModel(val db: AppDb, val api: Api): BaseViewModel<Any?>() {
     internal fun getNextTrack(context: Context, id: Int) {
         executeJob(context) {
             safeScopeFun(context).launch(Dispatchers.IO) {
-                executeJob(context) {
-                    safeScopeFun(context).launch(Dispatchers.IO) {
-                        Log.d("TAG", id.toString())
-
-                        val trackSize = db.trackDao().getAllTrack()?.size ?: 0
-                        val track = if (id > trackSize - 1) {
-                            db.trackDao().getTrackByIdPrimary(0)
-                        } else {
-                            db.trackDao().getTrackByIdPrimary(id + 1)
-                        }
-
-                        nextTrack.postValue(track)
-                    }
+                val trackSize = db.trackDao().getAllTrack()?.size ?: 0
+                val track = if (id > trackSize - 1) {
+                    db.trackDao().getTrackByIdPrimary(0)
+                } else {
+                    db.trackDao().getTrackByIdPrimary(id + 1)
                 }
+
+                nextTrack.postValue(track)
             }
         }
     }
@@ -64,19 +58,14 @@ class BroadcastViewModel(val db: AppDb, val api: Api): BaseViewModel<Any?>() {
     internal fun getPrevTrack(context: Context, id: Int) {
         executeJob(context) {
             safeScopeFun(context).launch(Dispatchers.IO) {
-                executeJob(context) {
-                    safeScopeFun(context).launch(Dispatchers.IO) {
-                        Log.d("TAG", id.toString())
-                        val trackSize = db.trackDao().getAllTrack()?.size ?: 0
-                        val track = if (id < 1) {
-                            db.trackDao().getTrackByIdPrimary(trackSize - 1)
-                        } else {
-                            db.trackDao().getTrackByIdPrimary(id - 1)
-                        }
-
-                        prevTrack.postValue(track)
-                    }
+                val trackSize = db.trackDao().getAllTrack()?.size ?: 0
+                val track = if (id < 1) {
+                    db.trackDao().getTrackByIdPrimary(trackSize - 1)
+                } else {
+                    db.trackDao().getTrackByIdPrimary(id - 1)
                 }
+
+                prevTrack.postValue(track)
             }
         }
     }
