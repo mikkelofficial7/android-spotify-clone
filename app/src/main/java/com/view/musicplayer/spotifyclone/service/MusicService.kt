@@ -13,7 +13,6 @@ import com.view.musicplayer.spotifyclone.di.RoomModule
 import com.view.musicplayer.spotifyclone.ext.convertTimeToHHSS
 import com.view.musicplayer.spotifyclone.ext.convertTimeToMinuteSecond
 import com.view.musicplayer.spotifyclone.ext.loadImageNotification
-import com.view.musicplayer.spotifyclone.ext.toSecond
 import com.view.musicplayer.spotifyclone.network.response.Track
 import com.view.musicplayer.spotifyclone.service.MusicService.Notification.NOTIFICATION_ID
 import com.view.musicplayer.spotifyclone.service.builder.NotificationLayoutBuilder
@@ -46,7 +45,9 @@ class MusicService : Service() {
     private val serviceScopeMain = CoroutineScope(Dispatchers.Main + serviceJob)
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        if (intent == null) return START_STICKY
+        if (intent == null) {
+            return START_NOT_STICKY
+        }
 
         val musicId = intent.getStringExtra(TAG.MUSIC_ID) ?: ""
         val isShuffle = intent.getBooleanExtra(TAG.IS_SHUFFLE, false)
@@ -61,27 +62,26 @@ class MusicService : Service() {
 
                     when (currentPlayerState) {
                         ActionDetail.START_MODE -> {
-                            delay(1000)
+                            delay(500)
                             playPlayback()
                         }
                         ActionDetail.PAUSE_MODE -> {
-                            delay(1000)
+                            delay(500)
                             pausePlayback()
                         }
                         ActionDetail.STOP_MODE -> {
-                            delay(1000)
+                            delay(500)
                             stopPlayback()
                         }
                         ActionDetail.NEXT_MODE -> {
-                            delay(1000)
+                            delay(500)
                             playPlayback()
                         }
                         ActionDetail.PREV_MODE -> {
-                            delay(1000)
+                            delay(500)
                             playPlayback()
                         }
                         ActionDetail.RESTART_MODE -> {
-                            delay(1000)
                             playPlayback(isRefreshSamePlayback = true)
                         }
                         ActionDetail.SHUFFLE_MODE -> {
@@ -98,7 +98,7 @@ class MusicService : Service() {
             }
         }
 
-        return START_STICKY
+        return START_NOT_STICKY
     }
 
     override fun onBind(intent: Intent): IBinder? {
@@ -149,48 +149,56 @@ class MusicService : Service() {
     }
 
     private fun startCountDown() {
-        var imageNotification: Bitmap?
-        val interval = 1000L
-        val totalDuration = currentPlayingTrack?.duration?.toSecond() ?: 0L
-        val playingTrack = currentPlayingTrack
+        exoplayer.addListener(object : Player.Listener {
+            override fun onPlaybackStateChanged(state: Int) {
+                if (state == Player.STATE_READY) {
+                    var imageNotification: Bitmap?
+                    val interval = 1000L
+                    val playingTrack = currentPlayingTrack
+                    val totalDuration = exoplayer.duration
 
-        loadImageNotification(this@MusicService, playingTrack?.imageUrl.orEmpty()) { imageAlbum ->
-            imageNotification = imageAlbum
+                    loadImageNotification(this@MusicService, playingTrack?.imageUrl.orEmpty()) { imageAlbum ->
+                        imageNotification = imageAlbum
 
-            countdownJob?.cancel()
-            countdownJob = serviceScopeMain.launch {
-                var runningDuration = withContext(Dispatchers.Main) { exoplayer.currentPosition }
+                        countdownJob?.cancel()
+                        countdownJob = serviceScopeMain.launch {
+                            var runningDuration = withContext(Dispatchers.Main) { exoplayer.currentPosition }
 
-                while (isActive && runningDuration < totalDuration) {
-                    val formattedTime = runningDuration.convertTimeToHHSS()
-                    val formattedTimeTotal = totalDuration.convertTimeToHHSS()
-                    val progress = ((runningDuration * 100) / totalDuration).toFloat()
+                            while (isActive && runningDuration < totalDuration) {
+                                val formattedTime = runningDuration.convertTimeToHHSS()
+                                val formattedTimeTotal = totalDuration.convertTimeToHHSS()
+                                val progress = ((runningDuration * 100) / totalDuration).toFloat()
 
-                    val time = runningDuration.convertTimeToMinuteSecond()
+                                val time = runningDuration.convertTimeToMinuteSecond()
 
-                    durationRunning = time.second + (time.first * 60)
-                    durationTotal = playingTrack?.duration ?: 0L
-                    durationRunningText = formattedTime
-                    durationTotalText = formattedTimeTotal
+                                durationRunning = time.second + (time.first * 60)
+                                durationTotal = playingTrack?.duration ?: 0L
+                                durationRunningText = formattedTime
+                                durationTotalText = formattedTimeTotal
 
-                    buildNotificationLayout(progress, formattedTime, formattedTimeTotal, imageNotification)
+                                if (playerStatus != PlayerStatus.STOP) {
+                                    buildNotificationLayout(progress, formattedTime, formattedTimeTotal, imageNotification)
+                                }
 
-                    updatePlaybackDurationToActivity(
-                        title = playingTrack?.title.orEmpty(),
-                        descriptions = playingTrack?.artist.orEmpty()
-                    )
+                                updatePlaybackDurationToActivity(
+                                    title = playingTrack?.title.orEmpty(),
+                                    descriptions = playingTrack?.artist.orEmpty()
+                                )
 
-                    delay(interval)
-                    if (playerStatus != PlayerStatus.PAUSE) {
-                        runningDuration += interval
+                                delay(interval)
+                                if (playerStatus != PlayerStatus.PAUSE) {
+                                    runningDuration += interval
+                                }
+                            }
+
+                            withContext(Dispatchers.Main) {
+                                onFinishRun(totalDuration)
+                            }
+                        }
                     }
                 }
-
-                withContext(Dispatchers.Main) {
-                    onFinishRun(totalDuration)
-                }
             }
-        }
+        })
     }
 
     private fun onFinishRun(totalDuration: Long) {
