@@ -202,7 +202,7 @@ class MusicService : Service() {
                 )
 
                 stopMusic(currentPlayingTrack?.idPk ?: 0, 0)
-                if (isShuffleEnable) setRandomPlaylistPosition()
+                if (isShuffleEnable) setRandomPlaylistPosition() else setNextPlayback()
             }
         }
 
@@ -223,6 +223,20 @@ class MusicService : Service() {
                 playMusic(currentPlayingTrack?.idPk ?: 0, exoplayer.currentPosition)
                 runCountDown()
             }
+        }
+    }
+
+    private fun setNextPlayback() {
+        serviceScope.launch {
+            val trackSize = RoomModule.provideDB(applicationContext).trackDao().getAllTrack()?.size ?: 0
+            val track = if ((currentPlayingTrack?.idPk ?: 0) > trackSize - 1) {
+                RoomModule.provideDB(applicationContext).trackDao().getTrackByIdPrimary(0)
+            } else {
+                RoomModule.provideDB(applicationContext).trackDao().getTrackByIdPrimary((currentPlayingTrack?.idPk) + 1)
+            }
+
+            currentPlayingTrack = track
+            playPlayback()
         }
     }
 
