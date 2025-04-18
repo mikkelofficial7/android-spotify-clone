@@ -1,7 +1,6 @@
 package com.view.musicplayer.spotifyclone.screen.shared
 
 import android.content.res.Configuration
-import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image

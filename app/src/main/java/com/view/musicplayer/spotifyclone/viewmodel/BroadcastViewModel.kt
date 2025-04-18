@@ -1,7 +1,6 @@
 package com.view.musicplayer.spotifyclone.viewmodel
 
 import android.content.Context
-import android.util.Log
 import com.view.musicplayer.spotifyclone.ext.EmptyClass
 import com.view.musicplayer.spotifyclone.ext.SingleLiveEvent
 import com.view.musicplayer.spotifyclone.ext.flowOnValue
@@ -120,10 +119,7 @@ class BroadcastViewModel(val db: AppDb, val api: Api): BaseViewModel<Any?>() {
                     else -> id - 1
                 }
 
-                Log.d("TAG", "prev id: $id, next id: $newId")
-
                 val track = db.trackDao().getTrackByIdPrimary(newId)
-
                 newTrack.postValue(track)
             }
         }

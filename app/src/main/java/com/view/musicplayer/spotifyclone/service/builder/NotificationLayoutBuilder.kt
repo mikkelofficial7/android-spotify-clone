@@ -56,20 +56,17 @@ object NotificationLayoutBuilder {
         }
         notificationManager.createNotificationChannel(notificationChannel)
 
-        val notificationLayout = RemoteViews(context.packageName, R.layout.layout_notification).apply {
-            setProgressBar(R.id.notification_seekbar, 100, progress.toInt(), false)
+        val notificationLayout = RemoteViews(context.packageName, R.layout.layout_notification_small).apply {
             setTextViewText(R.id.iv_title_notification, title)
             setTextViewText(R.id.iv_subtitle_notification, descriptions)
-            setTextViewText(R.id.tv_timer_notification, durationText)
-            setTextViewText(R.id.tv_timer_notification_total, durationTotalText)
+            setTextViewText(R.id.tv_timer_notification, "$durationText / $durationTotalText")
             image?.let {
                 setImageViewBitmap(R.id.iv_notification, image)
                 setImageViewBitmap(R.id.iv_notification_bg, image)
             }
         }
-        val notificationLayoutExpanded = RemoteViews(context.packageName,
-            R.layout.layout_notification
-        ).apply {
+
+        val notificationLayoutExpanded = RemoteViews(context.packageName, R.layout.layout_notification).apply {
             setProgressBar(R.id.notification_seekbar, 100, progress.toInt(), false)
             setTextViewText(R.id.iv_title_notification, title)
             setTextViewText(R.id.iv_subtitle_notification, descriptions)

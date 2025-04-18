@@ -4,36 +4,36 @@ import android.app.Service
 import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
-import android.os.CountDownTimer
 import android.os.IBinder
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import com.view.musicplayer.spotifyclone.di.RoomModule
+import com.view.musicplayer.spotifyclone.ext.convertTimeToHHSS
+import com.view.musicplayer.spotifyclone.ext.convertTimeToMinuteSecond
 import com.view.musicplayer.spotifyclone.ext.loadImageNotification
+import com.view.musicplayer.spotifyclone.ext.toSecond
 import com.view.musicplayer.spotifyclone.network.response.Track
+import com.view.musicplayer.spotifyclone.service.MusicService.Notification.NOTIFICATION_ID
 import com.view.musicplayer.spotifyclone.service.builder.NotificationLayoutBuilder
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.math.abs
 
 class MusicService : Service() {
     private val exoplayer: ExoPlayer by lazy {
         ExoPlayer.Builder(this).build()
     }
 
-    private var countdownTimer: CountDownTimer? = null
-    private var notification: android.app.Notification? = null
-
+    private var countdownJob: Job? = null
     private var isShuffleEnable: Boolean = false
     private var currentPlayingTrack: Track? = null
-    private var totalDuration: Long = 0
-    private var lastDuration: Long = 0
     private var playerStatus: PlayerStatus? = null
 
     var durationRunning: Long = 0L
@@ -43,6 +43,7 @@ class MusicService : Service() {
 
     private val serviceJob = SupervisorJob()
     private val serviceScope = CoroutineScope(Dispatchers.IO + serviceJob)
+    private val serviceScopeMain = CoroutineScope(Dispatchers.Main + serviceJob)
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent == null) return START_STICKY
@@ -60,26 +61,32 @@ class MusicService : Service() {
 
                     when (currentPlayerState) {
                         ActionDetail.START_MODE -> {
+                            delay(1000)
                             playPlayback()
                         }
                         ActionDetail.PAUSE_MODE -> {
+                            delay(1000)
                             pausePlayback()
                         }
                         ActionDetail.STOP_MODE -> {
+                            delay(1000)
                             stopPlayback()
                         }
                         ActionDetail.NEXT_MODE -> {
+                            delay(1000)
                             playPlayback()
                         }
                         ActionDetail.PREV_MODE -> {
+                            delay(1000)
                             playPlayback()
                         }
                         ActionDetail.RESTART_MODE -> {
+                            delay(1000)
                             playPlayback(isRefreshSamePlayback = true)
                         }
                         ActionDetail.SHUFFLE_MODE -> {
                             isShuffleEnable = isShuffle
-                            exoplayer.shuffleModeEnabled = isShuffle
+                            // exoplayer.shuffleModeEnabled = isShuffle
                         }
                         ActionDetail.REPEAT_MODE -> {
                             playerStatus = PlayerStatus.PLAY
@@ -101,8 +108,8 @@ class MusicService : Service() {
     override fun onDestroy() {
         currentPlayingTrack = null
         exoplayer.release()
-
         killService()
+
         super.onDestroy()
     }
 
@@ -115,28 +122,19 @@ class MusicService : Service() {
         stopForeground(true)
     }
 
-    private fun stopMusic(position: Int, duration: Long) {
-        exoplayer.seekTo(position, duration)
-    }
-
     private fun playMusic(position: Int, lastPlaybackPosition: Long) {
         exoplayer.seekTo(position, lastPlaybackPosition)
         exoplayer.play()
     }
 
-    private fun runCountDown() {
-        countdownTimer?.cancel()
-        startCountDown()
-    }
-
-    private fun showNotification(context: Context,
-                                 musicID: String = "",
-                                 progress: Float = 0f,
-                                 durationText: String = "00:00",
-                                 durationTotalText: String = "00:00",
-                                 title: String = "",
-                                 descriptions: String = "",
-                                 image: Bitmap? = null
+    private fun buildNotificationLayout(context: Context,
+                                        musicID: String = "",
+                                        progress: Float = 0f,
+                                        durationText: String = "",
+                                        durationTotalText: String = "",
+                                        title: String = "",
+                                        descriptions: String = "",
+                                        image: Bitmap? = null
     ): android.app.Notification {
         return NotificationLayoutBuilder.showCustomNotification(
             context,
@@ -151,71 +149,78 @@ class MusicService : Service() {
     }
 
     private fun startCountDown() {
-        countdownTimer = object : CountDownTimer(totalDuration, 1000) {
-            override fun onTick(millisUntilFinished: Long) {
-                lastDuration = exoplayer.currentPosition
+        var imageNotification: Bitmap?
+        val interval = 1000L
+        val totalDuration = currentPlayingTrack?.duration?.toSecond() ?: 0L
+        val playingTrack = currentPlayingTrack
 
-                val minutes = lastDuration / 60000
-                val seconds = (lastDuration % 60000) / 1000
-                val formattedTime = String.format("%02d:%02d", minutes, seconds)
-                val progress = ((lastDuration * 100) /totalDuration).toFloat()
+        loadImageNotification(this@MusicService, playingTrack?.imageUrl.orEmpty()) { imageAlbum ->
+            imageNotification = imageAlbum
 
-                val minutesTotal = totalDuration / 60000
-                val secondsTotal = (totalDuration % 60000) / 1000
-                val formattedTimeTotal = String.format("%02d:%02d", minutesTotal, secondsTotal)
+            countdownJob?.cancel()
+            countdownJob = serviceScopeMain.launch {
+                var runningDuration = withContext(Dispatchers.Main) { exoplayer.currentPosition }
 
-                loadImageNotification(this@MusicService, currentPlayingTrack?.imageUrl.orEmpty()) { imageAlbum ->
-                    notification = showNotification(
-                        this@MusicService,
-                        progress = progress,
-                        musicID = currentPlayingTrack?.id.orEmpty(),
-                        durationText = formattedTime,
-                        durationTotalText = formattedTimeTotal,
-                        title = currentPlayingTrack?.title.orEmpty(),
-                        descriptions = currentPlayingTrack?.artist.orEmpty(),
-                        image = imageAlbum
-                    )
+                while (isActive && runningDuration < totalDuration) {
+                    val formattedTime = runningDuration.convertTimeToHHSS()
+                    val formattedTimeTotal = totalDuration.convertTimeToHHSS()
+                    val progress = ((runningDuration * 100) / totalDuration).toFloat()
 
-                    durationRunning = seconds + (minutes * 60)
-                    durationTotal = currentPlayingTrack?.duration ?: 0L
+                    val time = runningDuration.convertTimeToMinuteSecond()
+
+                    durationRunning = time.second + (time.first * 60)
+                    durationTotal = playingTrack?.duration ?: 0L
                     durationRunningText = formattedTime
                     durationTotalText = formattedTimeTotal
 
+                    buildNotificationLayout(progress, formattedTime, formattedTimeTotal, imageNotification)
+
                     updatePlaybackDurationToActivity(
-                        title = currentPlayingTrack?.title.orEmpty(),
-                        descriptions = currentPlayingTrack?.artist.orEmpty()
+                        title = playingTrack?.title.orEmpty(),
+                        descriptions = playingTrack?.artist.orEmpty()
                     )
 
-                    startForeground(Notification.NOTIFICATION_ID, notification)
+                    delay(interval)
+                    if (playerStatus != PlayerStatus.PAUSE) {
+                        runningDuration += interval
+                    }
+                }
+
+                withContext(Dispatchers.Main) {
+                    onFinishRun(totalDuration)
                 }
             }
-            override fun onFinish() {
-                durationRunning = 0L
-                durationTotal = currentPlayingTrack?.duration ?: 0L
-                durationRunningText = "00:00"
-                durationTotalText = "00:00"
-                playerStatus = PlayerStatus.STOP
-
-                updatePlaybackDurationToActivity(
-                    title = currentPlayingTrack?.title.orEmpty(),
-                    descriptions = currentPlayingTrack?.artist.orEmpty()
-                )
-
-                stopMusic(currentPlayingTrack?.idPk ?: 0, 0)
-                if (isShuffleEnable) setRandomPlaylistPosition() else setNextPlayback()
-            }
         }
+    }
 
-        countdownTimer?.start()
+    private fun onFinishRun(totalDuration: Long) {
+        durationRunning = 0L
+        durationTotal = totalDuration
+        durationRunningText = "00:00"
+        durationTotalText = "00:00"
+        playerStatus = PlayerStatus.STOP
+
+        updatePlaybackDurationToActivity(
+            title = currentPlayingTrack?.title.orEmpty(),
+            descriptions = currentPlayingTrack?.artist.orEmpty()
+        )
+
+        removeNotification()
+        killService()
+
+        if (isShuffleEnable) setRandomPlaylistPosition() else setNextPlayback()
     }
 
     private fun setRandomPlaylistPosition() {
         serviceScope.launch {
             val trackSize = RoomModule.provideDB(applicationContext).trackDao().getAllFavoriteTrack().size
             val randomSort = (0..trackSize).random()
+
             currentPlayingTrack = RoomModule.provideDB(applicationContext).trackDao().getTrackByIdPrimary(randomSort)
 
-            playPlayback()
+            withContext(Dispatchers.Main) {
+                playPlayback()
+            }
         }
     }
 
@@ -229,7 +234,9 @@ class MusicService : Service() {
             }
 
             currentPlayingTrack = track
-            playPlayback()
+            withContext(Dispatchers.Main) {
+                playPlayback()
+            }
         }
     }
 
@@ -244,10 +251,8 @@ class MusicService : Service() {
         }
 
         playerStatus = PlayerStatus.PLAY
-        totalDuration = abs(currentPlayingTrack?.duration ?: 0) * 1000
-
         playMusic(currentPlayingTrack?.idPk ?: 0, exoplayer.currentPosition)
-        runCountDown()
+        startCountDown()
     }
 
     private fun pausePlayback() {
@@ -293,6 +298,26 @@ class MusicService : Service() {
         intent.putExtra(INTENT.PENDING_DURATION_TOTAL_TEXT, durationTotalText)
 
         LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
+    }
+
+    private fun buildNotificationLayout(
+        progress: Float,
+        formattedTime: String,
+        formattedTimeTotal: String,
+        imageNotification: Bitmap?
+    ) {
+        val notification = buildNotificationLayout(
+            this@MusicService,
+            progress = progress,
+            musicID = currentPlayingTrack?.id.orEmpty(),
+            durationText = formattedTime,
+            durationTotalText = formattedTimeTotal,
+            title = currentPlayingTrack?.title.orEmpty(),
+            descriptions = currentPlayingTrack?.artist.orEmpty(),
+            image = imageNotification
+        )
+
+        startForeground(NOTIFICATION_ID, notification)
     }
 
     object ActionDetail {
