@@ -229,10 +229,10 @@ fun MainPage(
                         }
                     },
                     onNextClick = {
-                        viewModel.getNextTrack(context, currentPlaying.idPk)
+                        viewModel.getTrack(context, currentPlaying.idPk, true)
                     },
                     onPreviousClick = {
-                        viewModel.getPrevTrack(context, currentPlaying.idPk)
+                        viewModel.getTrack(context, currentPlaying.idPk, false)
                     },
                     onRefreshClick = {
                         listener.onRestart(context, currentPlaying.id)
@@ -266,11 +266,11 @@ fun MainPage(
                         }
                     },
                     onNextClick = {
-                        viewModel.getNextTrack(context, currentPlaying.idPk)
+                        viewModel.getTrack(context, currentPlaying.idPk, true)
                     },
                     onPreviousClick = {
-                        viewModel.getPrevTrack(context, currentPlaying.idPk)
-                    }
+                        viewModel.getTrack(context, currentPlaying.idPk, false)
+                    },
                 )
             }
             composable(ScreenRoute.Profile.route) {
@@ -300,11 +300,11 @@ fun MainPage(
                         }
                     },
                     onNextClick = {
-                        viewModel.getNextTrack(context, currentPlaying.idPk)
+                        viewModel.getTrack(context, currentPlaying.idPk, true)
                     },
                     onPreviousClick = {
-                        viewModel.getPrevTrack(context, currentPlaying.idPk)
-                    }
+                        viewModel.getTrack(context, currentPlaying.idPk, false)
+                    },
                 )
             }
             composable(
@@ -339,11 +339,11 @@ fun MainPage(
                         }
                     },
                     onNextClick = {
-                        viewModel.getNextTrack(context, currentPlaying.idPk)
+                        viewModel.getTrack(context, currentPlaying.idPk, true)
                     },
                     onPreviousClick = {
-                        viewModel.getPrevTrack(context, currentPlaying.idPk)
-                    }
+                        viewModel.getTrack(context, currentPlaying.idPk, false)
+                    },
                 )
             }
             composable(
@@ -366,11 +366,11 @@ fun MainPage(
                         }
                     },
                     onNextClick = {
-                        viewModel.getNextTrack(context, currentPlaying.idPk)
+                        viewModel.getTrack(context, currentPlaying.idPk, true)
                     },
                     onPreviousClick = {
-                        viewModel.getPrevTrack(context, currentPlaying.idPk)
-                    }
+                        viewModel.getTrack(context, currentPlaying.idPk, false)
+                    },
                 )
             }
             composable(
@@ -410,11 +410,11 @@ fun MainPage(
                         }
                     },
                     onNextClick = {
-                        viewModel.getNextTrack(context, currentPlaying.idPk)
+                        viewModel.getTrack(context, currentPlaying.idPk, true)
                     },
                     onPreviousClick = {
-                        viewModel.getPrevTrack(context, currentPlaying.idPk)
-                    }
+                        viewModel.getTrack(context, currentPlaying.idPk, false)
+                    },
                 )
             }
         }

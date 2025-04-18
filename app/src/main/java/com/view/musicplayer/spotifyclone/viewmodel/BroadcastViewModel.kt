@@ -1,6 +1,7 @@
 package com.view.musicplayer.spotifyclone.viewmodel
 
 import android.content.Context
+import android.util.Log
 import com.view.musicplayer.spotifyclone.ext.EmptyClass
 import com.view.musicplayer.spotifyclone.ext.SingleLiveEvent
 import com.view.musicplayer.spotifyclone.ext.flowOnValue
@@ -107,32 +108,28 @@ class BroadcastViewModel(val db: AppDb, val api: Api): BaseViewModel<Any?>() {
         }
     }
 
-    internal fun getNextTrack(context: Context, id: Int) {
+    internal fun getTrack(context: Context, id: Int, isNext: Boolean) {
         executeJob(context) {
             safeScopeFun(context).launch(Dispatchers.IO) {
-                val trackSize = db.trackDao().getAllTrack()?.size ?: 0
-                val track = if (id > trackSize - 1) {
-                    db.trackDao().getTrackByIdPrimary(0)
-                } else {
-                    db.trackDao().getTrackByIdPrimary(id + 1)
+                val tracks = db.trackDao().getAllTrack() ?: return@launch
+                val trackSize = tracks.size
+
+                val newId = when {
+                    isNext && id >= trackSize - 1 -> 0
+                    !isNext && id <= 0 -> trackSize - 1
+                    isNext -> id + 1
+                    else -> id - 1
                 }
 
-                nextTrack.postValue(track)
-            }
-        }
-    }
+                Log.d("TAG", "prev id: $id, next id: $newId")
 
-    internal fun getPrevTrack(context: Context, id: Int) {
-        executeJob(context) {
-            safeScopeFun(context).launch(Dispatchers.IO) {
-                val trackSize = db.trackDao().getAllTrack()?.size ?: 0
-                val track = if (id < 1) {
-                    db.trackDao().getTrackByIdPrimary(trackSize - 1)
+                val track = db.trackDao().getTrackByIdPrimary(newId)
+
+                if (isNext) {
+                    nextTrack.postValue(track)
                 } else {
-                    db.trackDao().getTrackByIdPrimary(id - 1)
+                    prevTrack.postValue(track)
                 }
-
-                prevTrack.postValue(track)
             }
         }
     }
