@@ -85,6 +85,7 @@ fun SearchScreen(
     navController: NavController,
     playerStatus: String,
     trackProgress: Long,
+    isShuffle: Boolean,
     trackProgressTotal: Long,
     trackProgressText: String,
     trackProgressTotalText: String,
@@ -92,6 +93,7 @@ fun SearchScreen(
     onPlayPauseClick: () -> Unit = {},
     onNextClick: () -> Unit = {},
     onPreviousClick: () -> Unit = {},
+    onShuffleClick: () -> Unit = {},
 ) {
     val context: Context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -206,10 +208,12 @@ fun SearchScreen(
                 durationTotal = trackProgressTotal,
                 durationText = trackProgressText,
                 durationTotalText = trackProgressTotalText,
+                isShuffle = isShuffle,
                 isPlaying = playerStatus == MusicService.PlayerStatus.PLAY.status,
                 onPlayPauseClick = onPlayPauseClick,
                 onNextClick = onNextClick,
-                onPreviousClick = onPreviousClick
+                onPreviousClick = onPreviousClick,
+                onShuffleClick = onShuffleClick
             )
         }
     }

@@ -64,6 +64,7 @@ fun ProfileScreen(
     viewModel: ProfileViewModel = koinViewModel(),
     navController: NavController,
     isShowPlayerButton: Boolean,
+    isShuffle: Boolean,
     currentPlaying: Track,
     playerStatus: String,
     trackProgress: Long,
@@ -74,6 +75,7 @@ fun ProfileScreen(
     onPlayPauseClick: () -> Unit = {},
     onNextClick: () -> Unit = {},
     onPreviousClick: () -> Unit = {},
+    onShuffleClick: () -> Unit = {}
 ) {
     val context = LocalContext.current
     val tabTitles = listOf(context.getString(R.string.your_favorite), context.getString(R.string.your_playlists))
@@ -178,10 +180,12 @@ fun ProfileScreen(
                 durationTotal = trackProgressTotal,
                 durationText = trackProgressText,
                 durationTotalText = trackProgressTotalText,
+                isShuffle = isShuffle,
                 isPlaying = playerStatus == MusicService.PlayerStatus.PLAY.status,
                 onPlayPauseClick = onPlayPauseClick,
                 onNextClick = onNextClick,
-                onPreviousClick = onPreviousClick
+                onPreviousClick = onPreviousClick,
+                onShuffleClick = onShuffleClick
             )
         }
         if (isShowAddPlaylistDialog) {

@@ -169,6 +169,7 @@ fun MainPage(
     var isShowPlayerButton by rememberSaveable { mutableStateOf(isShowPlayer) }
     var currentPlaying by remember { mutableStateOf(Track.empty) }
     var isNextPlayback by remember { mutableStateOf(false) }
+    var isShuffle by remember { mutableStateOf(false) }
 
     val playerStatus by viewModel.currentTrackStatus.observeAsState()
     val trackProgress by viewModel.currentTrackDuration.observeAsState()
@@ -211,6 +212,7 @@ fun MainPage(
                     trackProgressText = trackProgressText.orEmpty(),
                     trackProgressTotalText = trackProgressTotalText.orEmpty(),
                     currentPlaying = currentPlaying,
+                    isShuffle = isShuffle,
                     onClickMusic = {
                         if (currentPlaying.id == it.id) {
                             currentPlaying = Track.empty
@@ -237,6 +239,10 @@ fun MainPage(
                     },
                     onRefreshClick = {
                         listener.onRestart(context, currentPlaying.id)
+                    },
+                    onShuffleClick = {
+                        isShuffle = !isShuffle
+                        listener.onShuffle(context, isShuffle)
                     }
                 )
             }
@@ -250,6 +256,7 @@ fun MainPage(
                     trackProgressTotal = trackProgressTotal ?: 0L,
                     trackProgressText = trackProgressText.orEmpty(),
                     trackProgressTotalText = trackProgressTotalText.orEmpty(),
+                    isShuffle = isShuffle,
                     onClickMusic = {
                         if (currentPlaying.id == it.id) {
                             currentPlaying = Track.empty
@@ -273,6 +280,10 @@ fun MainPage(
                     onPreviousClick = {
                         isNextPlayback = false
                         viewModel.getTrack(context, currentPlaying.idPk, isNextPlayback)
+                    },
+                    onShuffleClick = {
+                        isShuffle = !isShuffle
+                        listener.onShuffle(context, isShuffle)
                     }
                 )
             }
@@ -286,6 +297,7 @@ fun MainPage(
                     trackProgressTotal = trackProgressTotal ?: 0L,
                     trackProgressText = trackProgressText.orEmpty(),
                     trackProgressTotalText = trackProgressTotalText.orEmpty(),
+                    isShuffle = isShuffle,
                     onClickMusic = {
                         if (currentPlaying.id == it.id) {
                             currentPlaying = Track.empty
@@ -309,6 +321,10 @@ fun MainPage(
                     onPreviousClick = {
                         isNextPlayback = false
                         viewModel.getTrack(context, currentPlaying.idPk, isNextPlayback)
+                    },
+                    onShuffleClick = {
+                        isShuffle = !isShuffle
+                        listener.onShuffle(context, isShuffle)
                     }
                 )
             }
@@ -327,6 +343,7 @@ fun MainPage(
                     trackProgressTotal = trackProgressTotal ?: 0L,
                     trackProgressText = trackProgressText.orEmpty(),
                     trackProgressTotalText = trackProgressTotalText.orEmpty(),
+                    isShuffle = isShuffle,
                     onClickMusic = {
                         if (currentPlaying.id == it.id) {
                             currentPlaying = Track.empty
@@ -351,6 +368,10 @@ fun MainPage(
                         isNextPlayback = false
                         viewModel.getTrack(context, currentPlaying.idPk, isNextPlayback)
                     },
+                    onShuffleClick = {
+                        isShuffle = !isShuffle
+                        listener.onShuffle(context, isShuffle)
+                    }
                 )
             }
             composable(
@@ -365,6 +386,7 @@ fun MainPage(
                     trackProgressText = trackProgressText.orEmpty(),
                     trackProgressTotalText = trackProgressTotalText.orEmpty(),
                     currentPlaying = currentPlaying,
+                    isShuffle = isShuffle,
                     onPlayPauseClick = {
                         if (playerStatus == MusicService.PlayerStatus.PLAY.status) {
                             listener.onPause(context)
@@ -379,6 +401,10 @@ fun MainPage(
                     onPreviousClick = {
                         isNextPlayback = false
                         viewModel.getTrack(context, currentPlaying.idPk, isNextPlayback)
+                    },
+                    onShuffleClick = {
+                        isShuffle = !isShuffle
+                        listener.onShuffle(context, isShuffle)
                     }
                 )
             }
@@ -402,6 +428,7 @@ fun MainPage(
                     trackProgressTotal = trackProgressTotal ?: 0L,
                     trackProgressText = trackProgressText.orEmpty(),
                     trackProgressTotalText = trackProgressTotalText.orEmpty(),
+                    isShuffle = isShuffle,
                     onClickMusic = {
                         if (currentPlaying.id == it.id) {
                             currentPlaying = Track.empty
@@ -425,6 +452,10 @@ fun MainPage(
                     onPreviousClick = {
                         isNextPlayback = false
                         viewModel.getTrack(context, currentPlaying.idPk, isNextPlayback)
+                    },
+                    onShuffleClick = {
+                        isShuffle = !isShuffle
+                        listener.onShuffle(context, isShuffle)
                     }
                 )
             }

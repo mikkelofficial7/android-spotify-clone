@@ -42,11 +42,13 @@ fun HomeScreen(
     trackProgressTotal: Long,
     trackProgressText: String,
     trackProgressTotalText: String,
+    isShuffle: Boolean,
     onClickMusic: (Track) -> Unit,
     onPlayPauseClick: () -> Unit = {},
     onNextClick: () -> Unit = {},
     onPreviousClick: () -> Unit = {},
-    onRefreshClick: () -> Unit = {}
+    onRefreshClick: () -> Unit = {},
+    onShuffleClick: () -> Unit = {}
 ) {
     val context: Context = LocalContext.current
     val recommendChart by viewModel.recommendationChart.observeAsState()
@@ -245,11 +247,13 @@ fun HomeScreen(
                 durationTotal = trackProgressTotal,
                 durationText = trackProgressText,
                 durationTotalText = trackProgressTotalText,
+                isShuffle = isShuffle,
                 isPlaying = playerStatus == MusicService.PlayerStatus.PLAY.status,
                 onPlayPauseClick = onPlayPauseClick,
                 onNextClick = onNextClick,
                 onPreviousClick = onPreviousClick,
                 onRefreshClick = onRefreshClick,
+                onShuffleClick = onShuffleClick
             )
         }
     }

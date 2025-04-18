@@ -41,6 +41,7 @@ fun PlaylistDetailScreen(
     viewModel: PlaylistDetailViewModel = koinViewModel(),
     navController: NavController,
     isShowPlayerButton: Boolean,
+    isShuffle: Boolean,
     playlistId: String,
     currentPlaying: Track,
     playerStatus: String,
@@ -52,6 +53,7 @@ fun PlaylistDetailScreen(
     onPlayPauseClick: () -> Unit = {},
     onNextClick: () -> Unit = {},
     onPreviousClick: () -> Unit = {},
+    onShuffleClick: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val playlistData by viewModel.playlistData.observeAsState()
@@ -143,11 +145,13 @@ fun PlaylistDetailScreen(
                 duration = trackProgress,
                 durationTotal = trackProgressTotal,
                 durationText = trackProgressText,
+                isShuffle = isShuffle,
                 durationTotalText = trackProgressTotalText,
                 isPlaying = playerStatus == MusicService.PlayerStatus.PLAY.status,
                 onPlayPauseClick = onPlayPauseClick,
                 onNextClick = onNextClick,
-                onPreviousClick = onPreviousClick
+                onPreviousClick = onPreviousClick,
+                onShuffleClick = onShuffleClick
             )
         }
     }

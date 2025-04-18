@@ -44,7 +44,9 @@ class MusicService : Service() {
     private val serviceJob = SupervisorJob()
     private val serviceScope = CoroutineScope(Dispatchers.IO + serviceJob)
 
-    override fun onStartCommand(intent: Intent, flags: Int, startId: Int): Int {
+    override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (intent == null) return START_STICKY
+
         val musicId = intent.getStringExtra(TAG.MUSIC_ID) ?: ""
         val isShuffle = intent.getBooleanExtra(TAG.IS_SHUFFLE, false)
         val repeatMode = intent.getIntExtra(TAG.REPEAT_MODE, -1)
@@ -76,7 +78,6 @@ class MusicService : Service() {
                             playPlayback(isRefreshSamePlayback = true)
                         }
                         ActionDetail.SHUFFLE_MODE -> {
-                            playerStatus = PlayerStatus.PLAY
                             isShuffleEnable = isShuffle
                             exoplayer.shuffleModeEnabled = isShuffle
                         }

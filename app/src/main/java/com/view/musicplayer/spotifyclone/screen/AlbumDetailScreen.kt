@@ -72,6 +72,7 @@ fun AlbumDetailScreen(
     viewModel: AlbumDetailViewModel = koinViewModel(),
     navController: NavController,
     isShowPlayerButton: Boolean,
+    isShuffle: Boolean,
     albumGenre: String,
     currentPlaying: Track,
     playerStatus: String,
@@ -83,6 +84,7 @@ fun AlbumDetailScreen(
     onPlayPauseClick: () -> Unit = {},
     onNextClick: () -> Unit = {},
     onPreviousClick: () -> Unit = {},
+    onShuffleClick: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val screenHeightDp = getDeviceScreenRatio().screenHeightDp
@@ -371,11 +373,13 @@ fun AlbumDetailScreen(
                 duration = trackProgress,
                 durationTotal = trackProgressTotal,
                 durationText = trackProgressText,
+                isShuffle = isShuffle,
                 durationTotalText = trackProgressTotalText,
                 isPlaying = playerStatus == MusicService.PlayerStatus.PLAY.status,
                 onPlayPauseClick = onPlayPauseClick,
                 onNextClick = onNextClick,
-                onPreviousClick = onPreviousClick
+                onPreviousClick = onPreviousClick,
+                onShuffleClick = onShuffleClick
             )
         }
     }

@@ -2,6 +2,7 @@ package com.view.musicplayer.spotifyclone.screen
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -15,6 +16,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -36,10 +39,12 @@ fun SongDetailScreen(
     trackProgress: Long,
     trackProgressTotal: Long,
     trackProgressText: String,
+    isShuffle: Boolean,
     trackProgressTotalText: String,
     onPlayPauseClick: () -> Unit = {},
     onNextClick: () -> Unit = {},
     onPreviousClick: () -> Unit = {},
+    onShuffleClick: () -> Unit = {},
 ) {
     BackHandler {
         navController.popBackStack()
@@ -79,23 +84,39 @@ fun SongDetailScreen(
                .fillMaxHeight()
                .weight(1f)
        ) {
-           ImageLoader(
-               url = currentPlaying.imageUrl,
-               otherModifier = Modifier
+           Box(
+               contentAlignment = Alignment.Center,
+               modifier = Modifier
                    .padding(20.dp)
                    .fillMaxSize()
-           )
+           ) {
+               ImageLoader(
+                   url = currentPlaying.imageUrl,
+                   otherModifier = Modifier
+                       .fillMaxSize()
+                       .alpha(0.4f)
+               )
+               ImageLoader(
+                   url = currentPlaying.imageUrl,
+                   otherModifier = Modifier
+                       .padding(20.dp)
+                       .height(100.dp)
+                       .width(100.dp)
+               )
+           }
        }
        PlayerButton(
            isShowTimeTrack = true,
            duration = trackProgress,
            durationTotal = trackProgressTotal,
            durationText = trackProgressText,
+           isShuffle = isShuffle,
            durationTotalText = trackProgressTotalText,
            isPlaying = playerStatus == MusicService.PlayerStatus.PLAY.status,
            onPlayPauseClick = onPlayPauseClick,
            onNextClick = onNextClick,
-           onPreviousClick = onPreviousClick
+           onPreviousClick = onPreviousClick,
+           onShuffleClick = onShuffleClick
        )
    }
 }

@@ -116,7 +116,7 @@ fun showLoading(padding: Int = 5) {
 }
 
 @Composable
-fun ImageLoader(url: String, otherModifier: Modifier = Modifier) {
+fun ImageLoader(url: String, otherModifier: Modifier = Modifier, colorFilter: ColorFilter? = null) {
     AsyncImage(
         model = ImageRequest.Builder(LocalContext.current)
             .data(url)
@@ -125,9 +125,10 @@ fun ImageLoader(url: String, otherModifier: Modifier = Modifier) {
             .build(),
         contentScale = ContentScale.Crop,
         contentDescription = url,
+        colorFilter = colorFilter,
         modifier = Modifier.then(otherModifier),
         placeholder = painterResource(R.drawable.is_spotify_green),
-        error = painterResource(R.drawable.is_spotify_green)
+        error = painterResource(R.drawable.is_spotify_green),
     )
 }
 
@@ -361,10 +362,10 @@ fun PlayerButton(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 IconButton(onClick = onShuffleClick, colors = IconButtonDefaults.iconButtonColors(
-                    contentColor = White80
+                    contentColor = if (isShuffle) SpotifyGreen80 else White80
                 )) {
                     Icon(
-                        imageVector = if (isShuffle) loadIconToVector(icon = R.drawable.ic_shuffle_on) else loadIconToVector(icon = R.drawable.ic_shuffle),
+                        imageVector = loadIconToVector(icon = R.drawable.ic_shuffle),
                         contentDescription = "Shuffle",
                         modifier = Modifier
                             .height(iconSize.dp)
