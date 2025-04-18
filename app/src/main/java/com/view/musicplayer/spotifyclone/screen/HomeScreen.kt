@@ -46,6 +46,7 @@ fun HomeScreen(
     onPlayPauseClick: () -> Unit = {},
     onNextClick: () -> Unit = {},
     onPreviousClick: () -> Unit = {},
+    onRefreshClick: () -> Unit = {}
 ) {
     val context: Context = LocalContext.current
     val recommendChart by viewModel.recommendationChart.observeAsState()
@@ -247,7 +248,8 @@ fun HomeScreen(
                 isPlaying = playerStatus == MusicService.PlayerStatus.PLAY.status,
                 onPlayPauseClick = onPlayPauseClick,
                 onNextClick = onNextClick,
-                onPreviousClick = onPreviousClick
+                onPreviousClick = onPreviousClick,
+                onRefreshClick = onRefreshClick,
             )
         }
     }

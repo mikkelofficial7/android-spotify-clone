@@ -231,6 +231,9 @@ fun MainPage(
                     },
                     onPreviousClick = {
                         viewModel.getPrevTrack(context, currentPlaying.idPk)
+                    },
+                    onRefreshClick = {
+                        listener.onRestart(context, currentPlaying.id)
                     }
                 )
             }

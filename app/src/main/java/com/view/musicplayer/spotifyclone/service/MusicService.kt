@@ -17,7 +17,6 @@ import com.view.musicplayer.spotifyclone.service.builder.NotificationLayoutBuild
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.math.abs
@@ -73,8 +72,7 @@ class MusicService : Service() {
                             playPlayback()
                         }
                         ActionDetail.RESTART_MODE -> {
-                            playerStatus = PlayerStatus.PLAY
-                            stopMusic(currentPlayingTrack?.idPk ?: 0, 0)
+                            playPlayback(isRefreshSamePlayback = true)
                         }
                         ActionDetail.SHUFFLE_MODE -> {
                             playerStatus = PlayerStatus.PLAY
@@ -210,19 +208,12 @@ class MusicService : Service() {
     }
 
     private fun setRandomPlaylistPosition() {
-        playerStatus = PlayerStatus.PLAY
-
         serviceScope.launch {
             val trackSize = RoomModule.provideDB(applicationContext).trackDao().getAllFavoriteTrack().size
             val randomSort = (0..trackSize).random()
             currentPlayingTrack = RoomModule.provideDB(applicationContext).trackDao().getTrackByIdPrimary(randomSort)
 
-            totalDuration = abs(currentPlayingTrack?.duration ?: 0) * 1000
-            withContext(Dispatchers.Main) {
-                delay(1000)
-                playMusic(currentPlayingTrack?.idPk ?: 0, exoplayer.currentPosition)
-                runCountDown()
-            }
+            playPlayback()
         }
     }
 
@@ -232,7 +223,7 @@ class MusicService : Service() {
             val track = if ((currentPlayingTrack?.idPk ?: 0) > trackSize - 1) {
                 RoomModule.provideDB(applicationContext).trackDao().getTrackByIdPrimary(0)
             } else {
-                RoomModule.provideDB(applicationContext).trackDao().getTrackByIdPrimary((currentPlayingTrack?.idPk) + 1)
+                RoomModule.provideDB(applicationContext).trackDao().getTrackByIdPrimary((currentPlayingTrack?.idPk ?: 0) + 1)
             }
 
             currentPlayingTrack = track
@@ -240,9 +231,10 @@ class MusicService : Service() {
         }
     }
 
-    private fun playPlayback() {
+    private fun playPlayback(isRefreshSamePlayback: Boolean = false) {
         if (exoplayer.currentMediaItem != MediaItem.fromUri(currentPlayingTrack?.streamedUrl.orEmpty())
-            || exoplayer.playbackState == Player.STATE_IDLE) {
+            || exoplayer.playbackState == Player.STATE_IDLE
+            || isRefreshSamePlayback) {
 
             exoplayer.setMediaItem(MediaItem.fromUri(currentPlayingTrack?.streamedUrl.orEmpty()))
             exoplayer.volume = 1f
