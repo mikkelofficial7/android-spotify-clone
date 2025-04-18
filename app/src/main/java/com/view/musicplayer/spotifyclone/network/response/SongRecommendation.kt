@@ -6,15 +6,20 @@ import androidx.room.PrimaryKey
 import com.view.musicplayer.spotifyclone.room.model.FavoriteTrack
 import kotlinx.parcelize.Parcelize
 
+@Parcelize
+@Entity(tableName = "tbl_track_recommendation")
 data class SongRecommendation(
+    @PrimaryKey(autoGenerate = false)
+    var idPk: Int = 0,
     val id: String,
-    val title: String
-)
+    val title: String,
+    val listTrack: ArrayList<Track>? = arrayListOf()
+) : Parcelable
 
 @Parcelize
 @Entity(tableName = "tbl_item_track")
 data class Track (
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey(autoGenerate = false)
     var idPk: Int = 0,
     val id: String,
     val title: String,

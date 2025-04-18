@@ -76,17 +76,19 @@ class MainActivity : ComponentActivity() {
 
         viewModel.getAllTrackList(this)
 
-        setContent {
-            AndroidspotifycloneTheme {
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
-                ) {
-                    MainPage(
-                        viewModel = viewModel,
-                        listener = notificationListener,
-                        context = this
-                    )
+        viewModel.finishLoad.observe(this) {
+            setContent {
+                AndroidspotifycloneTheme {
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = MaterialTheme.colorScheme.background
+                    ) {
+                        MainPage(
+                            viewModel = viewModel,
+                            listener = notificationListener,
+                            context = this
+                        )
+                    }
                 }
             }
         }

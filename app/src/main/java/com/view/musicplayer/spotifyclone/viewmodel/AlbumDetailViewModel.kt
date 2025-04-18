@@ -23,29 +23,11 @@ class AlbumDetailViewModel(private val api: Api, private val db: AppDb): BaseVie
     internal fun getGenreByName(context: Context, genre: String) {
         executeJob(context) {
             safeScopeFun(context).launch(Dispatchers.IO) {
-                flowOnValue(api.getAllGenre()).collectLatest { response ->
-                    isLoadingEvent.postValue(false)
-                    genreData.postValue(response.data?.find { it.name.equals(genre, true) })
-                }
-            }
-        }
-    }
+                val result = db.genreDao().getGenreByName(genre)
 
-    internal fun getAllArtistByGenre(context: Context, genre: String) {
-        executeJob(context) {
-            safeScopeFun(context).launch(Dispatchers.IO) {
-                executeJob(context) {
-                    safeScopeFun(context).launch(Dispatchers.IO) {
-                        val allTrack = db.trackDao().getAllTrack()
-                        isLoadingEvent.postValue(false)
-
-                        val matchingTracks = allTrack?.filter {
-                            it.genre.equals(genre, ignoreCase = true)
-                        }
-
-                        listArtistByGenre.postValue(matchingTracks as ArrayList<Track>)
-                    }
-                }
+                isLoadingEvent.postValue(false)
+                genreData.postValue(result)
+                listArtistByGenre.postValue(result?.listTrack)
             }
         }
     }

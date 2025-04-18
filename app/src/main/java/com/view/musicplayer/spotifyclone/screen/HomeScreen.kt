@@ -50,17 +50,17 @@ fun HomeScreen(
 ) {
     val context: Context = LocalContext.current
     val recommendChart by viewModel.recommendationChart.observeAsState()
-    val firstTrack by viewModel.firstTrack.observeAsState()
-    val secondTrack by viewModel.secondTrack.observeAsState()
-    val thirdTrack by viewModel.thirdTrack.observeAsState()
-    val fourthTrack by viewModel.fourthTrack.observeAsState()
     val favoriteTrack by viewModel.favoriteTrack.observeAsState()
     val listPlaylist by viewModel.listPlaylist.observeAsState()
+
+    val firstTrack = recommendChart?.first()?.listTrack ?: arrayListOf()
+    val secondTrack = recommendChart?.get(1)?.listTrack ?: arrayListOf()
+    val thirdTrack = recommendChart?.get(2)?.listTrack ?: arrayListOf()
+    val fourthTrack = recommendChart?.last()?.listTrack ?: arrayListOf()
 
     LaunchedEffect(Unit) {
         viewModel.getAllFavoriteTrack(context)
         viewModel.getRecommendation(context)
-        viewModel.getSongRecommendation(context)
         viewModel.getAllPlaylist(context)
     }
 

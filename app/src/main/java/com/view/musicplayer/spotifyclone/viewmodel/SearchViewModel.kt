@@ -23,10 +23,10 @@ class SearchViewModel(private val api: Api, private val db: AppDb): BaseViewMode
     internal fun getAllGenre(context: Context) {
         executeJob(context) {
             safeScopeFun(context).launch(Dispatchers.IO) {
-                flowOnValue(api.getAllGenre()).collectLatest { response ->
-                    isLoadingEvent.postValue(false)
-                    allGenre.postValue(response.data)
-                }
+                val allDataGenre = db.genreDao().getAllGenre()
+
+                isLoadingEvent.postValue(false)
+                allGenre.postValue(allDataGenre)
             }
         }
     }
@@ -47,15 +47,10 @@ class SearchViewModel(private val api: Api, private val db: AppDb): BaseViewMode
         executeJob(context) {
             safeScopeFun(context).launch(Dispatchers.IO) {
                 isLoadingEvent.postValue(false)
-                val allTrack = db.trackDao().getAllTrack()
-
-                val matchingTracks = allTrack?.filter {
-                    it.artist.contains(artistName, ignoreCase = true) ||
-                            it.title.contains(artistName, ignoreCase = true)
-                } ?: listOf()
+                val allSongOrArtist = db.trackDao().getAllTrackByArtistOrSongName(artistName)
 
                 listSearchArtist.postValue(arrayListOf())
-                listSearchArtist.postValue(matchingTracks as ArrayList<Track>)
+                listSearchArtist.postValue(allSongOrArtist as ArrayList<Track>)
             }
         }
     }

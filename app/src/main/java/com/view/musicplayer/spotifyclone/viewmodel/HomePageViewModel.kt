@@ -1,9 +1,6 @@
 package com.view.musicplayer.spotifyclone.viewmodel
 
 import android.content.Context
-import android.util.Log
-import com.google.gson.Gson
-import com.view.musicplayer.spotifyclone.di.RoomModule
 import com.view.musicplayer.spotifyclone.ext.SingleLiveEvent
 import com.view.musicplayer.spotifyclone.ext.flowOnValue
 import com.view.musicplayer.spotifyclone.network.Api
@@ -19,33 +16,14 @@ import kotlinx.coroutines.launch
 class HomePageViewModel(private val api: Api, private val db: AppDb): BaseViewModel<Any?>() {
     val recommendationChart = SingleLiveEvent<List<SongRecommendation>>()
     val favoriteTrack = SingleLiveEvent<List<Track>>()
-    val firstTrack = SingleLiveEvent<List<Track>>()
-    val secondTrack = SingleLiveEvent<List<Track>>()
-    val thirdTrack = SingleLiveEvent<List<Track>>()
-    val fourthTrack = SingleLiveEvent<List<Track>>()
     val listPlaylist = SingleLiveEvent<List<PlaylistModel>>()
 
     internal fun getRecommendation(context: Context) {
         executeJob(context) {
             safeScopeFun(context).launch(Dispatchers.IO) {
-                flowOnValue(api.getRecommendation()).collect { response ->
-                    isLoadingEvent.postValue(false)
-                    recommendationChart.postValue(response.data)
+                flowOnValue(db.recommendDao().getAllRecommendation()).collectLatest {
+                    recommendationChart.postValue(it)
                 }
-            }
-        }
-    }
-
-    internal fun getSongRecommendation(context: Context) {
-        executeJob(context) {
-            safeScopeFun(context).launch(Dispatchers.IO) {
-                isLoadingEvent.postValue(false)
-                val allTrack = db.trackDao().getAllTrack()
-
-                firstTrack.postValue(allTrack?.shuffled()?.take(5))
-                secondTrack.postValue(allTrack?.shuffled()?.take(5))
-                thirdTrack.postValue(allTrack?.shuffled()?.take(5))
-                fourthTrack.postValue(allTrack?.shuffled()?.take(5))
             }
         }
     }

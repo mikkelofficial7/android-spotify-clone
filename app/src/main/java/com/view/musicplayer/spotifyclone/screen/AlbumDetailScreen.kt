@@ -107,7 +107,6 @@ fun AlbumDetailScreen(
         viewModel.getAllPlaylist(context)
         viewModel.getPlaylistByName(context, albumGenre)
         viewModel.getAllFavoriteTrack(context)
-        viewModel.getAllArtistByGenre(context, albumGenre)
         viewModel.getGenreByName(context, albumGenre)
     }
 
