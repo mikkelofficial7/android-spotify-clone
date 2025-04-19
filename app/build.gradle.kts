@@ -97,9 +97,8 @@ dependencies {
     implementation("androidx.room:room-ktx:2.6.1")
 
     // exo player
-    implementation("androidx.media3:media3-exoplayer:1.6.1")
-    implementation("androidx.media3:media3-exoplayer-dash:1.6.1")
-    implementation("androidx.media3:media3-ui:1.6.1")
+    implementation("com.google.android.exoplayer:exoplayer:2.19.1")
+    implementation("com.google.android.exoplayer:extension-mediasession:2.19.1")
     implementation("androidx.media:media:1.7.0")
 
     // glide
