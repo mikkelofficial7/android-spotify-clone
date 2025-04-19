@@ -184,6 +184,14 @@ fun MainPage(
         listener.onStop(context)
     }
 
+    if (playerStatus == MusicService.PlayerStatus.NEXT_PLAY.status) {
+        if (isShuffle) {
+            viewModel.getRandomTrack(context)
+        } else {
+            viewModel.getTrack(context, currentPlaying.idPk, true)
+        }
+    }
+
     if (newTrack != null && newTrack != Track.empty) {
         currentPlaying = newTrack as Track
 

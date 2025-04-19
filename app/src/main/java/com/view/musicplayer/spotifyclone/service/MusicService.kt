@@ -6,7 +6,6 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.os.IBinder
 import android.support.v4.media.session.MediaSessionCompat
-import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.media.session.MediaButtonReceiver
 import com.google.android.exoplayer2.ExoPlayer
@@ -109,7 +108,6 @@ class MusicService : Service() {
                         }
                         ActionDetail.SHUFFLE_MODE -> {
                             isShuffleEnable = isShuffle
-                            // exoplayer.shuffleModeEnabled = isShuffle
                         }
                         ActionDetail.REPEAT_MODE -> {
                             playerStatus = PlayerStatus.PLAY
@@ -244,36 +242,12 @@ class MusicService : Service() {
         removeNotification()
         killService()
 
-        if (isShuffleEnable) setRandomPlaylistPosition() else setNextPlayback()
-    }
-
-    private fun setRandomPlaylistPosition() {
-        serviceScope.launch {
-            val trackSize = RoomModule.provideDB(applicationContext).trackDao().getAllFavoriteTrack().size
-            val randomSort = (0..trackSize).random()
-
-            currentPlayingTrack = RoomModule.provideDB(applicationContext).trackDao().getTrackByIdPrimary(randomSort)
-
-            withContext(Dispatchers.Main) {
-                playPlayback()
-            }
-        }
+        setNextPlayback()
     }
 
     private fun setNextPlayback() {
-        serviceScope.launch {
-            val trackSize = RoomModule.provideDB(applicationContext).trackDao().getAllTrack()?.size ?: 0
-            val track = if ((currentPlayingTrack?.idPk ?: 0) > trackSize - 1) {
-                RoomModule.provideDB(applicationContext).trackDao().getTrackByIdPrimary(0)
-            } else {
-                RoomModule.provideDB(applicationContext).trackDao().getTrackByIdPrimary((currentPlayingTrack?.idPk ?: 0) + 1)
-            }
-
-            currentPlayingTrack = track
-            withContext(Dispatchers.Main) {
-                playPlayback()
-            }
-        }
+        playerStatus = PlayerStatus.NEXT_PLAY
+        updatePlaybackDurationToActivity()
     }
 
     private fun playPlayback(isRefreshSamePlayback: Boolean = false) {
@@ -395,6 +369,7 @@ class MusicService : Service() {
     }
 
     enum class PlayerStatus(val status: String) {
+        NEXT_PLAY("NEXT_PLAY"),
         PLAY("PLAY"),
         PAUSE("PAUSE"),
         STOP("STOP"),
