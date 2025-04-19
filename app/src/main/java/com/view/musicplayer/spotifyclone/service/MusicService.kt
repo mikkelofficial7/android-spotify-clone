@@ -69,12 +69,12 @@ class MusicService : Service() {
             return START_NOT_STICKY
         }
 
+        MediaButtonReceiver.handleIntent(mediaSession, intent)
+
         val musicId = intent.getStringExtra(TAG.MUSIC_ID) ?: ""
         val isShuffle = intent.getBooleanExtra(TAG.IS_SHUFFLE, false)
         val repeatMode = intent.getIntExtra(TAG.REPEAT_MODE, -1)
 
-        MediaButtonReceiver.handleIntent(mediaSession, intent)
-        
         serviceScope.launch {
             currentPlayingTrack = RoomModule.provideDB(applicationContext).trackDao().getTrackById(musicId)
 
