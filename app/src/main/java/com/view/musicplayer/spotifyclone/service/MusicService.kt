@@ -6,6 +6,7 @@ import android.content.Intent
 import android.graphics.Bitmap
 import android.os.IBinder
 import android.support.v4.media.session.MediaSessionCompat
+import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import androidx.media.session.MediaButtonReceiver
 import com.google.android.exoplayer2.ExoPlayer
@@ -199,7 +200,12 @@ class MusicService : Service() {
                                 durationTotalText = formattedTimeTotal
 
                                 if (playerStatus != PlayerStatus.STOP) {
-                                    buildNotificationLayout(progress, formattedTime, formattedTimeTotal, imageNotification)
+                                    buildNotificationLayout(
+                                        playingTrack,
+                                        progress,
+                                        formattedTime,
+                                        formattedTimeTotal,
+                                        imageNotification)
                                 }
 
                                 updatePlaybackDurationToActivity(
@@ -331,6 +337,7 @@ class MusicService : Service() {
     }
 
     private fun buildNotificationLayout(
+        track: Track?,
         progress: Float,
         formattedTime: String,
         formattedTimeTotal: String,
@@ -339,11 +346,11 @@ class MusicService : Service() {
         val notification = buildNotificationLayout(
             this@MusicService,
             progress = progress,
-            musicID = currentPlayingTrack?.id.orEmpty(),
+            musicID = track?.id.orEmpty(),
             durationText = formattedTime,
             durationTotalText = formattedTimeTotal,
-            title = currentPlayingTrack?.title.orEmpty(),
-            descriptions = currentPlayingTrack?.artist.orEmpty(),
+            title = track?.title.orEmpty(),
+            descriptions = track?.artist.orEmpty(),
             image = imageNotification
         )
 
