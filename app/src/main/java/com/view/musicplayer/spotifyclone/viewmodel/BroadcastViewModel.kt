@@ -124,4 +124,17 @@ class BroadcastViewModel(val db: AppDb, val api: Api): BaseViewModel<Any?>() {
             }
         }
     }
+
+    internal fun getRandomTrack(context: Context) {
+        executeJob(context) {
+            safeScopeFun(context).launch(Dispatchers.IO) {
+                val tracks = db.trackDao().getAllTrack() ?: return@launch
+                val trackSize = tracks.size
+
+                val randomId = (0..trackSize).random()
+                val track = db.trackDao().getTrackByIdPrimary(randomId)
+                newTrack.postValue(track)
+            }
+        }
+    }
 }
