@@ -1,6 +1,7 @@
 package com.view.musicplayer.spotifyclone.screen.shared
 
 import android.content.res.Configuration
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.Image
@@ -432,7 +433,9 @@ fun CustomSeekBar(
 ) {
     onSeekBarChange(currentDuration)
     val progress = if (totalDuration.toFloat() > 0f) currentDuration.toFloat() / totalDuration.toFloat() else 0f
+    val rounded = String.format("%.2f", progress).toFloat()
 
+    Log.d("TAG", "Fraction duration: $rounded")
     Box(
         modifier = Modifier
             .fillMaxWidth()
@@ -449,7 +452,7 @@ fun CustomSeekBar(
             .padding(horizontal = 5.dp)
             .background(seekBarActiveColor)
             .height(seekbarHeight.dp)
-            .fillMaxWidth(progress)
+            .fillMaxWidth(rounded)
         )
     }
 }
