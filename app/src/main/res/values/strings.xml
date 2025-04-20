@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Android Spotify Clone</string>
+    <string name="app_name">Spotify Clone - Android</string>
     <string name="search_song">Search your music vibe..</string>
     <string name="total_listener">%1$s Listeners</string>
     <string name="add_playlist">Add to Playlist</string>
