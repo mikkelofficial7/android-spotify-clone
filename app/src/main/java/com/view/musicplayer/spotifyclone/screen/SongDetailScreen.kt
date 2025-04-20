@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -98,13 +99,23 @@ fun SongDetailScreen(
                        .fillMaxSize()
                        .alpha(0.4f)
                )
-               ImageLoader(
-                   url = currentPlaying.imageUrl,
-                   otherModifier = Modifier
-                       .padding(20.dp)
-                       .height(150.dp)
-                       .width(150.dp)
-               )
+               Column(
+                   horizontalAlignment = Alignment.CenterHorizontally
+               ) {
+                   ImageLoader(
+                       url = currentPlaying.imageUrl,
+                       otherModifier = Modifier
+                           .padding(20.dp)
+                           .height(150.dp)
+                           .width(150.dp)
+                   )
+                   Text(
+                       text = currentPlaying.description,
+                       color = White80,
+                       textAlign = TextAlign.Center,
+                       fontStyle = FontStyle.Italic
+                   )
+               }
            }
        }
        PlayerButton(

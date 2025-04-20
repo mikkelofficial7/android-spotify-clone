@@ -3,6 +3,7 @@ package com.view.musicplayer.spotifyclone
 import android.app.Application
 import com.view.musicplayer.spotifyclone.di.ApiModule
 import com.view.musicplayer.spotifyclone.di.NetworkModule
+import com.view.musicplayer.spotifyclone.di.ReceiverModule
 import com.view.musicplayer.spotifyclone.di.RoomModule
 import com.view.musicplayer.spotifyclone.di.ViewModelModule
 import org.koin.android.ext.koin.androidContext
@@ -19,7 +20,8 @@ class MainApp : Application() {
                 NetworkModule.NetworkModule,
                 ApiModule.apiModule,
                 ViewModelModule.viewModelModule,
-                RoomModule.RoomModule
+                RoomModule.RoomModule,
+                ReceiverModule.module
             )
         }
     }

@@ -308,7 +308,7 @@ class MusicService : Service() {
             durationText = formattedTime,
             durationTotalText = formattedTimeTotal,
             title = track?.title.orEmpty(),
-            descriptions = track?.artist.orEmpty(),
+            descriptions = "by ${track?.artist.orEmpty()}",
             image = imageNotification,
             isPause = playerStatus == PlayerStatus.PAUSE
         )
