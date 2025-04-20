@@ -327,6 +327,13 @@ class MusicService : Service() {
         const val PREV_MODE = "_MODE_PREV_FOREGROUND"
     }
 
+    object ActionNotification {
+        const val ACTION_PLAY = "ACTION_PLAY"
+        const val ACTION_PAUSE = "ACTION_PAUSE"
+        const val ACTION_NEXT = "ACTION_NEXT"
+        const val ACTION_PREV = "ACTION_PREV"
+    }
+
     object ActionKey {
         const val ACTION = "ACTION"
     }

@@ -34,5 +34,10 @@
 
         <service android:name=".service.MusicService"
             android:foregroundServiceType="mediaPlayback"/>
+
+        <receiver
+            android:name=".service.receiver.NotificationToServiceReceiver"
+            android:exported="true" />
+
     </application>
 </manifest>

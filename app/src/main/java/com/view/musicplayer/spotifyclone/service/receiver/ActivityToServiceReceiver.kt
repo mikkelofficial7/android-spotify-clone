@@ -5,7 +5,7 @@ import android.content.Intent
 import com.view.musicplayer.spotifyclone.service.MusicService
 import com.view.musicplayer.spotifyclone.service.listener.ServiceStartOrStopListener
 
-class NotificationReceiver: ServiceStartOrStopListener {
+class ActivityToServiceReceiver: ServiceStartOrStopListener {
     override fun onPlay(
         context: Context,
         musicId: String
@@ -17,17 +17,15 @@ class NotificationReceiver: ServiceStartOrStopListener {
         context.startService(serviceIntent)
     }
 
-    override fun onPause(context: Context, musicId: String) {
+    override fun onPause(context: Context) {
         val serviceIntent = Intent(context, MusicService::class.java)
-        serviceIntent.putExtra(MusicService.TAG.MUSIC_ID, musicId)
         serviceIntent.putExtra(MusicService.ActionKey.ACTION, MusicService.ActionDetail.PAUSE_MODE)
         serviceIntent.action = MusicService.Notification.START_FOREGROUND_ACTION
         context.startService(serviceIntent)
     }
 
-    override fun onRestart(context: Context, musicId: String) {
+    override fun onRestart(context: Context) {
         val serviceIntent = Intent(context, MusicService::class.java)
-        serviceIntent.putExtra(MusicService.TAG.MUSIC_ID, musicId)
         serviceIntent.putExtra(MusicService.ActionKey.ACTION, MusicService.ActionDetail.RESTART_MODE)
         serviceIntent.action = MusicService.Notification.START_FOREGROUND_ACTION
         context.startService(serviceIntent)

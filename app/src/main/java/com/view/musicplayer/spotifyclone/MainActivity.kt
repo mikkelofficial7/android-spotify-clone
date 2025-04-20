@@ -46,7 +46,6 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import com.google.gson.Gson
 import com.view.musicplayer.spotifyclone.ext.convertToPlayerStatus
 import com.view.musicplayer.spotifyclone.navigation.ScreenRoute
 import com.view.musicplayer.spotifyclone.network.response.Track
@@ -59,7 +58,7 @@ import com.view.musicplayer.spotifyclone.screen.SongDetailScreen
 import com.view.musicplayer.spotifyclone.screen.shared.loadIconToVector
 import com.view.musicplayer.spotifyclone.service.MusicService
 import com.view.musicplayer.spotifyclone.service.listener.ServiceStartOrStopListener
-import com.view.musicplayer.spotifyclone.service.receiver.NotificationReceiver
+import com.view.musicplayer.spotifyclone.service.receiver.ActivityToServiceReceiver
 import com.view.musicplayer.spotifyclone.ui.theme.AndroidspotifycloneTheme
 import com.view.musicplayer.spotifyclone.ui.theme.Black80
 import com.view.musicplayer.spotifyclone.ui.theme.SpotifyAccent80
@@ -68,7 +67,7 @@ import com.view.musicplayer.spotifyclone.viewmodel.BroadcastViewModel
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
-    private val notificationListener: ServiceStartOrStopListener by lazy { NotificationReceiver() }
+    private val notificationListener: ServiceStartOrStopListener by lazy { ActivityToServiceReceiver() }
     private lateinit var broadcastReceiver: BroadcastReceiver
     private val viewModel: BroadcastViewModel by viewModel()
 
@@ -203,7 +202,7 @@ fun MainPage(
                     },
                     onPlayPauseClick = {
                         if (playerStatus == MusicService.PlayerStatus.PLAY.status) {
-                            listener.onPause(context, currentPlaying?.id.orEmpty())
+                            listener.onPause(context)
                         } else {
                             listener.onPlay(context, currentPlaying?.id.orEmpty())
                         }
@@ -215,7 +214,7 @@ fun MainPage(
                         listener.onPrevious(context)
                     },
                     onRefreshClick = {
-                        listener.onRestart(context, currentPlaying?.id.orEmpty())
+                        listener.onRestart(context)
                     },
                     onShuffleClick = {
                         isShuffle = !isShuffle
@@ -245,7 +244,7 @@ fun MainPage(
                     },
                     onPlayPauseClick = {
                         if (playerStatus == MusicService.PlayerStatus.PLAY.status) {
-                            listener.onPause(context, currentPlaying?.id.orEmpty())
+                            listener.onPause(context)
                         } else {
                             listener.onPlay(context, currentPlaying?.id.orEmpty())
                         }
@@ -257,7 +256,7 @@ fun MainPage(
                         listener.onPrevious(context)
                     },
                     onRefreshClick = {
-                        listener.onRestart(context, currentPlaying?.id.orEmpty())
+                        listener.onRestart(context)
                     },
                     onShuffleClick = {
                         isShuffle = !isShuffle
@@ -287,7 +286,7 @@ fun MainPage(
                     },
                     onPlayPauseClick = {
                         if (playerStatus == MusicService.PlayerStatus.PLAY.status) {
-                            listener.onPause(context, currentPlaying?.id.orEmpty())
+                            listener.onPause(context)
                         } else {
                             listener.onPlay(context, currentPlaying?.id.orEmpty())
                         }
@@ -299,7 +298,7 @@ fun MainPage(
                         listener.onPrevious(context)
                     },
                     onRefreshClick = {
-                        listener.onRestart(context, currentPlaying?.id.orEmpty())
+                        listener.onRestart(context)
                     },
                     onShuffleClick = {
                         isShuffle = !isShuffle
@@ -334,7 +333,7 @@ fun MainPage(
                     },
                     onPlayPauseClick = {
                         if (playerStatus == MusicService.PlayerStatus.PLAY.status) {
-                            listener.onPause(context, currentPlaying?.id.orEmpty())
+                            listener.onPause(context)
                         } else {
                             listener.onPlay(context, currentPlaying?.id.orEmpty())
                         }
@@ -346,7 +345,7 @@ fun MainPage(
                         listener.onPrevious(context)
                     },
                     onRefreshClick = {
-                        listener.onRestart(context, currentPlaying?.id.orEmpty())
+                        listener.onRestart(context)
                     },
                     onShuffleClick = {
                         isShuffle = !isShuffle
@@ -369,7 +368,7 @@ fun MainPage(
                     isShuffle = isShuffle,
                     onPlayPauseClick = {
                         if (playerStatus == MusicService.PlayerStatus.PLAY.status) {
-                            listener.onPause(context, currentPlaying?.id.orEmpty())
+                            listener.onPause(context)
                         } else {
                             listener.onPlay(context, currentPlaying?.id.orEmpty())
                         }
@@ -381,7 +380,7 @@ fun MainPage(
                         listener.onPrevious(context)
                     },
                     onRefreshClick = {
-                        listener.onRestart(context, currentPlaying?.id.orEmpty())
+                        listener.onRestart(context)
                     },
                     onShuffleClick = {
                         isShuffle = !isShuffle
@@ -421,7 +420,7 @@ fun MainPage(
                     },
                     onPlayPauseClick = {
                         if (playerStatus == MusicService.PlayerStatus.PLAY.status) {
-                            listener.onPause(context, currentPlaying?.id.orEmpty())
+                            listener.onPause(context)
                         } else {
                             listener.onPlay(context, currentPlaying?.id.orEmpty())
                         }
@@ -433,7 +432,7 @@ fun MainPage(
                         listener.onPrevious(context)
                     },
                     onRefreshClick = {
-                        listener.onRestart(context, currentPlaying?.id.orEmpty())
+                        listener.onRestart(context)
                     },
                     onShuffleClick = {
                         isShuffle = !isShuffle
