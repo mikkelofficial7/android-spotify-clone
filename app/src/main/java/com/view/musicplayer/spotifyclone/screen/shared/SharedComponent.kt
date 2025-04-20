@@ -433,7 +433,7 @@ fun CustomSeekBar(
 ) {
     onSeekBarChange(currentDuration)
     val progress = if (totalDuration.toFloat() > 0f) currentDuration.toFloat() / totalDuration.toFloat() else 0f
-    val rounded = String.format("%.2f", progress).toFloat()
+    val rounded = String.format("%.1f", progress).toFloat()
 
     Log.d("TAG", "Fraction duration: $rounded")
     Box(
@@ -636,7 +636,9 @@ fun ShowOptionMenu(
                     Row(
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        ShowDetailButton(color = Black80, size = 20)
+                        ShowDetailButton(color = Black80, size = 20) {
+                            onShowDetail()
+                        }
                         Spacer(modifier = Modifier.width(8.dp))
                         Text(
                             text = LocalContext.current.getString(R.string.show_detail),

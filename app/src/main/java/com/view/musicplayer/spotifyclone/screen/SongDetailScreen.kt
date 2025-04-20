@@ -102,8 +102,8 @@ fun SongDetailScreen(
                    url = currentPlaying.imageUrl,
                    otherModifier = Modifier
                        .padding(20.dp)
-                       .height(100.dp)
-                       .width(100.dp)
+                       .height(150.dp)
+                       .width(150.dp)
                )
            }
        }
