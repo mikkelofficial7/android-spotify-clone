@@ -50,7 +50,7 @@ object NotificationLayoutBuilder {
 
         val contentIntent = PendingIntent.getActivity(context, NOTIFICATION_ID, pendingIntent, PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE)
 
-        val importance = NotificationManager.IMPORTANCE_HIGH
+        val importance = NotificationManager.IMPORTANCE_LOW
         val notificationChannel = NotificationChannel(channelId, channelName, importance).apply {
             description = channelDescription
             enableLights(false)
@@ -62,8 +62,9 @@ object NotificationLayoutBuilder {
         val notificationLayout = RemoteViews(context.packageName, R.layout.layout_notification_small).apply {
             setTextViewText(R.id.iv_title_notification, title)
             setTextViewText(R.id.iv_subtitle_notification, descriptions)
-            setTextViewText(R.id.tv_timer_notification, "$durationText / $durationTotalText")
             setImageViewResource(R.id.btn_play_pause, if (isPause) R.drawable.ic_play else R.drawable.ic_pause)
+            setImageViewResource(R.id.btn_next, R.drawable.ic_next)
+            setImageViewResource(R.id.btn_previous, R.drawable.ic_previous)
             image?.let {
                 setImageViewBitmap(R.id.iv_notification, image)
                 setImageViewBitmap(R.id.iv_notification_bg, image)
@@ -76,6 +77,8 @@ object NotificationLayoutBuilder {
             setTextViewText(R.id.iv_subtitle_notification, descriptions)
             setTextViewText(R.id.tv_timer_notification, durationText)
             setTextViewText(R.id.tv_timer_notification_total, durationTotalText)
+            setImageViewResource(R.id.btn_next, R.drawable.ic_next)
+            setImageViewResource(R.id.btn_previous, R.drawable.ic_previous)
             setImageViewResource(R.id.btn_play_pause, if (isPause) R.drawable.ic_play else R.drawable.ic_pause)
             image?.let {
                 setImageViewBitmap(R.id.iv_notification, image)
@@ -89,7 +92,7 @@ object NotificationLayoutBuilder {
             .setContentIntent(contentIntent)
             .setCustomContentView(notificationLayout)
             .setCustomBigContentView(notificationLayoutExpanded)
-            .setPriority(NotificationCompat.PRIORITY_MAX)
+            .setPriority(NotificationCompat.PRIORITY_LOW)
             .setAutoCancel(true)
             .setOnlyAlertOnce(true)
             .build()
