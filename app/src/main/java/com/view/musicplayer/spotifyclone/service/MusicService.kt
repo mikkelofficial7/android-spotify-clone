@@ -4,12 +4,12 @@ import android.app.Service
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.IBinder
-import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
 import com.view.musicplayer.spotifyclone.di.RoomModule
+import com.view.musicplayer.spotifyclone.ext.LogExt
 import com.view.musicplayer.spotifyclone.ext.convertTimeToHHSS
 import com.view.musicplayer.spotifyclone.ext.convertTimeToMinuteSecond
 import com.view.musicplayer.spotifyclone.ext.isGroupPlay
@@ -58,13 +58,13 @@ class MusicService : Service() {
             if (musicId.isNotEmpty()) {
                 currentPlayingTrack = RoomModule.provideDB(applicationContext).trackDao().getTrackById(musicId)
             }
-            Log.d("TAG", "Playback is preparing...${currentPlayingTrack?.title.toString()}")
+            LogExt.d("TAG", "Playback is preparing...${currentPlayingTrack?.title.toString()}")
 
             withContext(Dispatchers.Main) {
                 if (intent.action == Notification.START_FOREGROUND_ACTION) {
                     val currentPlayerState = intent.getStringExtra(ActionKey.ACTION) ?: ""
 
-                    Log.d("TAG", "State: ${currentPlayerState}")
+                    LogExt.d("TAG", "State: ${currentPlayerState}")
 
                     when (currentPlayerState) {
                         ActionDetail.START_MODE -> {
@@ -141,7 +141,7 @@ class MusicService : Service() {
     }
 
     private fun startCountDown() {
-        Log.d("TAG", "Playback is ready...${currentPlayingTrack?.title.toString()}")
+        LogExt.d("TAG", "Playback is ready...${currentPlayingTrack?.title.toString()}")
 
         exoplayer.addListener(object : Player.Listener {
             override fun onPlaybackStateChanged(state: Int) {
@@ -194,7 +194,7 @@ class MusicService : Service() {
     }
 
     private fun onFinishRun() {
-        Log.d("TAG", "Playback finish running..")
+        LogExt.d("TAG", "Playback finish running..")
         playerStatus = if (isShuffleEnable) PlayerStatus.SHUFFLE else PlayerStatus.NEXT_PLAY
 
         if (isShuffleEnable) setRandomTrack() else setNextTrack()

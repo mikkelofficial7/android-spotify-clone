@@ -62,6 +62,7 @@ import androidx.navigation.NavController
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.view.musicplayer.spotifyclone.R
+import com.view.musicplayer.spotifyclone.ext.LogExt
 import com.view.musicplayer.spotifyclone.ext.roundedNumber
 import com.view.musicplayer.spotifyclone.navigation.routeToMusicDetail
 import com.view.musicplayer.spotifyclone.network.response.Track
@@ -433,9 +434,9 @@ fun CustomSeekBar(
 ) {
     onSeekBarChange(currentDuration)
     val progress = if (totalDuration.toFloat() > 0f) currentDuration.toFloat() / totalDuration.toFloat() else 0f
-    val rounded = String.format("%.1f", progress).toFloat()
+    val rounded = String.format("%.2f", progress).toFloat()
 
-    Log.d("TAG", "Fraction duration: $rounded")
+    LogExt.d("TAG", "Fraction duration: $rounded")
     Box(
         modifier = Modifier
             .fillMaxWidth()

@@ -42,6 +42,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.view.musicplayer.spotifyclone.ext.LogExt
 import com.view.musicplayer.spotifyclone.ext.checkNotificationPermission
 import com.view.musicplayer.spotifyclone.ext.convertToPlayerStatus
 import com.view.musicplayer.spotifyclone.navigation.ScreenRoute
@@ -138,7 +139,7 @@ fun MainPage(
     val trackProgressText by viewModel.currentTrackDurationText.observeAsState()
     val trackProgressTotalText by viewModel.currentTrackDurationTotalText.observeAsState()
 
-    Log.d("TAG", "Current Playing: ${currentPlaying?.title.toString()}")
+    LogExt.d("TAG", "Current Playing: ${currentPlaying?.title.toString()}")
 
     Scaffold(
         bottomBar = { BottomNavBar(navController) }
