@@ -17,6 +17,14 @@ class NotificationReceiver: ServiceStartOrStopListener {
         context.startService(serviceIntent)
     }
 
+    override fun onPause(context: Context, musicId: String) {
+        val serviceIntent = Intent(context, MusicService::class.java)
+        serviceIntent.putExtra(MusicService.TAG.MUSIC_ID, musicId)
+        serviceIntent.putExtra(MusicService.ActionKey.ACTION, MusicService.ActionDetail.PAUSE_MODE)
+        serviceIntent.action = MusicService.Notification.START_FOREGROUND_ACTION
+        context.startService(serviceIntent)
+    }
+
     override fun onRestart(context: Context, musicId: String) {
         val serviceIntent = Intent(context, MusicService::class.java)
         serviceIntent.putExtra(MusicService.TAG.MUSIC_ID, musicId)
@@ -25,25 +33,16 @@ class NotificationReceiver: ServiceStartOrStopListener {
         context.startService(serviceIntent)
     }
 
-    override fun onNext(context: Context, musicId: String) {
+    override fun onNext(context: Context) {
         val serviceIntent = Intent(context, MusicService::class.java)
-        serviceIntent.putExtra(MusicService.TAG.MUSIC_ID, musicId)
         serviceIntent.putExtra(MusicService.ActionKey.ACTION, MusicService.ActionDetail.NEXT_MODE)
         serviceIntent.action = MusicService.Notification.START_FOREGROUND_ACTION
         context.startService(serviceIntent)
     }
 
-    override fun onPrevious(context: Context, musicId: String) {
+    override fun onPrevious(context: Context) {
         val serviceIntent = Intent(context, MusicService::class.java)
-        serviceIntent.putExtra(MusicService.TAG.MUSIC_ID, musicId)
         serviceIntent.putExtra(MusicService.ActionKey.ACTION, MusicService.ActionDetail.PREV_MODE)
-        serviceIntent.action = MusicService.Notification.START_FOREGROUND_ACTION
-        context.startService(serviceIntent)
-    }
-
-    override fun onPause(context: Context) {
-        val serviceIntent = Intent(context, MusicService::class.java)
-        serviceIntent.putExtra(MusicService.ActionKey.ACTION, MusicService.ActionDetail.PAUSE_MODE)
         serviceIntent.action = MusicService.Notification.START_FOREGROUND_ACTION
         context.startService(serviceIntent)
     }

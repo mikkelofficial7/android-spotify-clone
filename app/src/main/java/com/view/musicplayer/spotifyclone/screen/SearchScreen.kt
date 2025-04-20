@@ -55,6 +55,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.view.musicplayer.spotifyclone.R
 import com.view.musicplayer.spotifyclone.constants.Constants
+import com.view.musicplayer.spotifyclone.ext.isGroupPlay
 import com.view.musicplayer.spotifyclone.navigation.routeToAlbumDetail
 import com.view.musicplayer.spotifyclone.network.response.Genre
 import com.view.musicplayer.spotifyclone.network.response.Track
@@ -83,7 +84,7 @@ fun SearchScreen(
     isShowPlayerButton: Boolean,
     currentPlaying: Track,
     navController: NavController,
-    playerStatus: String,
+    playerStatus: MusicService.PlayerStatus,
     trackProgress: Long,
     isShuffle: Boolean,
     trackProgressTotal: Long,
@@ -94,6 +95,7 @@ fun SearchScreen(
     onNextClick: () -> Unit = {},
     onPreviousClick: () -> Unit = {},
     onShuffleClick: () -> Unit = {},
+    onRefreshClick: () -> Unit = {},
 ) {
     val context: Context = LocalContext.current
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -209,11 +211,12 @@ fun SearchScreen(
                 durationText = trackProgressText,
                 durationTotalText = trackProgressTotalText,
                 isShuffle = isShuffle,
-                isPlaying = playerStatus == MusicService.PlayerStatus.PLAY.status,
+                isPlaying = playerStatus.isGroupPlay(),
                 onPlayPauseClick = onPlayPauseClick,
                 onNextClick = onNextClick,
                 onPreviousClick = onPreviousClick,
-                onShuffleClick = onShuffleClick
+                onShuffleClick = onShuffleClick,
+                onRefreshClick = onRefreshClick
             )
         }
     }

@@ -2,8 +2,7 @@ package com.view.musicplayer.spotifyclone.ext
 
 import android.content.Context
 import android.net.Uri
-import android.util.Log
-import kotlin.time.Duration.Companion.seconds
+import com.view.musicplayer.spotifyclone.service.MusicService
 
 fun Int.roundedNumber(): String {
     return if (this > 5000) return "5000+"
@@ -41,4 +40,17 @@ fun Long.convertTimeToMinuteSecond(): Pair<Long, Long> {
     val minutes = this / 60000
     val seconds = (this % 60000) / 1000
     return Pair(minutes, seconds)
+}
+
+fun MusicService.PlayerStatus.isGroupPlay(): Boolean {
+    return this == MusicService.PlayerStatus.PLAY
+            || this == MusicService.PlayerStatus.RESTART
+            || this == MusicService.PlayerStatus.PREV_PLAY
+            || this == MusicService.PlayerStatus.NEXT_PLAY
+            || this == MusicService.PlayerStatus.SHUFFLE
+            || this == MusicService.PlayerStatus.REPEAT
+}
+
+fun String.convertToPlayerStatus(): MusicService.PlayerStatus? {
+    return MusicService.PlayerStatus.values().find { it.status == this }
 }

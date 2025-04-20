@@ -41,6 +41,7 @@ import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.view.musicplayer.spotifyclone.R
 import com.view.musicplayer.spotifyclone.ext.convertMillisToTime
+import com.view.musicplayer.spotifyclone.ext.isGroupPlay
 import com.view.musicplayer.spotifyclone.ext.toSecond
 import com.view.musicplayer.spotifyclone.network.response.Track
 import com.view.musicplayer.spotifyclone.screen.shared.AddToFavoriteButton
@@ -75,7 +76,7 @@ fun AlbumDetailScreen(
     isShuffle: Boolean,
     albumGenre: String,
     currentPlaying: Track,
-    playerStatus: String,
+    playerStatus: MusicService.PlayerStatus,
     trackProgress: Long,
     trackProgressTotal: Long,
     trackProgressText: String,
@@ -85,6 +86,7 @@ fun AlbumDetailScreen(
     onNextClick: () -> Unit = {},
     onPreviousClick: () -> Unit = {},
     onShuffleClick: () -> Unit = {},
+    onRefreshClick: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val screenHeightDp = getDeviceScreenRatio().screenHeightDp
@@ -375,11 +377,12 @@ fun AlbumDetailScreen(
                 durationText = trackProgressText,
                 isShuffle = isShuffle,
                 durationTotalText = trackProgressTotalText,
-                isPlaying = playerStatus == MusicService.PlayerStatus.PLAY.status,
+                isPlaying = playerStatus.isGroupPlay(),
                 onPlayPauseClick = onPlayPauseClick,
                 onNextClick = onNextClick,
                 onPreviousClick = onPreviousClick,
-                onShuffleClick = onShuffleClick
+                onShuffleClick = onShuffleClick,
+                onRefreshClick = onRefreshClick
             )
         }
     }

@@ -25,6 +25,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.view.musicplayer.spotifyclone.SetBackStackViewResult
+import com.view.musicplayer.spotifyclone.ext.isGroupPlay
 import com.view.musicplayer.spotifyclone.network.response.Track
 import com.view.musicplayer.spotifyclone.screen.shared.BackButton
 import com.view.musicplayer.spotifyclone.screen.shared.EmptyView
@@ -44,7 +45,7 @@ fun PlaylistDetailScreen(
     isShuffle: Boolean,
     playlistId: String,
     currentPlaying: Track,
-    playerStatus: String,
+    playerStatus: MusicService.PlayerStatus,
     trackProgress: Long,
     trackProgressTotal: Long,
     trackProgressText: String,
@@ -54,6 +55,7 @@ fun PlaylistDetailScreen(
     onNextClick: () -> Unit = {},
     onPreviousClick: () -> Unit = {},
     onShuffleClick: () -> Unit = {},
+    onRefreshClick: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val playlistData by viewModel.playlistData.observeAsState()
@@ -147,11 +149,12 @@ fun PlaylistDetailScreen(
                 durationText = trackProgressText,
                 isShuffle = isShuffle,
                 durationTotalText = trackProgressTotalText,
-                isPlaying = playerStatus == MusicService.PlayerStatus.PLAY.status,
+                isPlaying = playerStatus.isGroupPlay(),
                 onPlayPauseClick = onPlayPauseClick,
                 onNextClick = onNextClick,
                 onPreviousClick = onPreviousClick,
-                onShuffleClick = onShuffleClick
+                onShuffleClick = onShuffleClick,
+                onRefreshClick = onRefreshClick
             )
         }
     }

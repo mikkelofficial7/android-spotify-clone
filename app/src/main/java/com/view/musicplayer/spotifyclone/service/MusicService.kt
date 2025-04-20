@@ -12,6 +12,7 @@ import com.google.android.exoplayer2.Player
 import com.view.musicplayer.spotifyclone.di.RoomModule
 import com.view.musicplayer.spotifyclone.ext.convertTimeToHHSS
 import com.view.musicplayer.spotifyclone.ext.convertTimeToMinuteSecond
+import com.view.musicplayer.spotifyclone.ext.isGroupPlay
 import com.view.musicplayer.spotifyclone.ext.loadImageNotification
 import com.view.musicplayer.spotifyclone.network.response.Track
 import com.view.musicplayer.spotifyclone.service.MusicService.Notification.NOTIFICATION_ID
@@ -53,43 +54,54 @@ class MusicService : Service() {
         val isShuffle = intent.getBooleanExtra(TAG.IS_SHUFFLE, false)
         val repeatMode = intent.getIntExtra(TAG.REPEAT_MODE, -1)
 
-        Log.d("TAG", "hit here....${intent.getStringExtra(ActionKey.ACTION)}")
         serviceScope.launch {
-            currentPlayingTrack = RoomModule.provideDB(applicationContext).trackDao().getTrackById(musicId)
+            if (musicId.isNotEmpty()) {
+                currentPlayingTrack = RoomModule.provideDB(applicationContext).trackDao().getTrackById(musicId)
+            }
+            Log.d("TAG", "Playback is preparing...${currentPlayingTrack?.title.toString()}")
 
             withContext(Dispatchers.Main) {
                 if (intent.action == Notification.START_FOREGROUND_ACTION) {
                     val currentPlayerState = intent.getStringExtra(ActionKey.ACTION) ?: ""
 
+                    Log.d("TAG", "State: ${currentPlayerState}")
+
                     when (currentPlayerState) {
                         ActionDetail.START_MODE -> {
                             delay(500)
+                            playerStatus = PlayerStatus.PLAY
                             playPlayback()
                         }
                         ActionDetail.PAUSE_MODE -> {
                             delay(500)
+                            playerStatus = PlayerStatus.PAUSE
                             pausePlayback()
                         }
                         ActionDetail.STOP_MODE -> {
                             delay(500)
+                            playerStatus = PlayerStatus.STOP
                             stopPlayback()
                         }
                         ActionDetail.NEXT_MODE -> {
+                            playerStatus = PlayerStatus.NEXT_PLAY
                             delay(500)
-                            playPlayback()
+                            setNextTrack()
                         }
                         ActionDetail.PREV_MODE -> {
+                            playerStatus = PlayerStatus.PREV_PLAY
                             delay(500)
-                            playPlayback()
+                            setPrevTrack()
                         }
                         ActionDetail.RESTART_MODE -> {
+                            playerStatus = PlayerStatus.RESTART
                             playPlayback(isRefreshSamePlayback = true)
                         }
                         ActionDetail.SHUFFLE_MODE -> {
                             isShuffleEnable = isShuffle
+                            updatePlaybackDurationToActivity()
                         }
                         ActionDetail.REPEAT_MODE -> {
-                            playerStatus = PlayerStatus.PLAY
+                            playerStatus = PlayerStatus.REPEAT
                             exoplayer.repeatMode = repeatMode
                         }
                     }
@@ -129,15 +141,16 @@ class MusicService : Service() {
     }
 
     private fun startCountDown() {
+        Log.d("TAG", "Playback is ready...${currentPlayingTrack?.title.toString()}")
+
         exoplayer.addListener(object : Player.Listener {
             override fun onPlaybackStateChanged(state: Int) {
                 if (state == Player.STATE_READY) {
                     var imageNotification: Bitmap?
                     val interval = 1000L
-                    val playingTrack = currentPlayingTrack
                     val totalDuration = exoplayer.duration
 
-                    loadImageNotification(this@MusicService, playingTrack?.imageUrl.orEmpty()) { imageAlbum ->
+                    loadImageNotification(this@MusicService, currentPlayingTrack?.imageUrl.orEmpty()) { imageAlbum ->
                         imageNotification = imageAlbum
 
                         countdownJob?.cancel()
@@ -148,36 +161,30 @@ class MusicService : Service() {
                                 val formattedTime = runningDuration.convertTimeToHHSS()
                                 val formattedTimeTotal = totalDuration.convertTimeToHHSS()
                                 val progress = ((runningDuration * 100) / totalDuration).toFloat()
-
                                 val time = runningDuration.convertTimeToMinuteSecond()
 
                                 durationRunning = time.second + (time.first * 60)
-                                durationTotal = playingTrack?.duration ?: 0L
+                                durationTotal = currentPlayingTrack?.duration ?: 0L
                                 durationRunningText = formattedTime
                                 durationTotalText = formattedTimeTotal
 
-                                if (playerStatus != PlayerStatus.STOP) {
-                                    buildNotificationLayout(
-                                        playingTrack,
-                                        progress,
-                                        formattedTime,
-                                        formattedTimeTotal,
-                                        imageNotification)
-                                }
-
-                                updatePlaybackDurationToActivity(
-                                    title = playingTrack?.title.orEmpty(),
-                                    descriptions = playingTrack?.artist.orEmpty()
+                                buildNotificationLayout(
+                                    currentPlayingTrack,
+                                    progress,
+                                    formattedTime,
+                                    formattedTimeTotal,
+                                    imageNotification
                                 )
 
+                                updatePlaybackDurationToActivity()
+
                                 delay(interval)
-                                if (playerStatus != PlayerStatus.PAUSE) {
-                                    runningDuration += interval
-                                }
+
+                                if (playerStatus?.isGroupPlay() == true) runningDuration += interval
                             }
 
                             withContext(Dispatchers.Main) {
-                                onFinishRun(totalDuration)
+                                onFinishRun()
                             }
                         }
                     }
@@ -186,27 +193,58 @@ class MusicService : Service() {
         })
     }
 
-    private fun onFinishRun(totalDuration: Long) {
-        durationRunning = 0L
-        durationTotal = totalDuration
-        durationRunningText = "00:00"
-        durationTotalText = "00:00"
-        playerStatus = PlayerStatus.STOP
+    private fun onFinishRun() {
+        Log.d("TAG", "Playback finish running..")
+        playerStatus = if (isShuffleEnable) PlayerStatus.SHUFFLE else PlayerStatus.NEXT_PLAY
 
-        updatePlaybackDurationToActivity(
-            title = currentPlayingTrack?.title.orEmpty(),
-            descriptions = currentPlayingTrack?.artist.orEmpty()
-        )
-
-        removeNotification()
-        killService()
-
-        setNextPlayback()
+        if (isShuffleEnable) setRandomTrack() else setNextTrack()
     }
 
-    private fun setNextPlayback() {
-        playerStatus = PlayerStatus.NEXT_PLAY
-        updatePlaybackDurationToActivity()
+    private fun setRandomTrack() {
+        serviceScope.launch {
+            val totalTrack = RoomModule.provideDB(applicationContext).trackDao().getAllTrack()?.size ?: 0
+
+            val nextIdTrack = (0 until totalTrack - 1).random()
+
+            currentPlayingTrack = RoomModule.provideDB(applicationContext).trackDao().getTrackByIdPrimary(nextIdTrack)
+            withContext(Dispatchers.Main) {
+                playPlayback()
+            }
+        }
+    }
+
+    private fun setNextTrack() {
+        serviceScope.launch {
+            val totalTrack = RoomModule.provideDB(applicationContext).trackDao().getAllTrack()?.size ?: 0
+
+            val nextIdTrack = if ((currentPlayingTrack?.idPk ?: 0) > (totalTrack - 1)) {
+                0
+            } else {
+                (currentPlayingTrack?.idPk ?: 0) + 1
+            }
+
+            currentPlayingTrack = RoomModule.provideDB(applicationContext).trackDao().getTrackByIdPrimary(nextIdTrack)
+            withContext(Dispatchers.Main) {
+                playPlayback()
+            }
+        }
+    }
+
+    private fun setPrevTrack() {
+        serviceScope.launch {
+            val totalTrack = RoomModule.provideDB(applicationContext).trackDao().getAllTrack()?.size ?: 0
+
+            val nextIdTrack = if ((currentPlayingTrack?.idPk ?: 0) == 0) {
+                totalTrack - 1
+            } else {
+                (currentPlayingTrack?.idPk ?: 0) - 1
+            }
+
+            currentPlayingTrack = RoomModule.provideDB(applicationContext).trackDao().getTrackByIdPrimary(nextIdTrack)
+            withContext(Dispatchers.Main) {
+                playPlayback()
+            }
+        }
     }
 
     private fun playPlayback(isRefreshSamePlayback: Boolean = false) {
@@ -219,22 +257,20 @@ class MusicService : Service() {
             exoplayer.prepare()
         }
 
-        playerStatus = PlayerStatus.PLAY
         playMusic(currentPlayingTrack?.idPk ?: 0, exoplayer.currentPosition)
         startCountDown()
     }
 
     private fun pausePlayback() {
-        playerStatus = PlayerStatus.PAUSE
         if (exoplayer.isPlaying) {
             exoplayer.pause()
         }
+
         updatePlaybackDurationToActivity()
         removeNotification()
     }
 
     private fun stopPlayback() {
-        playerStatus = PlayerStatus.STOP
         exoplayer.release()
 
         updatePlaybackDurationToActivity()
@@ -242,13 +278,12 @@ class MusicService : Service() {
         killService()
     }
 
-    private fun updatePlaybackDurationToActivity(title: String,
-                                                 descriptions: String) {
+    private fun updatePlaybackDurationToActivity() {
         val intent = Intent(Notification.BROADCAST_NAME)
 
-        intent.putExtra(INTENT.PENDING_MUSIC_ID, currentPlayingTrack?.id)
-        intent.putExtra(INTENT.PENDING_TITLE, title)
-        intent.putExtra(INTENT.PENDING_DESCRIPTION, descriptions)
+        intent.putExtra(INTENT.PENDING_MUSIC_DATA, currentPlayingTrack)
+        intent.putExtra(INTENT.PENDING_TITLE, currentPlayingTrack?.title)
+        intent.putExtra(INTENT.PENDING_DESCRIPTION, currentPlayingTrack?.description)
         intent.putExtra(INTENT.PENDING_MUSIC_STATUS,  playerStatus?.status)
         intent.putExtra(INTENT.PENDING_DURATION, durationRunning)
         intent.putExtra(INTENT.PENDING_DURATION_TOTAL, durationTotal)
@@ -256,18 +291,6 @@ class MusicService : Service() {
         intent.putExtra(INTENT.PENDING_DURATION_TOTAL_TEXT, durationTotalText)
 
         LocalBroadcastManager.getInstance(this).sendBroadcast(intent)
-    }
-
-    private fun updatePlaybackDurationToActivity() {
-        val intent = Intent(Notification.BROADCAST_NAME)
-
-        intent.putExtra(INTENT.PENDING_MUSIC_STATUS, playerStatus?.status)
-        intent.putExtra(INTENT.PENDING_DURATION, durationRunning)
-        intent.putExtra(INTENT.PENDING_DURATION_TOTAL, durationTotal)
-        intent.putExtra(INTENT.PENDING_DURATION_TEXT, durationRunningText)
-        intent.putExtra(INTENT.PENDING_DURATION_TOTAL_TEXT, durationTotalText)
-
-        LocalBroadcastManager.getInstance(applicationContext).sendBroadcast(intent)
     }
 
     private fun buildNotificationLayout(
@@ -281,13 +304,13 @@ class MusicService : Service() {
         val notification = NotificationLayoutBuilder.showCustomNotification(
             context = this@MusicService,
             progress = progress,
-            id = track?.id.orEmpty(),
+            track = track,
             durationText = formattedTime,
             durationTotalText = formattedTimeTotal,
             title = track?.title.orEmpty(),
             descriptions = track?.artist.orEmpty(),
             image = imageNotification,
-            isPlay = playerStatus == PlayerStatus.PLAY
+            isPause = playerStatus == PlayerStatus.PAUSE
         )
 
         startForeground(NOTIFICATION_ID, notification)
@@ -314,7 +337,7 @@ class MusicService : Service() {
     }
 
     object INTENT {
-        const val PENDING_MUSIC_ID = "PENDING_MUSIC_ID"
+        const val PENDING_MUSIC_DATA = "PENDING_MUSIC_DATA"
         const val PENDING_MUSIC_STATUS = "PENDING_MUSIC_STATUS"
         const val PENDING_TITLE = "PENDING_TITLE"
         const val PENDING_DESCRIPTION = "PENDING_DESCRIPTION"
@@ -331,9 +354,13 @@ class MusicService : Service() {
     }
 
     enum class PlayerStatus(val status: String) {
+        PREV_PLAY("PREV_PLAY"),
         NEXT_PLAY("NEXT_PLAY"),
+        SHUFFLE("SHUFFLE"),
         PLAY("PLAY"),
         PAUSE("PAUSE"),
         STOP("STOP"),
+        RESTART("RESTART"),
+        REPEAT("REPEAT"),
     }
 }

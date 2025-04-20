@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import com.view.musicplayer.spotifyclone.R
+import com.view.musicplayer.spotifyclone.ext.isGroupPlay
 import com.view.musicplayer.spotifyclone.navigation.routeToPlaylistDetail
 import com.view.musicplayer.spotifyclone.network.response.Track
 import com.view.musicplayer.spotifyclone.room.model.FavoriteTrack
@@ -66,7 +67,7 @@ fun ProfileScreen(
     isShowPlayerButton: Boolean,
     isShuffle: Boolean,
     currentPlaying: Track,
-    playerStatus: String,
+    playerStatus: MusicService.PlayerStatus,
     trackProgress: Long,
     trackProgressTotal: Long,
     trackProgressText: String,
@@ -75,7 +76,8 @@ fun ProfileScreen(
     onPlayPauseClick: () -> Unit = {},
     onNextClick: () -> Unit = {},
     onPreviousClick: () -> Unit = {},
-    onShuffleClick: () -> Unit = {}
+    onShuffleClick: () -> Unit = {},
+    onRefreshClick: () -> Unit = {},
 ) {
     val context = LocalContext.current
     val tabTitles = listOf(context.getString(R.string.your_favorite), context.getString(R.string.your_playlists))
@@ -181,11 +183,12 @@ fun ProfileScreen(
                 durationText = trackProgressText,
                 durationTotalText = trackProgressTotalText,
                 isShuffle = isShuffle,
-                isPlaying = playerStatus == MusicService.PlayerStatus.PLAY.status,
+                isPlaying = playerStatus.isGroupPlay(),
                 onPlayPauseClick = onPlayPauseClick,
                 onNextClick = onNextClick,
                 onPreviousClick = onPreviousClick,
-                onShuffleClick = onShuffleClick
+                onShuffleClick = onShuffleClick,
+                onRefreshClick = onRefreshClick
             )
         }
         if (isShowAddPlaylistDialog) {

@@ -7,6 +7,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AlertDialog
@@ -45,6 +46,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.google.gson.Gson
+import com.view.musicplayer.spotifyclone.ext.convertToPlayerStatus
 import com.view.musicplayer.spotifyclone.navigation.ScreenRoute
 import com.view.musicplayer.spotifyclone.network.response.Track
 import com.view.musicplayer.spotifyclone.screen.AlbumDetailScreen
@@ -138,12 +141,8 @@ class MainActivity : ComponentActivity() {
             override fun onReceive(context: Context, intent: Intent) {
                 val bundle = intent.extras
 
-                val oldPosition = bundle?.getString(MusicService.INTENT.PENDING_MUSIC_ID) ?: ""
-                if (viewModel.currentTrackId.value != oldPosition) {
-                    viewModel.currentTrackId.postValue(oldPosition)
-                }
+                viewModel.currentTrack.postValue(bundle?.getParcelable(MusicService.INTENT.PENDING_MUSIC_DATA))
                 viewModel.currentTrackStatus.postValue(bundle?.getString(MusicService.INTENT.PENDING_MUSIC_STATUS) ?: "")
-
                 viewModel.currentTrackDuration.postValue(bundle?.getLong(MusicService.INTENT.PENDING_DURATION) ?: 0L)
                 viewModel.currentTrackDurationTotal.postValue(bundle?.getLong(MusicService.INTENT.PENDING_DURATION_TOTAL) ?: 0L)
                 viewModel.currentTrackDurationText.postValue(bundle?.getString(MusicService.INTENT.PENDING_DURATION_TEXT) ?: "")
@@ -162,47 +161,17 @@ fun MainPage(
     context: Context
 ) {
     val navController = rememberNavController()
+    var isShowPlayerButton by rememberSaveable { mutableStateOf(false) }
+    var isShuffle by rememberSaveable { mutableStateOf(false) }
 
-    val isShowPlayer = (viewModel.currentTrackStatus.value == MusicService.PlayerStatus.PLAY.status
-            || viewModel.currentTrackStatus.value == MusicService.PlayerStatus.PAUSE.status)
-
-    var isShowPlayerButton by rememberSaveable { mutableStateOf(isShowPlayer) }
-    var currentPlaying by remember { mutableStateOf(Track.empty) }
-    var isNextPlayback by remember { mutableStateOf(false) }
-    var isShuffle by remember { mutableStateOf(false) }
-
+    val currentPlaying by viewModel.currentTrack.observeAsState()
     val playerStatus by viewModel.currentTrackStatus.observeAsState()
     val trackProgress by viewModel.currentTrackDuration.observeAsState()
     val trackProgressTotal by viewModel.currentTrackDurationTotal.observeAsState()
     val trackProgressText by viewModel.currentTrackDurationText.observeAsState()
     val trackProgressTotalText by viewModel.currentTrackDurationTotalText.observeAsState()
-    val newTrack by viewModel.newTrack.observeAsState()
 
-    if(playerStatus != MusicService.PlayerStatus.PAUSE.status) {
-        if (isShowPlayerButton) {
-            listener.onPlay(context, currentPlaying.id)
-        } else {
-            listener.onStop(context)
-        }
-    }
-
-    if (playerStatus == MusicService.PlayerStatus.NEXT_PLAY.status) {
-        if (isShuffle) {
-            viewModel.getRandomTrack(context)
-        } else {
-            viewModel.getTrack(context, currentPlaying.idPk, true)
-        }
-    }
-
-    if (newTrack != null && newTrack != Track.empty) {
-        currentPlaying = newTrack as Track
-
-        if (isNextPlayback) {
-            listener.onNext(context, currentPlaying.id)
-        } else {
-            listener.onPrevious(context, currentPlaying.id)
-        }
-    }
+    Log.d("TAG", "Current Playing: ${currentPlaying?.title.toString()}")
 
     Scaffold(
         bottomBar = { BottomNavBar(navController) }
@@ -216,39 +185,37 @@ fun MainPage(
                 HomeScreen(
                     navController = navController,
                     isShowPlayerButton = isShowPlayerButton,
-                    playerStatus = playerStatus.orEmpty(),
+                    playerStatus = playerStatus?.convertToPlayerStatus() ?: MusicService.PlayerStatus.STOP,
                     trackProgress = trackProgress ?: 0L,
                     trackProgressTotal = trackProgressTotal ?: 0L,
                     trackProgressText = trackProgressText.orEmpty(),
                     trackProgressTotalText = trackProgressTotalText.orEmpty(),
-                    currentPlaying = currentPlaying,
+                    currentPlaying = currentPlaying ?: Track.empty,
                     isShuffle = isShuffle,
                     onClickMusic = {
-                        if (currentPlaying.id == it.id) {
-                            currentPlaying = Track.empty
+                        if (currentPlaying?.id == it.id) {
                             isShowPlayerButton = !isShowPlayerButton
+                            listener.onStop(context)
                         } else {
-                            currentPlaying = it
                             isShowPlayerButton = true
+                            listener.onPlay(context, it.id)
                         }
                     },
                     onPlayPauseClick = {
                         if (playerStatus == MusicService.PlayerStatus.PLAY.status) {
-                            listener.onPause(context)
+                            listener.onPause(context, currentPlaying?.id.orEmpty())
                         } else {
-                            listener.onPlay(context, currentPlaying.id)
+                            listener.onPlay(context, currentPlaying?.id.orEmpty())
                         }
                     },
                     onNextClick = {
-                        isNextPlayback = true
-                        viewModel.getTrack(context, currentPlaying.idPk, isNextPlayback)
+                        listener.onNext(context)
                     },
                     onPreviousClick = {
-                        isNextPlayback = false
-                        viewModel.getTrack(context, currentPlaying.idPk, isNextPlayback)
+                        listener.onPrevious(context)
                     },
                     onRefreshClick = {
-                        listener.onRestart(context, currentPlaying.id)
+                        listener.onRestart(context, currentPlaying?.id.orEmpty())
                     },
                     onShuffleClick = {
                         isShuffle = !isShuffle
@@ -260,36 +227,37 @@ fun MainPage(
                 SearchScreen(
                     isShowPlayerButton = isShowPlayerButton,
                     navController = navController,
-                    currentPlaying = currentPlaying,
-                    playerStatus = playerStatus.orEmpty(),
+                    currentPlaying = currentPlaying ?: Track.empty,
+                    playerStatus = playerStatus?.convertToPlayerStatus() ?: MusicService.PlayerStatus.STOP,
                     trackProgress = trackProgress ?: 0L,
                     trackProgressTotal = trackProgressTotal ?: 0L,
                     trackProgressText = trackProgressText.orEmpty(),
                     trackProgressTotalText = trackProgressTotalText.orEmpty(),
                     isShuffle = isShuffle,
                     onClickMusic = {
-                        if (currentPlaying.id == it.id) {
-                            currentPlaying = Track.empty
+                        if (currentPlaying?.id == it.id) {
                             isShowPlayerButton = !isShowPlayerButton
+                            listener.onStop(context)
                         } else {
-                            currentPlaying = it
                             isShowPlayerButton = true
+                            listener.onPlay(context, it.id)
                         }
                     },
                     onPlayPauseClick = {
                         if (playerStatus == MusicService.PlayerStatus.PLAY.status) {
-                            listener.onPause(context)
+                            listener.onPause(context, currentPlaying?.id.orEmpty())
                         } else {
-                            listener.onPlay(context, currentPlaying.id)
+                            listener.onPlay(context, currentPlaying?.id.orEmpty())
                         }
                     },
                     onNextClick = {
-                        isNextPlayback = true
-                        viewModel.getTrack(context, currentPlaying.idPk, isNextPlayback)
+                        listener.onNext(context)
                     },
                     onPreviousClick = {
-                        isNextPlayback = false
-                        viewModel.getTrack(context, currentPlaying.idPk, isNextPlayback)
+                        listener.onPrevious(context)
+                    },
+                    onRefreshClick = {
+                        listener.onRestart(context, currentPlaying?.id.orEmpty())
                     },
                     onShuffleClick = {
                         isShuffle = !isShuffle
@@ -301,36 +269,37 @@ fun MainPage(
                 ProfileScreen(
                     navController = navController,
                     isShowPlayerButton = isShowPlayerButton,
-                    currentPlaying = currentPlaying,
-                    playerStatus = playerStatus.orEmpty(),
+                    currentPlaying = currentPlaying ?: Track.empty,
+                    playerStatus = playerStatus?.convertToPlayerStatus() ?: MusicService.PlayerStatus.STOP,
                     trackProgress = trackProgress ?: 0L,
                     trackProgressTotal = trackProgressTotal ?: 0L,
                     trackProgressText = trackProgressText.orEmpty(),
                     trackProgressTotalText = trackProgressTotalText.orEmpty(),
                     isShuffle = isShuffle,
                     onClickMusic = {
-                        if (currentPlaying.id == it.id) {
-                            currentPlaying = Track.empty
+                        if (currentPlaying?.id == it.id) {
                             isShowPlayerButton = !isShowPlayerButton
+                            listener.onStop(context)
                         } else {
-                            currentPlaying = it
                             isShowPlayerButton = true
+                            listener.onPlay(context, it.id)
                         }
                     },
                     onPlayPauseClick = {
                         if (playerStatus == MusicService.PlayerStatus.PLAY.status) {
-                            listener.onPause(context)
+                            listener.onPause(context, currentPlaying?.id.orEmpty())
                         } else {
-                            listener.onPlay(context, currentPlaying.id)
+                            listener.onPlay(context, currentPlaying?.id.orEmpty())
                         }
                     },
                     onNextClick = {
-                        isNextPlayback = true
-                        viewModel.getTrack(context, currentPlaying.idPk, isNextPlayback)
+                        listener.onNext(context)
                     },
                     onPreviousClick = {
-                        isNextPlayback = false
-                        viewModel.getTrack(context, currentPlaying.idPk, isNextPlayback)
+                        listener.onPrevious(context)
+                    },
+                    onRefreshClick = {
+                        listener.onRestart(context, currentPlaying?.id.orEmpty())
                     },
                     onShuffleClick = {
                         isShuffle = !isShuffle
@@ -347,36 +316,37 @@ fun MainPage(
                     navController = navController,
                     isShowPlayerButton = isShowPlayerButton,
                     albumGenre = albumGenre,
-                    currentPlaying = currentPlaying,
-                    playerStatus = playerStatus.orEmpty(),
+                    currentPlaying = currentPlaying ?: Track.empty,
+                    playerStatus = playerStatus?.convertToPlayerStatus() ?: MusicService.PlayerStatus.STOP,
                     trackProgress = trackProgress ?: 0L,
                     trackProgressTotal = trackProgressTotal ?: 0L,
                     trackProgressText = trackProgressText.orEmpty(),
                     trackProgressTotalText = trackProgressTotalText.orEmpty(),
                     isShuffle = isShuffle,
                     onClickMusic = {
-                        if (currentPlaying.id == it.id) {
-                            currentPlaying = Track.empty
+                        if (currentPlaying?.id == it.id) {
                             isShowPlayerButton = !isShowPlayerButton
+                            listener.onStop(context)
                         } else {
-                            currentPlaying = it
                             isShowPlayerButton = true
+                            listener.onPlay(context, it.id)
                         }
                     },
                     onPlayPauseClick = {
                         if (playerStatus == MusicService.PlayerStatus.PLAY.status) {
-                            listener.onPause(context)
+                            listener.onPause(context, currentPlaying?.id.orEmpty())
                         } else {
-                            listener.onPlay(context, currentPlaying.id)
+                            listener.onPlay(context, currentPlaying?.id.orEmpty())
                         }
                     },
                     onNextClick = {
-                        isNextPlayback = true
-                        viewModel.getTrack(context, currentPlaying.idPk, isNextPlayback)
+                        listener.onNext(context)
                     },
                     onPreviousClick = {
-                        isNextPlayback = false
-                        viewModel.getTrack(context, currentPlaying.idPk, isNextPlayback)
+                        listener.onPrevious(context)
+                    },
+                    onRefreshClick = {
+                        listener.onRestart(context, currentPlaying?.id.orEmpty())
                     },
                     onShuffleClick = {
                         isShuffle = !isShuffle
@@ -390,27 +360,28 @@ fun MainPage(
             ) { backStackEntry ->
                 SongDetailScreen(
                     navController = navController,
-                    playerStatus = playerStatus.orEmpty(),
+                    playerStatus = playerStatus?.convertToPlayerStatus() ?: MusicService.PlayerStatus.STOP,
                     trackProgress = trackProgress ?: 0L,
                     trackProgressTotal = trackProgressTotal ?: 0L,
                     trackProgressText = trackProgressText.orEmpty(),
                     trackProgressTotalText = trackProgressTotalText.orEmpty(),
-                    currentPlaying = currentPlaying,
+                    currentPlaying = currentPlaying ?: Track.empty,
                     isShuffle = isShuffle,
                     onPlayPauseClick = {
                         if (playerStatus == MusicService.PlayerStatus.PLAY.status) {
-                            listener.onPause(context)
+                            listener.onPause(context, currentPlaying?.id.orEmpty())
                         } else {
-                            listener.onPlay(context, currentPlaying.id)
+                            listener.onPlay(context, currentPlaying?.id.orEmpty())
                         }
                     },
                     onNextClick = {
-                        isNextPlayback = true
-                        viewModel.getTrack(context, currentPlaying.idPk, isNextPlayback)
+                        listener.onNext(context)
                     },
                     onPreviousClick = {
-                        isNextPlayback = false
-                        viewModel.getTrack(context, currentPlaying.idPk, isNextPlayback)
+                        listener.onPrevious(context)
+                    },
+                    onRefreshClick = {
+                        listener.onRestart(context, currentPlaying?.id.orEmpty())
                     },
                     onShuffleClick = {
                         isShuffle = !isShuffle
@@ -432,36 +403,37 @@ fun MainPage(
                     navController = navController,
                     isShowPlayerButton = isShowPlayerButton,
                     playlistId = playlistId,
-                    currentPlaying = currentPlaying,
-                    playerStatus = playerStatus.orEmpty(),
+                    currentPlaying = currentPlaying ?: Track.empty,
+                    playerStatus = playerStatus?.convertToPlayerStatus() ?: MusicService.PlayerStatus.STOP,
                     trackProgress = trackProgress ?: 0L,
                     trackProgressTotal = trackProgressTotal ?: 0L,
                     trackProgressText = trackProgressText.orEmpty(),
                     trackProgressTotalText = trackProgressTotalText.orEmpty(),
                     isShuffle = isShuffle,
                     onClickMusic = {
-                        if (currentPlaying.id == it.id) {
-                            currentPlaying = Track.empty
+                        if (currentPlaying?.id == it.id) {
                             isShowPlayerButton = !isShowPlayerButton
+                            listener.onStop(context)
                         } else {
-                            currentPlaying = it
                             isShowPlayerButton = true
+                            listener.onPlay(context, it.id)
                         }
                     },
                     onPlayPauseClick = {
                         if (playerStatus == MusicService.PlayerStatus.PLAY.status) {
-                            listener.onPause(context)
+                            listener.onPause(context, currentPlaying?.id.orEmpty())
                         } else {
-                            listener.onPlay(context, currentPlaying.id)
+                            listener.onPlay(context, currentPlaying?.id.orEmpty())
                         }
                     },
                     onNextClick = {
-                        isNextPlayback = true
-                        viewModel.getTrack(context, currentPlaying.idPk, isNextPlayback)
+                        listener.onNext(context)
                     },
                     onPreviousClick = {
-                        isNextPlayback = false
-                        viewModel.getTrack(context, currentPlaying.idPk, isNextPlayback)
+                        listener.onPrevious(context)
+                    },
+                    onRefreshClick = {
+                        listener.onRestart(context, currentPlaying?.id.orEmpty())
                     },
                     onShuffleClick = {
                         isShuffle = !isShuffle

@@ -9,6 +9,7 @@ import com.view.musicplayer.spotifyclone.network.response.Genre
 import com.view.musicplayer.spotifyclone.network.response.SongRecommendation
 import com.view.musicplayer.spotifyclone.network.response.Track
 import com.view.musicplayer.spotifyclone.room.AppDb
+import com.view.musicplayer.spotifyclone.service.MusicService
 import com.view.musicplayer.spotifyclone.viewmodel.base.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
@@ -17,16 +18,14 @@ import kotlinx.coroutines.launch
 class BroadcastViewModel(val db: AppDb, val api: Api): BaseViewModel<Any?>() {
     internal var finishLoad = SingleLiveEvent<EmptyClass>()
 
-    internal var currentTrackId = SingleLiveEvent<String>().apply { value = "" }
-    internal var currentTrackStatus = SingleLiveEvent<String>().apply { value = "" }
+    internal var currentTrack = SingleLiveEvent<Track>().apply { value = Track.empty }
+    internal var currentTrackStatus = SingleLiveEvent<String>().apply { value = MusicService.PlayerStatus.STOP.status }
 
     internal var currentTrackDuration = SingleLiveEvent<Long>().apply { value = 0L }
     internal var currentTrackDurationTotal = SingleLiveEvent<Long>().apply { value = 0L }
 
     internal var currentTrackDurationText = SingleLiveEvent<String>().apply { value = "" }
     internal var currentTrackDurationTotalText = SingleLiveEvent<String>().apply { value = "" }
-
-    internal var newTrack = SingleLiveEvent<Track>().apply { value = Track.empty }
 
     internal fun getAllTrackList(context: Context) {
         executeJob(context) {
@@ -102,38 +101,6 @@ class BroadcastViewModel(val db: AppDb, val api: Api): BaseViewModel<Any?>() {
 
                     finishLoad.postValue(EmptyClass())
                 }
-            }
-        }
-    }
-
-    internal fun getTrack(context: Context, id: Int, isNext: Boolean) {
-        executeJob(context) {
-            safeScopeFun(context).launch(Dispatchers.IO) {
-                val tracks = db.trackDao().getAllTrack() ?: return@launch
-                val trackSize = tracks.size
-
-                val newId = when {
-                    isNext && id >= trackSize - 1 -> 0
-                    !isNext && id <= 0 -> trackSize - 1
-                    isNext -> id + 1
-                    else -> id - 1
-                }
-
-                val track = db.trackDao().getTrackByIdPrimary(newId)
-                newTrack.postValue(track)
-            }
-        }
-    }
-
-    internal fun getRandomTrack(context: Context) {
-        executeJob(context) {
-            safeScopeFun(context).launch(Dispatchers.IO) {
-                val tracks = db.trackDao().getAllTrack() ?: return@launch
-                val trackSize = tracks.size
-
-                val randomId = (0..trackSize).random()
-                val track = db.trackDao().getTrackByIdPrimary(randomId)
-                newTrack.postValue(track)
             }
         }
     }

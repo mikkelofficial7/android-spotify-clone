@@ -12,11 +12,12 @@ import android.widget.RemoteViews
 import androidx.core.app.NotificationCompat
 import com.view.musicplayer.spotifyclone.MainActivity
 import com.view.musicplayer.spotifyclone.R
+import com.view.musicplayer.spotifyclone.network.response.Track
 import com.view.musicplayer.spotifyclone.service.MusicService.INTENT.PENDING_DESCRIPTION
 import com.view.musicplayer.spotifyclone.service.MusicService.INTENT.PENDING_DURATION
 import com.view.musicplayer.spotifyclone.service.MusicService.INTENT.PENDING_DURATION_TEXT
 import com.view.musicplayer.spotifyclone.service.MusicService.INTENT.PENDING_DURATION_TOTAL_TEXT
-import com.view.musicplayer.spotifyclone.service.MusicService.INTENT.PENDING_MUSIC_ID
+import com.view.musicplayer.spotifyclone.service.MusicService.INTENT.PENDING_MUSIC_DATA
 import com.view.musicplayer.spotifyclone.service.MusicService.INTENT.PENDING_TITLE
 import com.view.musicplayer.spotifyclone.service.MusicService.Notification.NOTIFICATION_ID
 
@@ -24,14 +25,14 @@ import com.view.musicplayer.spotifyclone.service.MusicService.Notification.NOTIF
 object NotificationLayoutBuilder {
     @SuppressLint("RemoteViewLayout")
     fun showCustomNotification(context: Context,
-                               id: String,
+                               track: Track?,
                                progress: Float,
                                durationText: String,
                                durationTotalText: String,
                                title: String,
                                descriptions: String,
                                image: Bitmap?,
-                               isPlay: Boolean = false
+                               isPause: Boolean = false
         ) : Notification {
         val channelId = "CHANNEL_ID"
         val channelName = "Channel name"
@@ -39,7 +40,7 @@ object NotificationLayoutBuilder {
         val notificationManager = context.getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
 
         val pendingIntent = Intent(context, MainActivity::class.java)
-        pendingIntent.putExtra(PENDING_MUSIC_ID, id)
+        pendingIntent.putExtra(PENDING_MUSIC_DATA, track)
         pendingIntent.putExtra(PENDING_DURATION, progress)
         pendingIntent.putExtra(PENDING_DURATION_TEXT, durationText)
         pendingIntent.putExtra(PENDING_DURATION_TOTAL_TEXT, durationTotalText)
@@ -62,7 +63,7 @@ object NotificationLayoutBuilder {
             setTextViewText(R.id.iv_title_notification, title)
             setTextViewText(R.id.iv_subtitle_notification, descriptions)
             setTextViewText(R.id.tv_timer_notification, "$durationText / $durationTotalText")
-            setImageViewResource(R.id.btn_play_pause, if (isPlay) R.drawable.ic_pause else R.drawable.ic_play)
+            setImageViewResource(R.id.btn_play_pause, if (isPause) R.drawable.ic_play else R.drawable.ic_pause)
             image?.let {
                 setImageViewBitmap(R.id.iv_notification, image)
                 setImageViewBitmap(R.id.iv_notification_bg, image)
@@ -75,7 +76,7 @@ object NotificationLayoutBuilder {
             setTextViewText(R.id.iv_subtitle_notification, descriptions)
             setTextViewText(R.id.tv_timer_notification, durationText)
             setTextViewText(R.id.tv_timer_notification_total, durationTotalText)
-            setImageViewResource(R.id.btn_play_pause, if (isPlay) R.drawable.ic_pause else R.drawable.ic_play)
+            setImageViewResource(R.id.btn_play_pause, if (isPause) R.drawable.ic_play else R.drawable.ic_pause)
             image?.let {
                 setImageViewBitmap(R.id.iv_notification, image)
                 setImageViewBitmap(R.id.iv_notification_bg, image)

@@ -20,6 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.view.musicplayer.spotifyclone.ext.isGroupPlay
 import com.view.musicplayer.spotifyclone.network.response.Track
 import com.view.musicplayer.spotifyclone.screen.shared.EmptyView
 import com.view.musicplayer.spotifyclone.screen.shared.MusicItemCard
@@ -37,7 +38,7 @@ fun HomeScreen(
     navController: NavController,
     currentPlaying: Track,
     isShowPlayerButton: Boolean,
-    playerStatus: String,
+    playerStatus: MusicService.PlayerStatus,
     trackProgress: Long,
     trackProgressTotal: Long,
     trackProgressText: String,
@@ -148,7 +149,7 @@ fun HomeScreen(
                             }
                         )
                     }
-                    if (secondTrack.isNullOrEmpty()) {
+                    if (secondTrack.isEmpty()) {
                         item {
                             EmptyView()
                         }
@@ -213,7 +214,7 @@ fun HomeScreen(
                         .background(Transparent)
                         .padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
                 ) {
-                    items(fourthTrack.orEmpty()) { artist ->
+                    items(fourthTrack) { artist ->
                         MusicItemCard(
                             navController = navController,
                             currentPlaying = currentPlaying,
@@ -248,7 +249,7 @@ fun HomeScreen(
                 durationText = trackProgressText,
                 durationTotalText = trackProgressTotalText,
                 isShuffle = isShuffle,
-                isPlaying = playerStatus == MusicService.PlayerStatus.PLAY.status,
+                isPlaying = playerStatus.isGroupPlay(),
                 onPlayPauseClick = onPlayPauseClick,
                 onNextClick = onNextClick,
                 onPreviousClick = onPreviousClick,
