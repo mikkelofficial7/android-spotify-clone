@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="110dp"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:background="@color/white"
     xmlns:tools="http://schemas.android.com/tools"
     android:orientation="vertical">
@@ -22,7 +22,19 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:src="@drawable/fading_effect"
-        android:layout_toRightOf="@id/iv_title_notification"
+        android:layout_alignParentEnd="true"
+        android:layout_alignParentTop="true"/>
+
+    <ImageView
+        android:id="@+id/btn_play_pause"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:src="@drawable/ic_play"
+        android:tint="@color/black80"
+        android:padding="5dp"
+        android:layout_marginTop="20dp"
+        android:layout_marginEnd="10dp"
+        android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"/>
 
     <ImageView
@@ -65,7 +77,7 @@
     <ProgressBar
         android:id="@+id/notification_seekbar"
         android:layout_width="0dp"
-        android:layout_height="15dp"
+        android:layout_height="10dp"
         android:max="100"
         style="@style/Widget.AppCompat.ProgressBar.Horizontal"
         android:layout_marginBottom="5dp"

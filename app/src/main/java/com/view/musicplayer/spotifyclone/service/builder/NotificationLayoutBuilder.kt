@@ -30,7 +30,9 @@ object NotificationLayoutBuilder {
                                durationTotalText: String,
                                title: String,
                                descriptions: String,
-                               image: Bitmap?) : Notification {
+                               image: Bitmap?,
+                               isPlay: Boolean = false
+        ) : Notification {
         val channelId = "CHANNEL_ID"
         val channelName = "Channel name"
         val channelDescription = "Channel description"
@@ -60,6 +62,7 @@ object NotificationLayoutBuilder {
             setTextViewText(R.id.iv_title_notification, title)
             setTextViewText(R.id.iv_subtitle_notification, descriptions)
             setTextViewText(R.id.tv_timer_notification, "$durationText / $durationTotalText")
+            setImageViewResource(R.id.btn_play_pause, if (isPlay) R.drawable.ic_pause else R.drawable.ic_play)
             image?.let {
                 setImageViewBitmap(R.id.iv_notification, image)
                 setImageViewBitmap(R.id.iv_notification_bg, image)
@@ -72,6 +75,7 @@ object NotificationLayoutBuilder {
             setTextViewText(R.id.iv_subtitle_notification, descriptions)
             setTextViewText(R.id.tv_timer_notification, durationText)
             setTextViewText(R.id.tv_timer_notification_total, durationTotalText)
+            setImageViewResource(R.id.btn_play_pause, if (isPlay) R.drawable.ic_pause else R.drawable.ic_play)
             image?.let {
                 setImageViewBitmap(R.id.iv_notification, image)
                 setImageViewBitmap(R.id.iv_notification_bg, image)

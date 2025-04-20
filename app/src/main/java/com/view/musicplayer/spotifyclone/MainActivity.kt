@@ -178,10 +178,12 @@ fun MainPage(
     val trackProgressTotalText by viewModel.currentTrackDurationTotalText.observeAsState()
     val newTrack by viewModel.newTrack.observeAsState()
 
-    if (isShowPlayerButton) {
-        listener.onPlay(context, currentPlaying.id)
-    } else {
-        listener.onStop(context)
+    if(playerStatus != MusicService.PlayerStatus.PAUSE.status) {
+        if (isShowPlayerButton) {
+            listener.onPlay(context, currentPlaying.id)
+        } else {
+            listener.onStop(context)
+        }
     }
 
     if (playerStatus == MusicService.PlayerStatus.NEXT_PLAY.status) {

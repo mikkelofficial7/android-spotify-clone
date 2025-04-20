@@ -1,17 +1,14 @@
 package com.view.musicplayer.spotifyclone.service
 
 import android.app.Service
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.os.IBinder
-import android.support.v4.media.session.MediaSessionCompat
+import android.util.Log
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
-import androidx.media.session.MediaButtonReceiver
 import com.google.android.exoplayer2.ExoPlayer
 import com.google.android.exoplayer2.MediaItem
 import com.google.android.exoplayer2.Player
-import com.google.android.exoplayer2.ext.mediasession.MediaSessionConnector
 import com.view.musicplayer.spotifyclone.di.RoomModule
 import com.view.musicplayer.spotifyclone.ext.convertTimeToHHSS
 import com.view.musicplayer.spotifyclone.ext.convertTimeToMinuteSecond
@@ -29,13 +26,9 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
 class MusicService : Service() {
-    private val exoplayer: Player by lazy {
+    private val exoplayer: ExoPlayer by lazy {
         ExoPlayer.Builder(this).build()
     }
-    private val mediaSession: MediaSessionCompat by lazy {
-        MediaSessionCompat(this, "MyAudioService")
-    }
-    private lateinit var mediaSessionConnector: MediaSessionConnector
 
     private var countdownJob: Job? = null
     private var isShuffleEnable: Boolean = false
@@ -51,30 +44,16 @@ class MusicService : Service() {
     private val serviceScope = CoroutineScope(Dispatchers.IO + serviceJob)
     private val serviceScopeMain = CoroutineScope(Dispatchers.Main + serviceJob)
 
-    override fun onCreate() {
-        super.onCreate()
-        mediaSession.isActive = true
-
-        mediaSessionConnector = MediaSessionConnector(mediaSession)
-        mediaSessionConnector.setPlayer(exoplayer)
-
-        mediaSession.setFlags(
-            MediaSessionCompat.FLAG_HANDLES_MEDIA_BUTTONS or
-                    MediaSessionCompat.FLAG_HANDLES_TRANSPORT_CONTROLS
-        )
-    }
-
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
         if (intent == null) {
             return START_NOT_STICKY
         }
 
-        MediaButtonReceiver.handleIntent(mediaSession, intent)
-
         val musicId = intent.getStringExtra(TAG.MUSIC_ID) ?: ""
         val isShuffle = intent.getBooleanExtra(TAG.IS_SHUFFLE, false)
         val repeatMode = intent.getIntExtra(TAG.REPEAT_MODE, -1)
 
+        Log.d("TAG", "hit here....${intent.getStringExtra(ActionKey.ACTION)}")
         serviceScope.launch {
             currentPlayingTrack = RoomModule.provideDB(applicationContext).trackDao().getTrackById(musicId)
 
@@ -129,6 +108,7 @@ class MusicService : Service() {
     override fun onDestroy() {
         currentPlayingTrack = null
         exoplayer.release()
+        countdownJob?.cancel()
         killService()
 
         super.onDestroy()
@@ -146,27 +126,6 @@ class MusicService : Service() {
     private fun playMusic(position: Int, lastPlaybackPosition: Long) {
         exoplayer.seekTo(position, lastPlaybackPosition)
         exoplayer.play()
-    }
-
-    private fun buildNotificationLayout(context: Context,
-                                        musicID: String = "",
-                                        progress: Float = 0f,
-                                        durationText: String = "",
-                                        durationTotalText: String = "",
-                                        title: String = "",
-                                        descriptions: String = "",
-                                        image: Bitmap? = null
-    ): android.app.Notification {
-        return NotificationLayoutBuilder.showCustomNotification(
-            context,
-            musicID,
-            progress,
-            durationText,
-            durationTotalText,
-            title,
-            descriptions,
-            image
-        )
     }
 
     private fun startCountDown() {
@@ -267,8 +226,9 @@ class MusicService : Service() {
 
     private fun pausePlayback() {
         playerStatus = PlayerStatus.PAUSE
-        if (exoplayer.isPlaying) exoplayer.pause()
-
+        if (exoplayer.isPlaying) {
+            exoplayer.pause()
+        }
         updatePlaybackDurationToActivity()
         removeNotification()
     }
@@ -317,15 +277,17 @@ class MusicService : Service() {
         formattedTimeTotal: String,
         imageNotification: Bitmap?
     ) {
-        val notification = buildNotificationLayout(
-            this@MusicService,
+
+        val notification = NotificationLayoutBuilder.showCustomNotification(
+            context = this@MusicService,
             progress = progress,
-            musicID = track?.id.orEmpty(),
+            id = track?.id.orEmpty(),
             durationText = formattedTime,
             durationTotalText = formattedTimeTotal,
             title = track?.title.orEmpty(),
             descriptions = track?.artist.orEmpty(),
-            image = imageNotification
+            image = imageNotification,
+            isPlay = playerStatus == PlayerStatus.PLAY
         )
 
         startForeground(NOTIFICATION_ID, notification)
