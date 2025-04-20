@@ -46,7 +46,9 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.view.musicplayer.spotifyclone.ext.checkNotificationPermission
 import com.view.musicplayer.spotifyclone.ext.convertToPlayerStatus
+import com.view.musicplayer.spotifyclone.ext.showAllowNotificationPermissionDialog
 import com.view.musicplayer.spotifyclone.navigation.ScreenRoute
 import com.view.musicplayer.spotifyclone.network.response.Track
 import com.view.musicplayer.spotifyclone.screen.AlbumDetailScreen
@@ -101,35 +103,6 @@ class MainActivity : ComponentActivity() {
         unRegisterBroadcast()
         super.onDestroy()
     }
-
-    private fun checkNotificationPermission(onGranted: () -> Unit = {}) {
-        if (!NotificationManagerCompat.from(this).areNotificationsEnabled()) {
-            showAllowNotificationPermissionDialog(this)
-        } else {
-            onGranted()
-        }
-    }
-
-    private fun showAllowNotificationPermissionDialog(activity: Activity, onCancel: () -> Unit = {}) {
-        AlertDialog.Builder(activity)
-            .setTitle("Hi User!")
-            .setMessage("For better experience and get more info about us, please allow this notification")
-            .setPositiveButton("Allow") { _, _ ->
-                openNotificationSetting(activity)
-            }
-            .setNegativeButton("Cancel") { _, _ ->
-                onCancel()
-            }
-            .show()
-    }
-
-    private fun openNotificationSetting(activity: Activity) {
-        val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        intent.putExtra(Settings.EXTRA_APP_PACKAGE, activity.packageName)
-        activity.startActivity(intent)
-    }
-
 
     private fun unRegisterBroadcast() {
         LocalBroadcastManager.getInstance(this).unregisterReceiver(broadcastReceiver)
