@@ -1,6 +1,7 @@
 package com.view.musicplayer.spotifyclone.navigation
 
 import androidx.annotation.DrawableRes
+import androidx.compose.ui.window.Popup
 import androidx.navigation.NavController
 import com.view.musicplayer.spotifyclone.R
 
@@ -8,6 +9,8 @@ sealed class ScreenRoute(val route: String, val title: String, @DrawableRes val 
     object Home : ScreenRoute("home", "Home Page", R.drawable.ic_home)
     object Search : ScreenRoute("search", "Search Music", R.drawable.ic_search)
     object Profile : ScreenRoute("profile", "Your Profile", R.drawable.is_spotify)
+    object Login : ScreenRoute("login", "Login", 0)
+
     object AlbumDetail : ScreenRoute("album_detail/{albumGenre}", "Album Detail", 0) {
         fun route(albumGenre: String): String = "album_detail/$albumGenre"
     }
@@ -38,6 +41,20 @@ fun NavController.routeToAlbumDetail(id: String) {
 fun NavController.routeToPlaylistDetail(id: String) {
     this.navigate(ScreenRoute.PlaylistDetail.route(id)) {
         popUpTo(ScreenRoute.Profile.route) { saveState = true }
+        launchSingleTop = true
+        restoreState = false
+    }
+}
+
+fun NavController.routeToLogin() {
+    this.navigate(ScreenRoute.Login.route) {
+        launchSingleTop = true
+        restoreState = false
+    }
+}
+
+fun NavController.routeToHomePage() {
+    this.navigate(ScreenRoute.Home.route) {
         launchSingleTop = true
         restoreState = false
     }

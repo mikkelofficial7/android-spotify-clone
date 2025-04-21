@@ -7,6 +7,8 @@ import android.content.IntentFilter
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -50,13 +52,16 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.view.musicplayer.spotifyclone.constants.Constants
-import com.view.musicplayer.spotifyclone.ext.LogExt
 import com.view.musicplayer.spotifyclone.ext.checkNotificationPermission
 import com.view.musicplayer.spotifyclone.ext.convertToPlayerStatus
 import com.view.musicplayer.spotifyclone.navigation.ScreenRoute
+import com.view.musicplayer.spotifyclone.navigation.routeToHomePage
+import com.view.musicplayer.spotifyclone.navigation.routeToLogin
 import com.view.musicplayer.spotifyclone.network.response.Track
+import com.view.musicplayer.spotifyclone.room.model.User
 import com.view.musicplayer.spotifyclone.screen.AlbumDetailScreen
 import com.view.musicplayer.spotifyclone.screen.HomeScreen
+import com.view.musicplayer.spotifyclone.screen.LoginScreen
 import com.view.musicplayer.spotifyclone.screen.PlaylistDetailScreen
 import com.view.musicplayer.spotifyclone.screen.ProfileScreen
 import com.view.musicplayer.spotifyclone.screen.SearchScreen
@@ -83,6 +88,7 @@ class MainActivity : ComponentActivity() {
         registerBroadcast()
 
         viewModel.getAllTrackList(this)
+        viewModel.checkUserLogin(this)
 
         setContent {
             AndroidspotifycloneTheme {
@@ -176,6 +182,8 @@ fun MainPage(
     var isShowPlayerButton by rememberSaveable { mutableStateOf(false) }
     var isShuffle by rememberSaveable { mutableStateOf(false) }
 
+    val userLogin by viewModel.userData.observeAsState()
+    val successLogin by viewModel.successLogin.observeAsState()
     val currentPlaying by viewModel.currentTrack.observeAsState()
     val playerStatus by viewModel.currentTrackStatus.observeAsState()
     val trackProgress by viewModel.currentTrackDuration.observeAsState()
@@ -183,7 +191,12 @@ fun MainPage(
     val trackProgressText by viewModel.currentTrackDurationText.observeAsState()
     val trackProgressTotalText by viewModel.currentTrackDurationTotalText.observeAsState()
 
-    LogExt.d("TAG", "Current Playing: ${currentPlaying?.title.toString()}")
+    var isUserHasLogin by remember { mutableStateOf(userLogin != null) }
+
+    if (successLogin == true) {
+        isUserHasLogin = true
+        navController.routeToHomePage()
+    }
 
     Scaffold(
         bottomBar = { BottomNavBar(navController) }
@@ -193,9 +206,17 @@ fun MainPage(
             startDestination = ScreenRoute.Home.route,
             modifier = Modifier.padding(padding)
         ) {
+            composable(ScreenRoute.Login.route) {
+                LoginScreen { name, email, age ->
+                    viewModel.doLogin(context,
+                        User(fullname = name, email = email, age = age)
+                    )
+                }
+            }
             composable(ScreenRoute.Home.route) {
                 HomeScreen(
                     navController = navController,
+                    isUserHasLogin = isUserHasLogin,
                     isShowPlayerButton = isShowPlayerButton,
                     playerStatus = playerStatus?.convertToPlayerStatus() ?: MusicService.PlayerStatus.STOP,
                     trackProgress = trackProgress ?: 0L,
@@ -205,6 +226,11 @@ fun MainPage(
                     currentPlaying = currentPlaying ?: Track.empty,
                     isShuffle = isShuffle,
                     onClickMusic = {
+                        if (!isUserHasLogin) {
+                            navController.routeToLogin()
+                            return@HomeScreen
+                        }
+
                         if (currentPlaying?.id == it.id) {
                             isShowPlayerButton = !isShowPlayerButton
                             listener.onStop(context)
@@ -242,11 +268,17 @@ fun MainPage(
                     currentPlaying = currentPlaying ?: Track.empty,
                     playerStatus = playerStatus?.convertToPlayerStatus() ?: MusicService.PlayerStatus.STOP,
                     trackProgress = trackProgress ?: 0L,
+                    isUserHasLogin = isUserHasLogin,
                     trackProgressTotal = trackProgressTotal ?: 0L,
                     trackProgressText = trackProgressText.orEmpty(),
                     trackProgressTotalText = trackProgressTotalText.orEmpty(),
                     isShuffle = isShuffle,
                     onClickMusic = {
+                        if (!isUserHasLogin) {
+                            navController.routeToLogin()
+                            return@SearchScreen
+                        }
+
                         if (currentPlaying?.id == it.id) {
                             isShowPlayerButton = !isShowPlayerButton
                             listener.onStop(context)
@@ -278,46 +310,54 @@ fun MainPage(
                 )
             }
             composable(ScreenRoute.Profile.route) {
-                ProfileScreen(
-                    navController = navController,
-                    isShowPlayerButton = isShowPlayerButton,
-                    currentPlaying = currentPlaying ?: Track.empty,
-                    playerStatus = playerStatus?.convertToPlayerStatus() ?: MusicService.PlayerStatus.STOP,
-                    trackProgress = trackProgress ?: 0L,
-                    trackProgressTotal = trackProgressTotal ?: 0L,
-                    trackProgressText = trackProgressText.orEmpty(),
-                    trackProgressTotalText = trackProgressTotalText.orEmpty(),
-                    isShuffle = isShuffle,
-                    onClickMusic = {
-                        if (currentPlaying?.id == it.id) {
-                            isShowPlayerButton = !isShowPlayerButton
-                            listener.onStop(context)
-                        } else {
-                            isShowPlayerButton = true
-                            listener.onPlay(context, it.id)
-                        }
-                    },
-                    onPlayPauseClick = {
-                        if (playerStatus == MusicService.PlayerStatus.PLAY.status) {
-                            listener.onPause(context)
-                        } else {
-                            listener.onPlay(context, currentPlaying?.id.orEmpty())
-                        }
-                    },
-                    onNextClick = {
-                        listener.onNext(context)
-                    },
-                    onPreviousClick = {
-                        listener.onPrevious(context)
-                    },
-                    onRefreshClick = {
-                        listener.onRestart(context)
-                    },
-                    onShuffleClick = {
-                        isShuffle = !isShuffle
-                        listener.onShuffle(context, isShuffle)
+                if (!isUserHasLogin) {
+                    LoginScreen { name, email, age ->
+                        viewModel.doLogin(context,
+                            User(fullname = name, email = email, age = age)
+                        )
                     }
-                )
+                } else {
+                    ProfileScreen(
+                        navController = navController,
+                        isShowPlayerButton = isShowPlayerButton,
+                        currentPlaying = currentPlaying ?: Track.empty,
+                        playerStatus = playerStatus?.convertToPlayerStatus() ?: MusicService.PlayerStatus.STOP,
+                        trackProgress = trackProgress ?: 0L,
+                        trackProgressTotal = trackProgressTotal ?: 0L,
+                        trackProgressText = trackProgressText.orEmpty(),
+                        trackProgressTotalText = trackProgressTotalText.orEmpty(),
+                        isShuffle = isShuffle,
+                        onClickMusic = {
+                            if (currentPlaying?.id == it.id) {
+                                isShowPlayerButton = !isShowPlayerButton
+                                listener.onStop(context)
+                            } else {
+                                isShowPlayerButton = true
+                                listener.onPlay(context, it.id)
+                            }
+                        },
+                        onPlayPauseClick = {
+                            if (playerStatus == MusicService.PlayerStatus.PLAY.status) {
+                                listener.onPause(context)
+                            } else {
+                                listener.onPlay(context, currentPlaying?.id.orEmpty())
+                            }
+                        },
+                        onNextClick = {
+                            listener.onNext(context)
+                        },
+                        onPreviousClick = {
+                            listener.onPrevious(context)
+                        },
+                        onRefreshClick = {
+                            listener.onRestart(context)
+                        },
+                        onShuffleClick = {
+                            isShuffle = !isShuffle
+                            listener.onShuffle(context, isShuffle)
+                        }
+                    )
+                }
             }
             composable(
                 route = ScreenRoute.AlbumDetail.route,

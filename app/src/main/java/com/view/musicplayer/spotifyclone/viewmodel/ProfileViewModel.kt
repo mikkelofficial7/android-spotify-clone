@@ -8,12 +8,14 @@ import com.view.musicplayer.spotifyclone.network.response.Track
 import com.view.musicplayer.spotifyclone.room.AppDb
 import com.view.musicplayer.spotifyclone.room.model.FavoriteTrack
 import com.view.musicplayer.spotifyclone.room.model.PlaylistModel
+import com.view.musicplayer.spotifyclone.room.model.User
 import com.view.musicplayer.spotifyclone.viewmodel.base.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class ProfileViewModel(private val db: AppDb): BaseViewModel<Any?>() {
+    val userData = SingleLiveEvent<User>()
     val listFavTrack = SingleLiveEvent<List<FavoriteTrack>>()
     val listPlaylist = SingleLiveEvent<List<PlaylistModel>>()
 
@@ -81,6 +83,15 @@ class ProfileViewModel(private val db: AppDb): BaseViewModel<Any?>() {
                 isLoadingEvent.postValue(false)
 
                 getAllPlaylist(context)
+            }
+        }
+    }
+
+    internal fun getDataUser(context: Context) {
+        executeJob(context) {
+            safeScopeFun(context).launch(Dispatchers.IO) {
+                isLoadingEvent.postValue(false)
+                userData.postValue(db.userDao().getUserData())
             }
         }
     }

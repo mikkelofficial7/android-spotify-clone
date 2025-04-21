@@ -12,18 +12,23 @@ import com.view.musicplayer.spotifyclone.network.OpenRouterApi
 import com.view.musicplayer.spotifyclone.network.request.OpenRouterMessage
 import com.view.musicplayer.spotifyclone.network.request.OpenRouterRequest
 import com.view.musicplayer.spotifyclone.network.response.Genre
-import com.view.musicplayer.spotifyclone.network.response.OpenAIFlagDb
+import com.view.musicplayer.spotifyclone.room.model.OpenAIFlagDb
 import com.view.musicplayer.spotifyclone.network.response.SongRecommendation
 import com.view.musicplayer.spotifyclone.network.response.Track
 import com.view.musicplayer.spotifyclone.room.AppDb
+import com.view.musicplayer.spotifyclone.room.model.User
 import com.view.musicplayer.spotifyclone.service.MusicService
 import com.view.musicplayer.spotifyclone.viewmodel.base.BaseViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class MainActivityViewModel(val db: AppDb, val api: Api, val openRouterApi: OpenRouterApi): BaseViewModel<Any?>() {
+class MainActivityViewModel(val db: AppDb,
+                            val api: Api,
+                            val openRouterApi: OpenRouterApi): BaseViewModel<Any?>() {
     internal var finishLoad = SingleLiveEvent<Boolean>().apply { value = false }
+    internal var successLogin = SingleLiveEvent<Boolean>().apply { value = false }
+    internal var userData = SingleLiveEvent<User>().apply { value = null }
 
     internal var currentTrack = SingleLiveEvent<Track>().apply { value = Track.empty }
     internal var currentTrackStatus = SingleLiveEvent<String>().apply { value = MusicService.PlayerStatus.STOP.status }
@@ -175,4 +180,21 @@ class MainActivityViewModel(val db: AppDb, val api: Api, val openRouterApi: Open
         }
     }
 
+    internal fun checkUserLogin(context: Context) {
+        executeJob(context) {
+            safeScopeFun(context).launch(Dispatchers.IO) {
+                val dataUser = db.userDao().getUserData()
+                userData.postValue(dataUser)
+            }
+        }
+    }
+
+    internal fun doLogin(context: Context, user: User) {
+        executeJob(context) {
+            safeScopeFun(context).launch(Dispatchers.IO) {
+                db.userDao().insert(user)
+                successLogin.postValue(true)
+            }
+        }
+    }
 }

@@ -21,6 +21,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.view.musicplayer.spotifyclone.ext.isGroupPlay
+import com.view.musicplayer.spotifyclone.navigation.routeToLogin
 import com.view.musicplayer.spotifyclone.network.response.Track
 import com.view.musicplayer.spotifyclone.screen.shared.EmptyView
 import com.view.musicplayer.spotifyclone.screen.shared.MusicItemCard
@@ -36,6 +37,7 @@ import org.koin.androidx.compose.koinViewModel
 fun HomeScreen(
     viewModel: HomePageViewModel = koinViewModel(),
     navController: NavController,
+    isUserHasLogin: Boolean,
     currentPlaying: Track,
     isShowPlayerButton: Boolean,
     playerStatus: MusicService.PlayerStatus,
@@ -98,17 +100,29 @@ fun HomeScreen(
                             isShowGotoDetailButton = currentPlaying.id == artist.id,
                             isFavorite = favoriteTrack?.find { it.id == artist.id } != null,
                             onClick = {
+                                if(!isUserHasLogin) {
+                                    navController.routeToLogin()
+                                    return@MusicItemCard
+                                }
                                 onClickMusic(artist)
                             },
                             onAddFavorite = {
+                                if(!isUserHasLogin) {
+                                    navController.routeToLogin()
+                                    return@MusicItemCard
+                                }
                                 viewModel.addOrRemoveFavorite(context, it)
                             },
                             onAddPlaylist = { track, playlist ->
+                                if(!isUserHasLogin) {
+                                    navController.routeToLogin()
+                                    return@MusicItemCard
+                                }
                                 viewModel.addTrackToPlaylist(context, track, playlist)
                             }
                         )
                     }
-                    if (firstTrack.isNullOrEmpty()) {
+                    if (firstTrack.isEmpty()) {
                         item {
                             EmptyView()
                         }
@@ -139,12 +153,24 @@ fun HomeScreen(
                             isShowGotoDetailButton = currentPlaying.id == artist.id,
                             isFavorite = favoriteTrack?.find { it.id == artist.id } != null,
                             onClick = {
+                                if(!isUserHasLogin) {
+                                    navController.routeToLogin()
+                                    return@MusicItemCard
+                                }
                                 onClickMusic(artist)
                             },
                             onAddFavorite = {
+                                if(!isUserHasLogin) {
+                                    navController.routeToLogin()
+                                    return@MusicItemCard
+                                }
                                 viewModel.addOrRemoveFavorite(context, it)
                             },
                             onAddPlaylist = { track, playlist ->
+                                if(!isUserHasLogin) {
+                                    navController.routeToLogin()
+                                    return@MusicItemCard
+                                }
                                 viewModel.addTrackToPlaylist(context, track, playlist)
                             }
                         )
@@ -172,7 +198,7 @@ fun HomeScreen(
                         .background(Transparent)
                         .padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
                 ) {
-                    items(thirdTrack.orEmpty()) { artist ->
+                    items(thirdTrack) { artist ->
                         MusicItemCard(
                             navController = navController,
                             currentPlaying = currentPlaying,
@@ -181,17 +207,29 @@ fun HomeScreen(
                             isShowGotoDetailButton = currentPlaying.id == artist.id,
                             isFavorite = favoriteTrack?.find { it.id == artist.id } != null,
                             onClick = {
+                                if(!isUserHasLogin) {
+                                    navController.routeToLogin()
+                                    return@MusicItemCard
+                                }
                                 onClickMusic(artist)
                             },
                             onAddFavorite = {
+                                if(!isUserHasLogin) {
+                                    navController.routeToLogin()
+                                    return@MusicItemCard
+                                }
                                 viewModel.addOrRemoveFavorite(context, it)
                             },
                             onAddPlaylist = { track, playlist ->
+                                if(!isUserHasLogin) {
+                                    navController.routeToLogin()
+                                    return@MusicItemCard
+                                }
                                 viewModel.addTrackToPlaylist(context, track, playlist)
                             }
                         )
                     }
-                    if (thirdTrack.isNullOrEmpty()) {
+                    if (thirdTrack.isEmpty()) {
                         item {
                             EmptyView()
                         }
@@ -223,17 +261,29 @@ fun HomeScreen(
                             isShowGotoDetailButton = currentPlaying.id == artist.id,
                             isFavorite = favoriteTrack?.find { it.id == artist.id } != null,
                             onClick = {
+                                if(!isUserHasLogin) {
+                                    navController.routeToLogin()
+                                    return@MusicItemCard
+                                }
                                 onClickMusic(artist)
                             },
                             onAddFavorite = {
+                                if(!isUserHasLogin) {
+                                    navController.routeToLogin()
+                                    return@MusicItemCard
+                                }
                                 viewModel.addOrRemoveFavorite(context, it)
                             },
                             onAddPlaylist = { track, playlist ->
+                                if(!isUserHasLogin) {
+                                    navController.routeToLogin()
+                                    return@MusicItemCard
+                                }
                                 viewModel.addTrackToPlaylist(context, track, playlist)
                             }
                         )
                     }
-                    if (fourthTrack.isNullOrEmpty()) {
+                    if (fourthTrack.isEmpty()) {
                         item {
                             EmptyView()
                         }

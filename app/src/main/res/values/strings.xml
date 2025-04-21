@@ -20,4 +20,10 @@
     <string name="song_in_playlist">%1$s Songs</string>
     <string name="cancel">Cancel</string>
     <string name="confirm">Confirm</string>
+    <string name="fullname">Full Name</string>
+    <string name="login_more">Login and get more experiences</string>
+    <string name="email">mail@example.com</string>
+    <string name="age">Age</string>
+    <string name="login">Login</string>
+    <string name="years_old">%1$s years old</string>
 </resources>

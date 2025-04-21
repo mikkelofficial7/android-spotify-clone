@@ -5,15 +5,15 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import com.view.musicplayer.spotifyclone.room.model.OpenAIFlagDb
+import com.view.musicplayer.spotifyclone.room.model.User
 
 @Dao
-interface OpenAiDao {
+interface UserDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(db: OpenAIFlagDb)
-    @Query("SELECT * FROM tbl_flag_open_ai")
-    suspend fun getAllOpenAiFlag(): List<OpenAIFlagDb>?
+    suspend fun insert(user: User)
+    @Query("SELECT * FROM tbl_user")
+    suspend fun getUserData(): User?
 
     @Delete
-    suspend fun delete(db: OpenAIFlagDb)
+    suspend fun delete(user: User)
 }

@@ -83,11 +83,13 @@ fun ProfileScreen(
     val tabTitles = listOf(context.getString(R.string.your_favorite), context.getString(R.string.your_playlists))
     var selectedTabIndex by remember { mutableStateOf(0) }
 
+    val userData by viewModel.userData.observeAsState()
     val listFavorite by viewModel.listFavTrack.observeAsState()
     val listPlaylist by viewModel.listPlaylist.observeAsState()
     var isShowAddPlaylistDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(Unit) {
+        viewModel.getDataUser(context)
         viewModel.getAllFavoriteTrack(context)
         viewModel.getAllPlaylist(context)
     }
@@ -111,9 +113,9 @@ fun ProfileScreen(
                     .width(80.dp)
             )
             Spacer(modifier = Modifier.height(12.dp))
-            Text(text = "{{name}}", color = White80, fontSize = 20.sp, fontWeight = FontWeight.Bold)
-            Text(text = "{{email}}", color = White80, fontSize = 14.sp)
-            Text(text = "{{age}}", color = White80, fontSize = 14.sp)
+            Text(text = userData?.fullname.orEmpty(), color = White80, fontSize = 20.sp, fontWeight = FontWeight.Bold)
+            Text(text = userData?.email.orEmpty(), color = White80, fontSize = 14.sp)
+            Text(text = context.getString(R.string.years_old, userData?.age.orEmpty()), color = White80, fontSize = 14.sp)
             Spacer(modifier = Modifier.height(24.dp))
             Column(
                 modifier = Modifier

@@ -57,6 +57,7 @@ import com.view.musicplayer.spotifyclone.R
 import com.view.musicplayer.spotifyclone.constants.Constants
 import com.view.musicplayer.spotifyclone.ext.isGroupPlay
 import com.view.musicplayer.spotifyclone.navigation.routeToAlbumDetail
+import com.view.musicplayer.spotifyclone.navigation.routeToLogin
 import com.view.musicplayer.spotifyclone.network.response.Genre
 import com.view.musicplayer.spotifyclone.network.response.Track
 import com.view.musicplayer.spotifyclone.room.model.PlaylistModel
@@ -87,6 +88,7 @@ fun SearchScreen(
     playerStatus: MusicService.PlayerStatus,
     trackProgress: Long,
     isShuffle: Boolean,
+    isUserHasLogin: Boolean,
     trackProgressTotal: Long,
     trackProgressText: String,
     trackProgressTotalText: String,
@@ -170,13 +172,28 @@ fun SearchScreen(
                     context,
                     querySearch,
                     onClick = {
+                        if (!isUserHasLogin) {
+                            navController.routeToLogin()
+                            return@showQuerySearchPage
+                        }
+
                         keyboardController?.hide()
                         onClickMusic(it)
                     },
                     onClickFavorite = {
+                        if (!isUserHasLogin) {
+                            navController.routeToLogin()
+                            return@showQuerySearchPage
+                        }
+
                         viewModel.addOrRemoveFavorite(context, it)
                     },
                     onAddPlaylist = { track, playlist ->
+                        if (!isUserHasLogin) {
+                            navController.routeToLogin()
+                            return@showQuerySearchPage
+                        }
+
                         viewModel.addTrackToPlaylist(context, track, playlist)
                     })
                 false -> showDefaultSearchPage(
@@ -188,17 +205,33 @@ fun SearchScreen(
                     recommendTopTrack,
                     genreData ?: listOf(),
                     onClickMusic = {
+                        if (!isUserHasLogin) {
+                            navController.routeToLogin()
+                            return@showDefaultSearchPage
+                        }
                         keyboardController?.hide()
                         onClickMusic(it)
                     },
                     onClickGenre = {
+                        if (!isUserHasLogin) {
+                            navController.routeToLogin()
+                            return@showDefaultSearchPage
+                        }
                         keyboardController?.hide()
                         navController.routeToAlbumDetail(it.name)
                     },
                     onClickFavorite = {
+                        if (!isUserHasLogin) {
+                            navController.routeToLogin()
+                            return@showDefaultSearchPage
+                        }
                         viewModel.addOrRemoveFavorite(context, it)
                     }
                 ) { track, playlist ->
+                    if (!isUserHasLogin) {
+                        navController.routeToLogin()
+                        return@showDefaultSearchPage
+                    }
                     viewModel.addTrackToPlaylist(context, track, playlist)
                 }
             }
