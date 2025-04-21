@@ -8,10 +8,14 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
@@ -30,6 +34,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.asFlow
@@ -52,6 +57,7 @@ import com.view.musicplayer.spotifyclone.screen.PlaylistDetailScreen
 import com.view.musicplayer.spotifyclone.screen.ProfileScreen
 import com.view.musicplayer.spotifyclone.screen.SearchScreen
 import com.view.musicplayer.spotifyclone.screen.SongDetailScreen
+import com.view.musicplayer.spotifyclone.screen.shared.EmptyView
 import com.view.musicplayer.spotifyclone.screen.shared.loadIconToVector
 import com.view.musicplayer.spotifyclone.service.MusicService
 import com.view.musicplayer.spotifyclone.service.listener.ServiceStartOrStopListener
@@ -75,18 +81,32 @@ class MainActivity : ComponentActivity() {
 
         viewModel.getAllTrackList(this)
 
-        viewModel.finishLoad.observe(this) {
-            setContent {
-                AndroidspotifycloneTheme {
-                    Surface(
-                        modifier = Modifier.fillMaxSize(),
-                        color = MaterialTheme.colorScheme.background
-                    ) {
+        setContent {
+            AndroidspotifycloneTheme {
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = MaterialTheme.colorScheme.background
+                ) {
+                    val isFinishLoad by viewModel.finishLoad.observeAsState()
+
+                    Box {
                         MainPage(
                             viewModel = viewModel,
                             listener = notificationListener,
-                            context = this
+                            context = this@MainActivity
                         )
+                        if (isFinishLoad != true) {
+                            Box(
+                                contentAlignment = Alignment.Center,
+                                modifier = Modifier.fillMaxSize()
+                            ) {
+                                CircularProgressIndicator(
+                                    color = SpotifyAccent80,
+                                    strokeWidth = 4.dp,
+                                    modifier = Modifier.size(48.dp)
+                                )
+                            }
+                        }
                     }
                 }
             }

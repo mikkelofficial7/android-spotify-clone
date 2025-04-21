@@ -1,6 +1,7 @@
 package com.view.musicplayer.spotifyclone.viewmodel
 
 import android.content.Context
+import com.google.gson.Gson
 import com.view.musicplayer.spotifyclone.constants.Constants
 import com.view.musicplayer.spotifyclone.ext.EmptyClass
 import com.view.musicplayer.spotifyclone.ext.SingleLiveEvent
@@ -24,7 +25,7 @@ import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
 class MainActivityViewModel(val db: AppDb, val api: Api, val openRouterApi: OpenRouterApi): BaseViewModel<Any?>() {
-    internal var finishLoad = SingleLiveEvent<EmptyClass>()
+    internal var finishLoad = SingleLiveEvent<Boolean>().apply { value = false }
 
     internal var currentTrack = SingleLiveEvent<Track>().apply { value = Track.empty }
     internal var currentTrackStatus = SingleLiveEvent<String>().apply { value = MusicService.PlayerStatus.STOP.status }
@@ -110,7 +111,7 @@ class MainActivityViewModel(val db: AppDb, val api: Api, val openRouterApi: Open
                 val flagOpenAi = db.openAiDao().getAllOpenAiFlag()?.firstOrNull()
 
                 if (flagOpenAi != null && flagOpenAi.lastHitDate == getCurrentDate()) {
-                    finishLoad.postValue(EmptyClass())
+                    finishLoad.postValue(true)
                     return@launch
                 }
 
@@ -151,7 +152,7 @@ class MainActivityViewModel(val db: AppDb, val api: Api, val openRouterApi: Open
                     }
 
                     db.openAiDao().insert(OpenAIFlagDb(lastHitDate = getCurrentDate().orEmpty()))
-                    finishLoad.postValue(EmptyClass())
+                    finishLoad.postValue(true)
                 }
             }
         }
