@@ -13,7 +13,7 @@ data class SongRecommendation(
     var idPk: Int = 0,
     val id: String,
     val title: String,
-    val listTrack: ArrayList<Track>? = arrayListOf()
+    val listTrack: ArrayList<Track> = arrayListOf()
 ) : Parcelable
 
 @Parcelize

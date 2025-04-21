@@ -1,9 +1,7 @@
 package com.view.musicplayer.spotifyclone.viewmodel
 
 import android.content.Context
-import com.google.gson.Gson
 import com.view.musicplayer.spotifyclone.constants.Constants
-import com.view.musicplayer.spotifyclone.ext.EmptyClass
 import com.view.musicplayer.spotifyclone.ext.SingleLiveEvent
 import com.view.musicplayer.spotifyclone.ext.extractTextIntoDesiredListText
 import com.view.musicplayer.spotifyclone.ext.flowOnValue
@@ -138,15 +136,34 @@ class MainActivityViewModel(val db: AppDb, val api: Api, val openRouterApi: Open
     ) {
         executeJob(context) {
             safeScopeFun(context).launch(Dispatchers.IO) {
-                flowOnValue(openRouterApi.getResponse(getOpenRouterRequest(prompt))).collectLatest { response ->
+                flowOnValue(
+                   onRunning = { openRouterApi.getResponse(getOpenRouterRequest(prompt)) },
+                   onError = {
+                       val listTrackChunked = listTrack.chunked(listTrack.size / listRecommend.size)
+
+                       listRecommend.mapIndexed { index, listRecommend ->
+                           val results = SongRecommendation(
+                               idPk = index,
+                               id = listRecommend.id,
+                               title = listRecommend.title,
+                               listTrack = listTrackChunked[index] as ArrayList<Track>
+                           )
+                           db.recommendDao().insert(results)
+                       }
+
+                       db.openAiDao().insert(OpenAIFlagDb(lastHitDate = getCurrentDate().orEmpty()))
+                       finishLoad.postValue(true)
+                   }
+                ).collectLatest { response ->
                     val listExtracted = response.choices.first().message.content.extractTextIntoDesiredListText()
+                    val listTrackChunked = listTrack.chunked(listTrack.size / listRecommend.size)
 
                     listRecommend.mapIndexed { index, listRecommend ->
                         val results = SongRecommendation(
                             idPk = index,
                             id = listRecommend.id,
                             title = listExtracted[index],
-                            listTrack = listTrack.shuffled().take(5) as ArrayList<Track>
+                            listTrack = listTrackChunked[index] as ArrayList<Track>
                         )
                         db.recommendDao().insert(results)
                     }

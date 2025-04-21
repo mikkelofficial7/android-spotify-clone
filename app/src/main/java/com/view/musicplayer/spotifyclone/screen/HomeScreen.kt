@@ -89,7 +89,7 @@ fun HomeScreen(
                         .fillMaxSize()
                         .padding(bottom = 16.dp, start = 16.dp, end = 16.dp)
                 ) {
-                    items(firstTrack.orEmpty()) {  artist ->
+                    items(firstTrack) { artist ->
                         MusicItemCard(
                             navController = navController,
                             currentPlaying = currentPlaying,
