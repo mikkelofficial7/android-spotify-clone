@@ -32,15 +32,7 @@ class MainActivityViewModel(val db: AppDb, val api: Api): BaseViewModel<Any?>() 
     internal var currentTrackDurationTotalText = SingleLiveEvent<String>().apply { value = "" }
 
     internal fun runGeminiGenAi(context: Context) {
-        executeJob(context) {
-            safeScopeFun(context).launch(Dispatchers.IO) {
-                val generativeModel = Firebase.vertexAI.generativeModel("gemini-2.0-flash")
-                val response =
-                    generativeModel.generateContent("Write a story about the green robot")
 
-                Log.d("GENAI", Gson().toJson(response))
-            }
-        }
     }
     internal fun getAllTrackList(context: Context) {
         executeJob(context) {
