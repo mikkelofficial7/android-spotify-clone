@@ -2,6 +2,7 @@ package com.view.musicplayer.spotifyclone.ext
 
 import android.content.Context
 import android.net.Uri
+import com.google.gson.Gson
 import com.view.musicplayer.spotifyclone.service.MusicService
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -66,6 +67,10 @@ fun String.extractTextIntoDesiredListText(): List<String> {
     return regex.findAll(this).map { it.groupValues[1] }.toList()
 }
 
+fun Any.toJson(): String? {
+    return Gson().toJson(this)
+}
+
 fun generateFirstPrompt(amount: Int): String {
-    return "Give me $amount title of music section of today vibe: ${getCurrentDate()}. The response should show only $amount title of music section and wrap each with []"
+    return "Give me $amount title of music section of today vibe: ${getCurrentDate()}. The response should show only $amount title of music section and wrap each with [] and don't forget to use millenial languages"
 }

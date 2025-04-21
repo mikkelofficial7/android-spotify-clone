@@ -11,9 +11,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -40,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.asFlow
 import androidx.localbroadcastmanager.content.LocalBroadcastManager
@@ -50,6 +49,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import com.view.musicplayer.spotifyclone.constants.Constants
 import com.view.musicplayer.spotifyclone.ext.LogExt
 import com.view.musicplayer.spotifyclone.ext.checkNotificationPermission
 import com.view.musicplayer.spotifyclone.ext.convertToPlayerStatus
@@ -61,7 +61,6 @@ import com.view.musicplayer.spotifyclone.screen.PlaylistDetailScreen
 import com.view.musicplayer.spotifyclone.screen.ProfileScreen
 import com.view.musicplayer.spotifyclone.screen.SearchScreen
 import com.view.musicplayer.spotifyclone.screen.SongDetailScreen
-import com.view.musicplayer.spotifyclone.screen.shared.EmptyView
 import com.view.musicplayer.spotifyclone.screen.shared.loadIconToVector
 import com.view.musicplayer.spotifyclone.service.MusicService
 import com.view.musicplayer.spotifyclone.service.listener.ServiceStartOrStopListener
@@ -93,7 +92,11 @@ class MainActivity : ComponentActivity() {
                 ) {
                     val isFinishLoad by viewModel.finishLoad.observeAsState()
 
-                    Box {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .background(Black80)
+                    ) {
                         if (isFinishLoad == true) {
                             MainPage(
                                 viewModel = viewModel,
@@ -154,9 +157,10 @@ fun FirstLoadingPage() {
                 modifier = Modifier.size(48.dp)
             )
             Text(
-                text = LocalContext.current.getString(R.string.loading_text),
+                text = LocalContext.current.getString(R.string.loading_text, Constants.AI_MODEL),
                 color = SpotifyAccent80,
-                modifier = Modifier.padding(top = 10.dp)
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(vertical = 10.dp, horizontal = 20.dp)
             )
         }
     }

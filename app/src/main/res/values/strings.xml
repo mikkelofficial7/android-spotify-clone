@@ -1,6 +1,6 @@
 <resources>
     <string name="app_name">Spotify Clone - Android</string>
-    <string name="loading_text">Loading now. Please wait..</string>
+    <string name="loading_text">Please wait..\nWe\'re generating data using %1$s</string>
     <string name="permission_title">Hi User!</string>
     <string name="permission_detail">For better experience and get more info about us, please allow this notification</string>
     <string name="search_song">Search your music vibe..</string>
