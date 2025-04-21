@@ -23,12 +23,23 @@ android {
     }
 
     buildTypes {
-        release {
+        getByName("debug") {
+            buildConfigField("String", "BASE_URL", "\"${project.properties["api.baseurl"] as? String ?: ""}\"")
+            buildConfigField("String", "BASE_URL_AI", "\"${project.properties["api.openrouter"] as? String ?: ""}\"")
+            buildConfigField("String", "API_TOKEN", "\"${project.properties["api.openrouter.token"] as? String ?: ""}\"")
+
+            versionNameSuffix = "-debug"
             isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+            isDebuggable = true
+        }
+        getByName("release") {
+            buildConfigField("String", "BASE_URL", "\"${project.properties["api.baseurl"] as? String ?: ""}\"")
+            buildConfigField("String", "BASE_URL_AI", "\"${project.properties["api.openrouter"] as? String ?: ""}\"")
+            buildConfigField("String", "API_TOKEN", "\"${project.properties["api.openrouter.token"] as? String ?: ""}\"")
+
+            isMinifyEnabled = true
+            isDebuggable = false
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
     compileOptions {
@@ -40,6 +51,7 @@ android {
     }
     buildFeatures {
         compose = true
+        buildConfig = true
     }
     composeOptions {
         kotlinCompilerExtensionVersion = "1.4.3"

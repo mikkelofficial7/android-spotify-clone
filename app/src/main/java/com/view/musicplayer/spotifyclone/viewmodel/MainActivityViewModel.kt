@@ -1,11 +1,19 @@
 package com.view.musicplayer.spotifyclone.viewmodel
 
 import android.content.Context
+import com.view.musicplayer.spotifyclone.constants.Constants
 import com.view.musicplayer.spotifyclone.ext.EmptyClass
 import com.view.musicplayer.spotifyclone.ext.SingleLiveEvent
+import com.view.musicplayer.spotifyclone.ext.extractTextIntoDesiredListText
 import com.view.musicplayer.spotifyclone.ext.flowOnValue
+import com.view.musicplayer.spotifyclone.ext.generateFirstPrompt
+import com.view.musicplayer.spotifyclone.ext.getCurrentDate
 import com.view.musicplayer.spotifyclone.network.Api
+import com.view.musicplayer.spotifyclone.network.OpenRouterApi
+import com.view.musicplayer.spotifyclone.network.request.OpenRouterMessage
+import com.view.musicplayer.spotifyclone.network.request.OpenRouterRequest
 import com.view.musicplayer.spotifyclone.network.response.Genre
+import com.view.musicplayer.spotifyclone.network.response.OpenAIFlagDb
 import com.view.musicplayer.spotifyclone.network.response.SongRecommendation
 import com.view.musicplayer.spotifyclone.network.response.Track
 import com.view.musicplayer.spotifyclone.room.AppDb
@@ -15,7 +23,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class MainActivityViewModel(val db: AppDb, val api: Api): BaseViewModel<Any?>() {
+class MainActivityViewModel(val db: AppDb, val api: Api, val openRouterApi: OpenRouterApi): BaseViewModel<Any?>() {
     internal var finishLoad = SingleLiveEvent<EmptyClass>()
 
     internal var currentTrack = SingleLiveEvent<Track>().apply { value = Track.empty }
@@ -27,8 +35,20 @@ class MainActivityViewModel(val db: AppDb, val api: Api): BaseViewModel<Any?>() 
     internal var currentTrackDurationText = SingleLiveEvent<String>().apply { value = "" }
     internal var currentTrackDurationTotalText = SingleLiveEvent<String>().apply { value = "" }
 
-    internal fun runGeminiGenAi(context: Context) {
+    private fun getOpenRouterRequest(prompt: String) : OpenRouterRequest {
+       val message = ArrayList<OpenRouterMessage>()
 
+        message.add(
+           OpenRouterMessage(
+               role = Constants.AI_ROLE,
+               content = prompt
+           )
+       )
+
+        return OpenRouterRequest(
+           model = Constants.AI_MODEL,
+           messages = message
+       )
     }
     internal fun getAllTrackList(context: Context) {
         executeJob(context) {
@@ -87,24 +107,54 @@ class MainActivityViewModel(val db: AppDb, val api: Api): BaseViewModel<Any?>() 
     private fun getRecommendation(context: Context) {
         executeJob(context) {
             safeScopeFun(context).launch(Dispatchers.IO) {
+                val flagOpenAi = db.openAiDao().getAllOpenAiFlag()?.firstOrNull()
+
+                if (flagOpenAi != null && flagOpenAi.lastHitDate == getCurrentDate()) {
+                    finishLoad.postValue(EmptyClass())
+                    return@launch
+                }
+
                 flowOnValue(api.getRecommendation()).collect { response ->
                     isLoadingEvent.postValue(false)
-
                     val allTrack = db.trackDao().getAllTrack()
+                    val recommendTextSize = response.data?.size ?: 0
 
-                    response.data?.mapIndexed { index, songRecommendation ->
-                        val result = SongRecommendation(
+                    runOpenAi(
+                        context,
+                        generateFirstPrompt(recommendTextSize),
+                        response.data ?: listOf(),
+                        allTrack ?: listOf()
+                    )
+                }
+            }
+        }
+    }
+
+    private suspend fun runOpenAi(context: Context,
+                                  prompt: String,
+                                  listRecommend: List<SongRecommendation>,
+                                  listTrack: List<Track>
+    ) {
+        executeJob(context) {
+            safeScopeFun(context).launch(Dispatchers.IO) {
+                flowOnValue(openRouterApi.getResponse(getOpenRouterRequest(prompt))).collectLatest { response ->
+                    val listExtracted = response.choices.first().message.content.extractTextIntoDesiredListText()
+
+                    listRecommend.mapIndexed { index, listRecommend ->
+                        val results = SongRecommendation(
                             idPk = index,
-                            id = songRecommendation.id,
-                            title = songRecommendation.title,
-                            listTrack = allTrack?.shuffled()?.take(5) as ArrayList<Track>
+                            id = listRecommend.id,
+                            title = listExtracted[index],
+                            listTrack = listTrack.shuffled().take(5) as ArrayList<Track>
                         )
-                        db.recommendDao().insert(result)
+                        db.recommendDao().insert(results)
                     }
 
+                    db.openAiDao().insert(OpenAIFlagDb(lastHitDate = getCurrentDate().orEmpty()))
                     finishLoad.postValue(EmptyClass())
                 }
             }
         }
     }
+
 }

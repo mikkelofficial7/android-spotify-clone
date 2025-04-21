@@ -11,7 +11,7 @@ import org.koin.dsl.module
 class ViewModelModule {
     companion object {
         val viewModelModule = module {
-            viewModel { MainActivityViewModel(get(), get()) }
+            viewModel { MainActivityViewModel(get(), get(), get()) }
             viewModel { HomePageViewModel(get()) }
             viewModel { SearchViewModel(get()) }
             viewModel { AlbumDetailViewModel(get()) }

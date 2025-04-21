@@ -4,6 +4,7 @@ import android.content.Context
 import com.jakewharton.retrofit2.adapter.kotlin.coroutines.CoroutineCallAdapterFactory
 import com.view.musicplayer.spotifyclone.network.interceptor.AssetFileInterceptor
 import com.view.musicplayer.spotifyclone.network.interceptor.HttpLoggingInterceptor
+import com.view.musicplayer.spotifyclone.network.interceptor.OpenRouterInterceptor
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -26,6 +27,7 @@ object RetrofitBuilder {
             .writeTimeout(50, TimeUnit.SECONDS)
             .readTimeout(50, TimeUnit.SECONDS)
             .addInterceptor(AssetFileInterceptor(context.assets))
+            .addInterceptor(OpenRouterInterceptor())
             .apply {
                 HttpLoggingInterceptor.get().forEach { addInterceptor(it) }
             }
