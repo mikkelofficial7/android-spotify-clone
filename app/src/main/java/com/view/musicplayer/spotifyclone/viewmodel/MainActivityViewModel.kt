@@ -1,10 +1,6 @@
 package com.view.musicplayer.spotifyclone.viewmodel
 
 import android.content.Context
-import android.util.Log
-import com.google.firebase.Firebase
-import com.google.firebase.vertexai.vertexAI
-import com.google.gson.Gson
 import com.view.musicplayer.spotifyclone.ext.EmptyClass
 import com.view.musicplayer.spotifyclone.ext.SingleLiveEvent
 import com.view.musicplayer.spotifyclone.ext.flowOnValue
