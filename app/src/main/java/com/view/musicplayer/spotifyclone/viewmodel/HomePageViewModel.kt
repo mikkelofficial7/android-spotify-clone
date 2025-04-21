@@ -3,7 +3,6 @@ package com.view.musicplayer.spotifyclone.viewmodel
 import android.content.Context
 import com.view.musicplayer.spotifyclone.ext.SingleLiveEvent
 import com.view.musicplayer.spotifyclone.ext.flowOnValue
-import com.view.musicplayer.spotifyclone.network.Api
 import com.view.musicplayer.spotifyclone.network.response.SongRecommendation
 import com.view.musicplayer.spotifyclone.network.response.Track
 import com.view.musicplayer.spotifyclone.room.AppDb
@@ -13,7 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class HomePageViewModel(private val api: Api, private val db: AppDb): BaseViewModel<Any?>() {
+class HomePageViewModel(private val db: AppDb): BaseViewModel<Any?>() {
     val recommendationChart = SingleLiveEvent<List<SongRecommendation>>()
     val favoriteTrack = SingleLiveEvent<List<Track>>()
     val listPlaylist = SingleLiveEvent<List<PlaylistModel>>()

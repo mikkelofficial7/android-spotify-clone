@@ -105,5 +105,10 @@ dependencies {
     annotationProcessor("com.github.bumptech.glide:compiler:4.15.1")
     implementation("com.github.bumptech.glide:glide:4.15.1")
 
+    // broadcast receiver
     implementation("androidx.localbroadcastmanager:localbroadcastmanager:1.1.0")
+
+    // vertex ai
+    implementation(platform("com.google.firebase:firebase-bom:33.12.0"))
+    implementation("com.google.firebase:firebase-vertexai") // see doc: https://developer.android.com/ai/vertex-ai-firebase
 }

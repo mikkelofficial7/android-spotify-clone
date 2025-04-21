@@ -3,7 +3,6 @@ package com.view.musicplayer.spotifyclone.viewmodel
 import android.content.Context
 import com.view.musicplayer.spotifyclone.ext.SingleLiveEvent
 import com.view.musicplayer.spotifyclone.ext.flowOnValue
-import com.view.musicplayer.spotifyclone.network.Api
 import com.view.musicplayer.spotifyclone.network.response.Genre
 import com.view.musicplayer.spotifyclone.network.response.Track
 import com.view.musicplayer.spotifyclone.room.AppDb
@@ -13,7 +12,7 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.collectLatest
 import kotlinx.coroutines.launch
 
-class SearchViewModel(private val api: Api, private val db: AppDb): BaseViewModel<Any?>() {
+class SearchViewModel(private val db: AppDb): BaseViewModel<Any?>() {
     val favoriteTrack = SingleLiveEvent<List<Track>>()
     val allGenre = SingleLiveEvent<List<Genre>>()
     val topTrack = SingleLiveEvent<List<Track>>()

@@ -5,7 +5,6 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.os.Bundle
-import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -60,14 +59,14 @@ import com.view.musicplayer.spotifyclone.ui.theme.AndroidspotifycloneTheme
 import com.view.musicplayer.spotifyclone.ui.theme.Black80
 import com.view.musicplayer.spotifyclone.ui.theme.SpotifyAccent80
 import com.view.musicplayer.spotifyclone.ui.theme.Transparent
-import com.view.musicplayer.spotifyclone.viewmodel.BroadcastViewModel
+import com.view.musicplayer.spotifyclone.viewmodel.MainActivityViewModel
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class MainActivity : ComponentActivity() {
     private val notificationListener: ServiceStartOrStopListener by inject()
     private lateinit var broadcastReceiver: BroadcastReceiver
-    private val viewModel: BroadcastViewModel by viewModel()
+    private val viewModel: MainActivityViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -124,7 +123,7 @@ class MainActivity : ComponentActivity() {
 
 @Composable
 fun MainPage(
-    viewModel: BroadcastViewModel,
+    viewModel: MainActivityViewModel,
     listener: ServiceStartOrStopListener,
     context: Context
 ) {
