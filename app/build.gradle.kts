@@ -27,6 +27,7 @@ android {
             buildConfigField("String", "BASE_URL", "\"${project.properties["api.baseurl"] as? String ?: ""}\"")
             buildConfigField("String", "BASE_URL_AI", "\"${project.properties["api.openrouter"] as? String ?: ""}\"")
             buildConfigField("String", "API_TOKEN", "\"${project.properties["api.openrouter.token"] as? String ?: ""}\"")
+            buildConfigField("String", "AI_MODEL", "\"${project.properties["api.openrouter.model"] as? String ?: ""}\"")
 
             versionNameSuffix = "-debug"
             isMinifyEnabled = false
@@ -36,6 +37,7 @@ android {
             buildConfigField("String", "BASE_URL", "\"${project.properties["api.baseurl"] as? String ?: ""}\"")
             buildConfigField("String", "BASE_URL_AI", "\"${project.properties["api.openrouter"] as? String ?: ""}\"")
             buildConfigField("String", "API_TOKEN", "\"${project.properties["api.openrouter.token"] as? String ?: ""}\"")
+            buildConfigField("String", "AI_MODEL", "\"${project.properties["api.openrouter.model"] as? String ?: ""}\"")
 
             isMinifyEnabled = true
             isDebuggable = false
