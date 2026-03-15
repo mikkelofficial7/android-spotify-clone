@@ -4,7 +4,13 @@ Music app inspired by [Spotify](https://open.spotify.com/) UI-looks (Download .a
 
 Apk Supports ```Android 9.0``` to ```Android 15```
 
-[See full video demo](https://videy.co/v/?id=5f8IaLiM1)
+Watch full video demo below:
+
+<a href="https://mega.nz/file/1BFnUKiJ#U400h_PRuDRJ9-VwCzQI5FMXIFox9qSsaWlQeJxdHuk">
+  <img src="https://github.com/mikkelofficial7/android-spotify-clone/blob/main/thumbnail.png" width="400"/>
+</a>
+
+Screenshots show below:
 
 <div align="left">
   <img src="https://github.com/mikkelofficial7/android-spotify-clone/blob/main/capture1.png" alt="Spoti-clone" width="150" height="300">
